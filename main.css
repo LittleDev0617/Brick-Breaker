@@ -1,0 +1,28 @@
+* {
+    margin: 0; padding: 0;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-around;
+    background-color: black;
+}
+
+#main {
+    position: relative;
+    margin: 0 auto;
+    width: 1024px;
+    height: 768px;
+    background-color: white;
+
+}
+
+canvas {
+    position: absolute;
+}
