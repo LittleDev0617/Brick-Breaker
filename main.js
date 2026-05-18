@@ -21,7 +21,9 @@ class GameManager {
             obj.isActive = !obj.isActive;
         }));
 
-        scene1.addUI("howBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 80, 400, 50, "How to play", null));
+        scene1.addUI("howBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 80, 400, 50, "How to play", () => {
+            console.log("test!");
+        }));
 
         this.addScene(scene1);
         this.update();
