@@ -4,6 +4,7 @@
 
 html {
     height: 100%;
+    font-family: 'Minecraft', sans-serif;
 }
 
 body {
@@ -11,7 +12,7 @@ body {
     height: 100%;
     flex-direction: column;
     justify-content: space-around;
-    background-color: black;
+    background-color: white;
 }
 
 #main {
@@ -25,4 +26,17 @@ body {
 
 canvas {
     position: absolute;
+    border: 2px solid black;
+}
+
+@font-face {
+    font-family: 'Minecraft';
+    src: url('font/Minecraft-Bold.otf') format('opentype');
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: 'Minecraft';
+    src: url('font/Minecraft.otf') format('opentype');
+    font-weight: 400;
 }

@@ -10,6 +10,7 @@ class Vector2D {
 
 class GameObject {
     constructor(x, y, velocity) {
+        this.isActive = true;
         this.x = x;
         this.y = y;
         this.v = velocity;
