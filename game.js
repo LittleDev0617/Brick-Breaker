@@ -16,6 +16,7 @@ class GameObject {
         this.v = velocity;
     }
 
+
     update() {
         this.move(); 
         this.draw();

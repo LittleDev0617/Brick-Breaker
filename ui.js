@@ -83,35 +83,48 @@ class Canvas {
         }
 
         this.isActive = true;
+        
         this.canvas = canvas;        
         this.context = canvas.getContext("2d");
         this.objects = {};
+    }
 
-        canvas.addEventListener("click", e => {
-            if (!this.isActive) return;
+    tryClick(x, y) {
+        if (!this.isActive) return false;
 
-            for (const objId in this.objects) {
-                let obj = this.objects[objId];
-                if (!(obj instanceof UIButton)) continue;
+        for (const objId in this.objects) {
+            let obj = this.objects[objId];
+            
+            // if (!(obj instanceof UIButton)) continue;
+            if (obj.contains == undefined) continue;
+            if (obj.click == undefined) continue;
 
-                if (obj.contains(e.offsetX, e.offsetY))
-                    obj.click();
+            if (obj.contains(x, y)) {
+                obj.click();
+                return true;
             }
-        });
-        
-        canvas.addEventListener("mousemove", e => {
-            if (!this.isActive) return;
+        }
 
-            for (const objId in this.objects) {
-                let obj = this.objects[objId];
-                
-                if (!(obj instanceof UIButton)) continue;
-                
-                obj.hover = false;
-                if (obj.contains(e.offsetX, e.offsetY))
-                    obj.hover = true;
+        return false;
+    }
+
+    updateHover(x, y) {
+        if (!this.isActive) return false;
+
+        for (const objId in this.objects) {
+            let obj = this.objects[objId];
+            
+            // if (!(obj instanceof UIButton)) continue;
+            if (obj.hover == undefined) continue;
+
+
+            if (obj.contains == undefined) continue;
+            obj.hover = false;
+            if (obj.contains(x, y)) {
+                obj.hover = true;                
             }
-        });
+        }
+        return false;
     }
 
     draw() {
@@ -136,6 +149,19 @@ class Scene {
 
         this.uiCanvas = new Canvas("ui");
         this.gameCanvas = new Canvas("game");
+
+        this.uiCanvas.canvas.addEventListener("click", e => {
+            const [ x, y ] = [ e.offsetX, e.offsetY ];
+            if (!this.uiCanvas.tryClick(x, y))
+                this.gameCanvas.tryClick(x, y);
+        });
+
+        this.uiCanvas.canvas.addEventListener("mousemove", e => {
+            const [ x, y ] = [ e.offsetX, e.offsetY ];
+            
+            this.uiCanvas.updateHover(x, y);
+            this.gameCanvas.updateHover(x, y);
+        });
     }
 
     addObject(name, obj, canvas) {
