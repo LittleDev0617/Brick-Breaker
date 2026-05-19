@@ -184,6 +184,11 @@ class Scene {
         }
     }
 
+    update() {
+        // 각자 Scene 객체에서 구현
+        this.draw();
+    }
+
     draw() {
         if (this.background) {
             this.background.draw();
