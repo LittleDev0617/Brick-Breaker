@@ -68,7 +68,7 @@ class Block extends GameObject {
         context.drawImage(this.texture, this.x, this.y, BLOCK_SIZE, BLOCK_SIZE);
 
         if (this.hp < this.maxHp) {
-            let index = Block.destroyImages.length - Math.floor((this.hp / this.maxHp) * 10);
+            let index = Block.destroyImages.length - Math.floor((this.hp / this.maxHp) * 10) - 1;
             let texture = Block.destroyImages[index];
             context.drawImage(texture, this.x, this.y, BLOCK_SIZE, BLOCK_SIZE);
         }
