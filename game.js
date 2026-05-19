@@ -9,19 +9,10 @@ class Vector2D {
 };
 
 class GameObject {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, pivotX=0.5, pivotY=0.5) {
         this.isActive = true;
-        this.transform = new Transform(x, y, width, height);
+        this.transform = new Transform(x, y, width, height, pivotX, pivotY);
     }
-
-    get left() { return this.transform.left };
-    get top()  { return this.transform.top };
-    get right() { return this.transform.right };
-    get bottom() { return this.transform.bottom };
-    get width() { return this.transform.width };
-    get height() { return this.transform.height };
-    get x() { return this.transform.x };
-    get y() { return this.transform.y };
 
     update() {
         this.move(); 
