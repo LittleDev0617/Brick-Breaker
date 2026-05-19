@@ -14,4 +14,7 @@ class Transform {
     get top()  { return this.y - this.height * this.pivotY };
     get right() { return this.left + this.width };
     get bottom() { return this.top + this.height };
+
+    translate() {}
+    rotate() {}
 }
