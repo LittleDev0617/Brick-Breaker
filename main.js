@@ -11,7 +11,7 @@ class GameManager {
     addScene(scene) { this.sceneList.push(scene); }
 
     update() {
-        this.sceneList[this.sceneIndex].draw();
+        this.sceneList[this.sceneIndex].update();
         requestAnimationFrame(() => { this.update(); });
     }
 };
@@ -87,7 +87,7 @@ window.onload = () => {
 
     scene1.addUI("playBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
         // console.log("Play button clicked!");
-        let obj = scene1.findUIObject("test");
+        let obj = scene1.findUIObject("titleText");
         obj.isActive = !obj.isActive;
     }));
 
@@ -99,7 +99,17 @@ window.onload = () => {
         for (j=0; j < 16; j++)
             scene1.addGameObject(`stone${i}_${j}`, new Block(j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "blocks/stone.png"));
 
-    scene1.findUIObject("titleText").transform.radian = Math.PI / 4;
+
+    scene1.update = function() {
+        let title = scene1.findUIObject("titleText");
+
+        title.color = `rgb(${Math.random()*256}, ${Math.random()*256}, ${Math.random()*256})`;
+        title.transform.radian += 0.15;
+        this.draw();
+    }
+
+
+
     gameManager.addScene(scene1);
     gameManager.update();
 }
