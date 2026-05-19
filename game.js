@@ -31,12 +31,4 @@ class GameObject {
     draw(context) {
 
     }
-
-    translate(dx, dy) {
-
-    }
-
-    move() {
-
-    }
 }
