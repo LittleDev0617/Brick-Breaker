@@ -127,8 +127,8 @@ class Canvas {
                 this.context.save();
                 
                 this.context.translate(obj.transform.x, obj.transform.y);
-                this.context.fillStyle = 'red'
-                this.context.fillRect(0, 0, 5, 5);
+                // this.context.fillStyle = 'red'
+                // this.context.fillRect(0, 0, 5, 5);
                 this.context.rotate(obj.transform.radian);
                 
 
