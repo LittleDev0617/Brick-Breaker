@@ -1,18 +1,17 @@
 class UI {
     constructor(x, y, width, height, pivotX=0.5, pivotY=0.5) {
         this.isActive = true;
-        this.x = x;
-        this.y = y;
-        this.pivotX = pivotX;
-        this.pivotY = pivotY;
-        this.width = width;
-        this.height = height;
+        this.transform = new Transform(x, y, width, height);
     }
 
-    get left() { return this.x - this.width * this.pivotX };
-    get top()  { return this.y - this.height * this.pivotY };
-    get right() { return this.left + this.width };
-    get bottom() { return this.top + this.height };
+    get left() { return this.transform.left };
+    get top()  { return this.transform.top };
+    get right() { return this.transform.right };
+    get bottom() { return this.transform.bottom };
+    get width() { return this.transform.width };
+    get height() { return this.transform.height };
+    get x() { return this.transform.x };
+    get y() { return this.transform.y };
 
     contains(mx, my) {
         return mx >= this.left && mx <= this.right && my >= this.top && my <= this.bottom;
