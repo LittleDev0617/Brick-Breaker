@@ -4,17 +4,8 @@ class UI {
         this.transform = new Transform(x, y, width, height);
     }
 
-    get left() { return this.transform.left };
-    get top()  { return this.transform.top };
-    get right() { return this.transform.right };
-    get bottom() { return this.transform.bottom };
-    get width() { return this.transform.width };
-    get height() { return this.transform.height };
-    get x() { return this.transform.x };
-    get y() { return this.transform.y };
-
     contains(mx, my) {
-        return mx >= this.left && mx <= this.right && my >= this.top && my <= this.bottom;
+        return mx >= this.transform.left && mx <= this.transform.right && my >= this.transform.top && my <= this.transform.bottom;
     }
     draw(context) {}
 }
@@ -27,7 +18,7 @@ class UIImage extends UI {
     }
 
     draw(context) {
-        context.drawImage(this.img, this.left, this.top, this.width, this.height);
+        context.drawImage(this.img, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
     }
 }
 
@@ -44,11 +35,11 @@ class UIButton extends UI {
 
     draw(context) {
         context.fillStyle = this.hover ? '#C0C0C0' : '#B0B0B0';
-        context.fillRect(this.left, this.top, this.width, this.height);
+        context.fillRect(this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
 
         context.strokeStyle = 'black';
         context.lineWidth = 2;
-        context.strokeRect(this.left, this.top, this.width, this.height);
+        context.strokeRect(this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
 
         if (this.text) {
             this.text.draw(context);
@@ -69,7 +60,7 @@ class UIText extends UI {
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillStyle = this.color;
-        context.fillText(this.text, this.left, this.top);
+        context.fillText(this.text, this.transform.offsetX, this.transform.offsetY);
     }
 }
 
@@ -132,8 +123,19 @@ class Canvas {
         for (const objId in this.objects) {
             let obj = this.objects[objId];
 
-            if (obj.isActive)
+            if (obj.isActive) {
+                this.context.save();
+                
+                this.context.translate(obj.transform.x, obj.transform.y);
+                this.context.fillStyle = 'red'
+                this.context.fillRect(0, 0, 5, 5);
+                this.context.rotate(obj.transform.radian);
+                
+
                 obj.draw(this.context);
+                
+                this.context.restore();
+            }
         }
     }
 

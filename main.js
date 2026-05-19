@@ -43,7 +43,7 @@ class Block extends GameObject {
     }
 
     constructor(x, y, textureSrc, hp=10) {
-        super(x, y, 0);
+        super(x, y, BLOCK_SIZE, BLOCK_SIZE, 0, 0);
         
         this.maxHp = hp;
         this.hp = hp;
@@ -53,7 +53,7 @@ class Block extends GameObject {
     }
 
     contains(mx, my) {
-        return mx >= this.x && mx <= this.x + BLOCK_SIZE && my >= this.y && my <= this.y + BLOCK_SIZE;
+        return mx >= this.transform.x && mx <= this.transform.x + BLOCK_SIZE && my >= this.transform.y && my <= this.transform.y + BLOCK_SIZE;
     }
 
     click() {
@@ -65,17 +65,17 @@ class Block extends GameObject {
 
     draw(context) {
         context.imageSmoothingEnabled = false;
-        context.drawImage(this.texture, this.x, this.y, BLOCK_SIZE, BLOCK_SIZE);
+        context.drawImage(this.texture, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE, BLOCK_SIZE);
 
         if (this.hp < this.maxHp) {
             let index = Block.destroyImages.length - Math.floor((this.hp / this.maxHp) * 10) - 1;
             let texture = Block.destroyImages[index];
-            context.drawImage(texture, this.x, this.y, BLOCK_SIZE, BLOCK_SIZE);
+            context.drawImage(texture, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE, BLOCK_SIZE);
         }
 
         if (this.hover) {
             context.fillStyle = "rgb(0, 0, 0, 0.2)";
-            context.fillRect(this.x, this.y, BLOCK_SIZE, BLOCK_SIZE);
+            context.fillRect(this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE, BLOCK_SIZE);
         }
     }
 }
@@ -99,6 +99,7 @@ window.onload = () => {
         for (j=0; j < 16; j++)
             scene1.addGameObject(`stone${i}_${j}`, new Block(j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "blocks/stone.png"));
 
+    scene1.findUIObject("titleText").transform.radian = Math.PI / 4;
     gameManager.addScene(scene1);
     gameManager.update();
 }
