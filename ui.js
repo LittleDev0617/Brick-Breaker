@@ -8,10 +8,15 @@ class UI {
 }
 
 class UIImage extends UI {
-    constructor(x, y, width, height, src) {
+    constructor(x, y, width, height, img) {
         super(x, y, width, height);
-        this.img = new Image();
-        this.img.src = src;
+
+        if (img instanceof String) {
+            this.img = new Image();
+            this.img.src = img;
+        } else if (img instanceof Image) {
+            this.img = img;
+        }
     }
 
     draw(context) {
