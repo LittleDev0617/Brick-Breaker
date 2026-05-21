@@ -13,9 +13,9 @@ class ObjectT {
         
         this.render(context);
 
-        for (const cObject in this.child) {
+        this.child.forEach(cObject => {
             cObject.draw(context);
-        }
+        });
         
         context.restore();
     }
@@ -30,8 +30,8 @@ class UI extends ObjectT {
 }
 
 class UIImage extends UI {
-    constructor(x, y, width, height, img) {
-        super(x, y, width, height);
+    constructor(x, y, width, height, img, pivotX=0.5, pivotY=0.5) {
+        super(x, y, width, height, pivotX, pivotY);
 
         if (typeof img === 'string') {
             this.img = new Image();
@@ -109,7 +109,8 @@ class Canvas {
         return mx >= target.transform.left && mx <= target.transform.right && my >= target.transform.top && my <= target.transform.bottom;
     }
 
-    tryClick(x, y) {
+    tryClick(e) {
+        const { offsetX, offsetY } = e;
         if (!this.isActive) return false;
 
         for (const objId in this.objects) {
@@ -117,7 +118,7 @@ class Canvas {
             
             if (obj.onClick == undefined) continue;
 
-            if (this.isMouseOver(obj, x, y)) {
+            if (this.isMouseOver(obj, offsetX, offsetY)) {
                 obj.onClick();
                 return true;
             }
@@ -126,7 +127,26 @@ class Canvas {
         return false;
     }
 
-    updateHover(x, y) {
+    tryScroll(e) {
+        const { offsetX, offsetY, deltaY }  = e;
+        if (!this.isActive) return false;
+
+        for (const objId in this.objects) {
+            let obj = this.objects[objId];
+            
+            if (obj.onScroll == undefined) continue;
+            
+            if (this.isMouseOver(obj, offsetX, offsetY)) {
+                obj.onScroll(deltaY);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    updateHover(e) {
+        const { offsetX, offsetY } = e;
         if (!this.isActive) return false;
 
         for (const objId in this.objects) {
@@ -136,7 +156,7 @@ class Canvas {
             if (obj.hover == undefined) continue;
 
             obj.hover = false;
-            if (this.isMouseOver(obj, x, y)) {
+            if (this.isMouseOver(obj, offsetX, offsetY)) {
                 obj.hover = true;
             }
         }
@@ -168,16 +188,18 @@ class Scene {
         this.gameCanvas = new Canvas("game");
 
         this.uiCanvas.canvas.addEventListener("click", e => {
-            const [ x, y ] = [ e.offsetX, e.offsetY ];
-            if (!this.uiCanvas.tryClick(x, y))
-                this.gameCanvas.tryClick(x, y);
+            if (!this.uiCanvas.tryClick(e))
+                this.gameCanvas.tryClick(e);
         });
 
-        this.uiCanvas.canvas.addEventListener("mousemove", e => {
-            const [ x, y ] = [ e.offsetX, e.offsetY ];
-            
-            this.uiCanvas.updateHover(x, y);
-            this.gameCanvas.updateHover(x, y);
+        this.uiCanvas.canvas.addEventListener("mousemove", e => {            
+            this.uiCanvas.updateHover(e);
+            this.gameCanvas.updateHover(e);
+        });
+
+        this.uiCanvas.canvas.addEventListener("wheel", e => {            
+            if (!this.uiCanvas.tryScroll(e))
+                this.gameCanvas.tryScroll(e);
         });
     }
 
