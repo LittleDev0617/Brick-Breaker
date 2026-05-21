@@ -30,3 +30,29 @@ const BLOCK_BLAZE           = makeImg("blocks/nether/blaze.png");
 // ender blocks
 const BLOCK_ENDERMAN        = makeImg("blocks/ender/enderman.png");
 
+const BLOCK_LIST = [
+    BLOCK_GRASS,       
+    BLOCK_DIRT,        
+    BLOCK_STONE,       
+    BLOCK_OAK_LOG,     
+    BLOCK_IRON_ORE,    
+    BLOCK_DIAMOND_ORE, 
+    BLOCK_OBSIDIAN,    
+    BLOCK_TNT,         
+    BLOCK_ZOMBIE,      
+    BLOCK_PIG,         
+    BLOCK_SHEEP,       
+    BLOCK_SPIDER,      
+    BLOCK_CREEPER,     
+    
+    // nether
+    BLOCK_SOULSAND,        
+    BLOCK_NETHERRACK,      
+    BLOCK_ANCIENT_DEBRIS,  
+    BLOCK_NETHER_GOLD_ORE, 
+    BLOCK_NETHER_BRICKS,   
+    BLOCK_BLAZE,           
+
+    // ender
+    BLOCK_ENDERMAN,
+];
