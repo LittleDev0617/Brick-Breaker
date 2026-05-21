@@ -14,23 +14,20 @@ class Vector2D {
     }
 };
 
-class GameObject {
+class GameObject extends ObjectT {
     constructor(x, y, width, height, pivotX=0.5, pivotY=0.5, sprite=null) {
-        this.isActive = true;
+        super(x, y, width, height, pivotX, pivotY);
 
         this.sprite = null;
         this.sprite = sprite;
-        
-
-        this.transform = new Transform(x, y, width, height, pivotX, pivotY);
     }
 
     update() {
         this.move(); 
-        this.draw();
+        this.render();
     }
 
-    draw(context) {
+    render(context) {
 
     }
 }
@@ -57,7 +54,7 @@ class Ball extends GameObject {
 
     }
 
-    draw(context) {
+    render(context) {
         context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.width);
     }
 }
@@ -90,7 +87,7 @@ class Block extends GameObject {
             this.isActive = false;
     }
 
-    draw(context) {
+    render(context) {
         context.imageSmoothingEnabled = false;
         context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE, BLOCK_SIZE);
 

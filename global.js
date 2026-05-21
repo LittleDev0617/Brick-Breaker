@@ -1,4 +1,4 @@
-const makeBlockInfo = (blockId, src) => {
+const makeBlockInfo = function(blockId, src) {
     let img = new Image();
     img.src = src;
     
@@ -9,30 +9,30 @@ const makeBlockInfo = (blockId, src) => {
 };
 
 // overworld blocks
-const BLOCK_GRASS       = makeBlockInfo("b_grass",          "blocks/over/grass.png");
-const BLOCK_DIRT        = makeBlockInfo("b_dirt",           "blocks/over/dirt.png");
-const BLOCK_STONE       = makeBlockInfo("b_stone",          "blocks/over/stone.png");
-const BLOCK_OAK_LOG     = makeBlockInfo("b_oak_log",        "blocks/over/oak_log.png");
-const BLOCK_IRON_ORE    = makeBlockInfo("b_iron_ore",       "blocks/over/iron_ore.png");
-const BLOCK_DIAMOND_ORE = makeBlockInfo("b_diamond_ore",    "blocks/over/diamond_ore.png");
-const BLOCK_OBSIDIAN    = makeBlockInfo("b_obsidian",       "blocks/over/obsidian.png");
-const BLOCK_TNT         = makeBlockInfo("b_tnt",            "blocks/over/tnt.png");
-const BLOCK_ZOMBIE      = makeBlockInfo("b_zombie",         "blocks/over/zombie.png");
-const BLOCK_PIG         = makeBlockInfo("b_pig",            "blocks/over/pig.png");
-const BLOCK_SHEEP       = makeBlockInfo("b_sheep",          "blocks/over/sheep.png");
-const BLOCK_SPIDER      = makeBlockInfo("b_spider",         "blocks/over/spider.png");
-const BLOCK_CREEPER     = makeBlockInfo("b_creeper",        "blocks/over/creeper.png");
+const BLOCK_GRASS       = new makeBlockInfo("b_grass",          "blocks/over/grass.png");
+const BLOCK_DIRT        = new makeBlockInfo("b_dirt",           "blocks/over/dirt.png");
+const BLOCK_STONE       = new makeBlockInfo("b_stone",          "blocks/over/stone.png");
+const BLOCK_OAK_LOG     = new makeBlockInfo("b_oak_log",        "blocks/over/oak_log.png");
+const BLOCK_IRON_ORE    = new makeBlockInfo("b_iron_ore",       "blocks/over/iron_ore.png");
+const BLOCK_DIAMOND_ORE = new makeBlockInfo("b_diamond_ore",    "blocks/over/diamond_ore.png");
+const BLOCK_OBSIDIAN    = new makeBlockInfo("b_obsidian",       "blocks/over/obsidian.png");
+const BLOCK_TNT         = new makeBlockInfo("b_tnt",            "blocks/over/tnt.png");
+const BLOCK_ZOMBIE      = new makeBlockInfo("b_zombie",         "blocks/over/zombie.png");
+const BLOCK_PIG         = new makeBlockInfo("b_pig",            "blocks/over/pig.png");
+const BLOCK_SHEEP       = new makeBlockInfo("b_sheep",          "blocks/over/sheep.png");
+const BLOCK_SPIDER      = new makeBlockInfo("b_spider",         "blocks/over/spider.png");
+const BLOCK_CREEPER     = new makeBlockInfo("b_creeper",        "blocks/over/creeper.png");
 
 // nether blocks
-const BLOCK_SOULSAND        = makeBlockInfo("b_soulsand",           "blocks/nether/soulsand.png");
-const BLOCK_NETHERRACK      = makeBlockInfo("b_netherrack",         "blocks/nether/netherrack.png");
-const BLOCK_ANCIENT_DEBRIS  = makeBlockInfo("b_ancient_debris",     "blocks/nether/ancient_debris.png");
-const BLOCK_NETHER_GOLD_ORE = makeBlockInfo("b_nether_gold_ore",    "blocks/nether/nether_gold_ore.png");
-const BLOCK_NETHER_BRICKS   = makeBlockInfo("b_nether_bricks",      "blocks/nether/nether_bricks.png");
-const BLOCK_BLAZE           = makeBlockInfo("b_blaze",              "blocks/nether/blaze.png");
+const BLOCK_SOULSAND        = new makeBlockInfo("b_soulsand",           "blocks/nether/soulsand.png");
+const BLOCK_NETHERRACK      = new makeBlockInfo("b_netherrack",         "blocks/nether/netherrack.png");
+const BLOCK_ANCIENT_DEBRIS  = new makeBlockInfo("b_ancient_debris",     "blocks/nether/ancient_debris.png");
+const BLOCK_NETHER_GOLD_ORE = new makeBlockInfo("b_nether_gold_ore",    "blocks/nether/nether_gold_ore.png");
+const BLOCK_NETHER_BRICKS   = new makeBlockInfo("b_nether_bricks",      "blocks/nether/nether_bricks.png");
+const BLOCK_BLAZE           = new makeBlockInfo("b_blaze",              "blocks/nether/blaze.png");
 
 // ender blocks
-const BLOCK_ENDERMAN        = makeBlockInfo("b_enderman",   "blocks/ender/enderman.png");
+const BLOCK_ENDERMAN        = new makeBlockInfo("b_enderman",   "blocks/ender/enderman.png");
 
 let BLOCK_LIST = {};
 

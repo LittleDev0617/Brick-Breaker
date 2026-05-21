@@ -1,17 +1,39 @@
-class UI {
+class ObjectT {
     constructor(x, y, width, height, pivotX=0.5, pivotY=0.5) {
         this.isActive = true;
-        this.transform = new Transform(x, y, width, height);
+        this.child = [];
+        this.transform = new Transform(x, y, width, height, pivotX, pivotY);
     }
 
-    draw(context) {}
+    draw(context) {
+        context.save();
+        
+        context.translate(this.transform.x, this.transform.y);
+        context.rotate(this.transform.radian);
+        
+        this.render(context);
+
+        for (const cObject in this.child) {
+            cObject.draw(context);
+        }
+        
+        context.restore();
+    }
+
+    render(context) {}
+}
+
+class UI extends ObjectT {
+    constructor(x, y, width, height, pivotX=0.5, pivotY=0.5) {
+        super(x, y, width, height, pivotX, pivotY);
+    }
 }
 
 class UIImage extends UI {
     constructor(x, y, width, height, img) {
         super(x, y, width, height);
 
-        if (img instanceof String) {
+        if (typeof img === 'string') {
             this.img = new Image();
             this.img.src = img;
         } else if (img instanceof Image) {
@@ -19,7 +41,8 @@ class UIImage extends UI {
         }
     }
 
-    draw(context) {
+    render(context) {
+        context.imageSmoothingEnabled = false;
         context.drawImage(this.img, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
     }
 }
@@ -36,7 +59,7 @@ class UIButton extends UI {
         }
     }
 
-    draw(context) {
+    render(context) {
         context.fillStyle = this.hover ? '#C0C0C0' : '#B0B0B0';
         context.fillRect(this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
 
@@ -45,7 +68,7 @@ class UIButton extends UI {
         context.strokeRect(this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
 
         if (this.text) {
-            this.text.draw(context);
+            this.text.render(context);
         }
     }
 }
@@ -58,7 +81,7 @@ class UIText extends UI {
         this.color = color;
     }
 
-    draw(context) {
+    render(context) {
         context.font = `400 ${this.fontSize}px Minecraft`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
@@ -127,17 +150,7 @@ class Canvas {
             let obj = this.objects[objId];
 
             if (obj.isActive) {
-                this.context.save();
-                
-                this.context.translate(obj.transform.x, obj.transform.y);
-                // this.context.fillStyle = 'red'
-                // this.context.fillRect(0, 0, 5, 5);
-                this.context.rotate(obj.transform.radian);
-                
-
                 obj.draw(this.context);
-                
-                this.context.restore();
             }
         }
     }
