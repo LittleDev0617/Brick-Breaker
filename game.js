@@ -83,11 +83,7 @@ class Block extends GameObject {
         this.hover = false;
     }
 
-    contains(mx, my) {
-        return mx >= this.transform.x && mx <= this.transform.x + BLOCK_SIZE && my >= this.transform.y && my <= this.transform.y + BLOCK_SIZE;
-    }
-
-    click() {
+    onClick() {
         this.hp--;
 
         if (this.hp == 0) 
