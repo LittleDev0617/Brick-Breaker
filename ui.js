@@ -4,9 +4,6 @@ class UI {
         this.transform = new Transform(x, y, width, height);
     }
 
-    contains(mx, my) {
-        return mx >= this.transform.left && mx <= this.transform.right && my >= this.transform.top && my <= this.transform.bottom;
-    }
     draw(context) {}
 }
 
@@ -27,7 +24,8 @@ class UIButton extends UI {
         super(x, y, width, height);
         
         this.hover = false;
-        this.click = onclick;
+        this.onClick = onclick;
+
         if (text) {
             this.text = new UIText(x, y, text, height * 0.5, 'black');
         }
@@ -78,6 +76,10 @@ class Canvas {
         this.context = canvas.getContext("2d");
         this.objects = {};
     }
+    
+    isMouseOver(target, mx, my) {
+        return mx >= target.transform.left && mx <= target.transform.right && my >= target.transform.top && my <= target.transform.bottom;
+    }
 
     tryClick(x, y) {
         if (!this.isActive) return false;
@@ -85,12 +87,10 @@ class Canvas {
         for (const objId in this.objects) {
             let obj = this.objects[objId];
             
-            // if (!(obj instanceof UIButton)) continue;
-            if (obj.contains == undefined) continue;
-            if (obj.click == undefined) continue;
+            if (obj.onClick == undefined) continue;
 
-            if (obj.contains(x, y)) {
-                obj.click();
+            if (this.isMouseOver(obj, x, y)) {
+                obj.onClick();
                 return true;
             }
         }
@@ -107,11 +107,9 @@ class Canvas {
             // if (!(obj instanceof UIButton)) continue;
             if (obj.hover == undefined) continue;
 
-
-            if (obj.contains == undefined) continue;
             obj.hover = false;
-            if (obj.contains(x, y)) {
-                obj.hover = true;                
+            if (this.isMouseOver(obj, x, y)) {
+                obj.hover = true;
             }
         }
         return false;

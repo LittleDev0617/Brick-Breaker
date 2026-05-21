@@ -1,6 +1,3 @@
-CANVAS_WIDTH  = 1024;
-CANVAS_HEIGHT = 768;
-
 class GameManager {
     constructor() {
         this.level = 0;
@@ -19,10 +16,6 @@ class GameManager {
 let gameManager = new GameManager();
 
 
-
-function lerp(a, b, t) {
-    return a + (b - a) * t;
-}
 window.onload = () => {
     let scene1 = new Scene("lobby");
     scene1.addUI("test", new UIImage(0, 0, 50, 50, "a.png"));
