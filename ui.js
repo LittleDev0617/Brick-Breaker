@@ -29,6 +29,18 @@ class UI extends ObjectT {
     }
 }
 
+class UIRect extends UI {
+    constructor(x, y, width, height, color, pivotX=0.5, pivotY=0.5) {
+        super(x, y, width, height, pivotX, pivotY);
+        this.color = color;
+    }
+
+    render(context) {
+        context.fillStyle = this.color;
+        context.fillRect(this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height)
+    }
+}
+
 class UIImage extends UI {
     constructor(x, y, width, height, img, pivotX=0.5, pivotY=0.5) {
         super(x, y, width, height, pivotX, pivotY);
@@ -128,7 +140,8 @@ class Canvas {
     }
 
     tryScroll(e) {
-        const { offsetX, offsetY, deltaY }  = e;
+        const { offsetX, offsetY }  = e;
+        e.preventDefault();
         if (!this.isActive) return false;
 
         for (const objId in this.objects) {
@@ -137,7 +150,7 @@ class Canvas {
             if (obj.onScroll == undefined) continue;
             
             if (this.isMouseOver(obj, offsetX, offsetY)) {
-                obj.onScroll(deltaY);
+                obj.onScroll(e);
                 return true;
             }
         }

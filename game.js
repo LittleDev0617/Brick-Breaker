@@ -59,7 +59,6 @@ class Ball extends GameObject {
     }
 }
 
-const BLOCK_SIZE  = 64;
 class Block extends GameObject {
     static destroyImages = [];
     static {
