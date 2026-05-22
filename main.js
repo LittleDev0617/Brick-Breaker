@@ -35,7 +35,7 @@ window.onload = () => {
 
     scene1.addUI("playBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
         // console.log("Play button clicked!");
-        gameManager.sceneIndex = 1;
+        gameManager.play("sample")
     }));
 
     scene1.addUI("howBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 80, 400, 50, "How to play", () => {
@@ -50,5 +50,5 @@ window.onload = () => {
 
     gameManager.addScene(scene1);
     gameManager.addScene(sampleScene());
-    gameManager.play("editor");
+    gameManager.play("lobby");
 }
