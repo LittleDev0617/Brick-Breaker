@@ -50,5 +50,5 @@ window.onload = () => {
 
     gameManager.addScene(scene1);
     gameManager.addScene(sampleScene());
-    gameManager.play("lobby");
+    gameManager.play("editor");
 }

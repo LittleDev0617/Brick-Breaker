@@ -53,10 +53,10 @@ class UIImage extends UI {
         super(x, y, width, height, pivotX, pivotY);
 
         if (typeof img === 'string') {
-            this.img = new Image();
-            this.img.src = img;
+            this.sprite = new Image();
+            this.sprite.src = img;
         } else if (img instanceof Image) {
-            this.img = img;
+            this.sprite = img;
         }
 
         this.opacity = 1;
@@ -65,7 +65,7 @@ class UIImage extends UI {
     render(context) {
         context.imageSmoothingEnabled = false;
         context.globalAlpha = this.opacity;
-        context.drawImage(this.img, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
+        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
         context.globalAlpha = 1;
     }
 }
@@ -180,17 +180,24 @@ class Canvas {
         const { offsetX, offsetY } = e;
         if (!this.isActive) return false;
 
+        // TODO: 땜빵용 코드. hover 겹쳐있는 대상 어떻게 할지 고민. mouse out 이벤트를 만들긴 해야하는데.
+        for (const objId in target) {
+            let obj = target[objId];
+            if (obj.hover == undefined) continue;
+            obj.hover = false;
+        }
+
         for (const objId in target) {
             let obj = target[objId];
             
             // if (!(obj instanceof UIButton)) continue;
             if (obj.hover == undefined) continue;
 
-            obj.hover = false;
             if (this.isMouseOver(obj, offsetX, offsetY)) {
                 obj.hover = true;
                 if (obj.onHover != undefined)
-                    obj?.onHover();                
+                    obj?.onHover();
+                return true;
             }
         }
         return false;

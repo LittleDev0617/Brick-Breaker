@@ -30,10 +30,10 @@ class Transform {
         let result = this.copy();
         let transform = this;
         while (transform.parent != null) {
+            transform = transform.parent;
+            
             result.x += transform.x;
             result.y += transform.y;
-
-            transform = transform.parent;
         }
 
         return result;
