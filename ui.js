@@ -277,7 +277,7 @@ class Scene {
         let result = [];
         for (const objId in this.gameCanvas.objects) {
             if (objId.indexOf(name) != -1) 
-                result.push(this.gameCanvas.objects[name]);
+                result.push(this.gameCanvas.objects[objId]);
         }
         return result;
     }

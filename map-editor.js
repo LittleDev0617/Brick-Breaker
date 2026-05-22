@@ -1,6 +1,11 @@
 const editorScene = () => {
     let scene = new Scene("editor");
-    let cameraPos = new Vector2D(0, 0);
+
+    let drawMode = true;
+    let camera = new ObjectT(0, 0, 0, 0);
+    let cameraPos = camera.transform;
+
+    scene.addUI("camera", camera);
 
     const LINE_WIDTH = 1;
     const UNIT = BLOCK_SIZE+LINE_WIDTH;
@@ -18,13 +23,21 @@ const editorScene = () => {
     let previewBlock = new UIImage(0, 0, BLOCK_SIZE, BLOCK_SIZE, BLOCK_GRASS.sprite, 0, 0);
     previewBlock.opacity = 0.7;
 
-    scrollUI.child.push(previewBlock);
+    scrollUI.appendChild(previewBlock);
     
-    const updatePreviewBlock = (e) => {
-        const { offsetX, offsetY } = e;
+    const movePreviewBlock = (e) => {
+        const { offsetX, offsetY, deltaX, deltaY } = e;
 
         previewBlock.transform.x = UNIT * Math.floor((offsetX + cameraPos.x % UNIT) / UNIT) - cameraPos.x % UNIT;
         previewBlock.transform.y = UNIT * Math.floor((offsetY + cameraPos.y % UNIT) / UNIT) - cameraPos.y % UNIT;
+    }
+
+    const moveRelative = e => {        
+        const { offsetX, offsetY, deltaX, deltaY } = e;
+        scene.findGameObjects("block").forEach(block => {            
+            block.transform.x = block.absX - cameraPos.x;
+            block.transform.y = block.absY - cameraPos.y;
+        });
     }
 
     scrollUI.onScroll = function(e) {
@@ -42,11 +55,25 @@ const editorScene = () => {
             line.transform.y = i*UNIT - cameraPos.y % UNIT;
         }
 
-        updatePreviewBlock(e);
+        movePreviewBlock(e);
+        moveRelative(e);
+    }
+
+    scrollUI.onClick = function(e) {
+        const { offsetX, offsetY } = e;
+
+        let x = UNIT * Math.floor((offsetX + cameraPos.x % UNIT) / UNIT) - cameraPos.x % UNIT;
+        let y = UNIT * Math.floor((offsetY + cameraPos.y % UNIT) / UNIT) - cameraPos.y % UNIT;
+        
+        let block = new UIImage(x, y, BLOCK_SIZE, BLOCK_SIZE, BLOCK_LIST[blockSelected].sprite, 0, 0);
+        block.absX = cameraPos.x + x;
+        block.absY = cameraPos.y + y;
+
+        scene.addGameObject("block", block);
     }
 
     scrollUI.onMouseMove = function(e) {
-        updatePreviewBlock(e);
+        movePreviewBlock(e);
     }
 
     scene.addUI('scrollUI', scrollUI);
@@ -62,7 +89,9 @@ const editorScene = () => {
             blockSelected = blockId;
         }
 
-        menu.child.push(block);
+        
+
+        menu.appendChild(block);
         menu.transform.width += block.transform.width+16;
         // scene.addUI(`menuBtn-${blockId}`, block);
         if (i == 0)
