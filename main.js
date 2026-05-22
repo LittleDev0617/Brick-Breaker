@@ -1,11 +1,23 @@
 class GameManager {
     constructor() {
         this.level = 0;
-        this.sceneIndex = 0;
+        this.sceneIndex = -1;
         this.sceneList = [];
     }
 
     addScene(scene) { this.sceneList.push(scene); }
+
+    play(sceneName) {
+        this.sceneList.forEach((scene, i) => {
+            scene.isActive = false;
+            if (scene.name == sceneName) {
+                scene.isActive = true;
+                this.sceneIndex = i;
+            }
+        })
+
+        this.update();
+    }
 
     update() {
         this.sceneList[this.sceneIndex].update();
@@ -34,9 +46,9 @@ window.onload = () => {
         for (j=0; j < 16; j++)
             scene1.addGameObject(`stone${i}_${j}`, new Block(j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "blocks/stone.png"));
 
-    // gameManager.addScene(editorScene());
+    gameManager.addScene(editorScene());
 
     gameManager.addScene(scene1);
     gameManager.addScene(sampleScene());
-    gameManager.update();
+    gameManager.play("editor");
 }

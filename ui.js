@@ -1,8 +1,15 @@
 class ObjectT {
     constructor(x, y, width, height, pivotX=0.5, pivotY=0.5) {
         this.isActive = true;
+        this.parent = null;
         this.child = [];
         this.transform = new Transform(x, y, width, height, pivotX, pivotY);
+    }
+
+    appendChild(child) {
+        this.child.push(child);
+        child.parent = this;
+        child.transform.parent = this.transform;
     }
 
     draw(context) {
@@ -29,6 +36,18 @@ class UI extends ObjectT {
     }
 }
 
+class UIRect extends UI {
+    constructor(x, y, width, height, color, pivotX=0.5, pivotY=0.5) {
+        super(x, y, width, height, pivotX, pivotY);
+        this.color = color;
+    }
+
+    render(context) {
+        context.fillStyle = this.color;
+        context.fillRect(this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height)
+    }
+}
+
 class UIImage extends UI {
     constructor(x, y, width, height, img, pivotX=0.5, pivotY=0.5) {
         super(x, y, width, height, pivotX, pivotY);
@@ -39,11 +58,15 @@ class UIImage extends UI {
         } else if (img instanceof Image) {
             this.img = img;
         }
+
+        this.opacity = 1;
     }
 
     render(context) {
         context.imageSmoothingEnabled = false;
+        context.globalAlpha = this.opacity;
         context.drawImage(this.img, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
+        context.globalAlpha = 1;
     }
 }
 
@@ -106,7 +129,9 @@ class Canvas {
     }
     
     isMouseOver(target, mx, my) {
-        return mx >= target.transform.left && mx <= target.transform.right && my >= target.transform.top && my <= target.transform.bottom;
+        const absolute = target.transform.getAbsolute();          
+
+        return mx >= absolute.left && mx <= absolute.right && my >= absolute.top && my <= absolute.bottom;
     }
 
     tryClick(e) {
@@ -119,7 +144,7 @@ class Canvas {
             if (obj.onClick == undefined) continue;
 
             if (this.isMouseOver(obj, offsetX, offsetY)) {
-                obj.onClick();
+                obj.onClick(e);
                 return true;
             }
         }
@@ -128,7 +153,8 @@ class Canvas {
     }
 
     tryScroll(e) {
-        const { offsetX, offsetY, deltaY }  = e;
+        const { offsetX, offsetY }  = e;
+        e.preventDefault();
         if (!this.isActive) return false;
 
         for (const objId in this.objects) {
@@ -137,7 +163,7 @@ class Canvas {
             if (obj.onScroll == undefined) continue;
             
             if (this.isMouseOver(obj, offsetX, offsetY)) {
-                obj.onScroll(deltaY);
+                obj.onScroll(e);
                 return true;
             }
         }
@@ -163,6 +189,16 @@ class Canvas {
         return false;
     }
 
+    mouseMove(e) {        
+        if (!this.isActive) return false;
+        for (const objId in this.objects) {
+            let obj = this.objects[objId];
+            
+            if (obj.onMouseMove == undefined) continue;
+            obj.onMouseMove(e);
+        }
+    }
+
     draw() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
@@ -176,6 +212,12 @@ class Canvas {
     }
 
     addObject(name, obj) { 
+        let originalName = name;
+        let i = 1;
+        
+        while (this.objects[name] != undefined)
+            name = `${originalName} (${i++})`;        
+            
         this.objects[name] = obj;
     }
 }
@@ -183,24 +225,33 @@ class Canvas {
 class Scene {
     constructor(name) {
         this.name = name;
-
+        this.isActive = false;
         this.uiCanvas = new Canvas("ui");
         this.gameCanvas = new Canvas("game");
 
         this.uiCanvas.canvas.addEventListener("click", e => {
+            if (!this.isActive) return;
             if (!this.uiCanvas.tryClick(e))
                 this.gameCanvas.tryClick(e);
         });
 
         this.uiCanvas.canvas.addEventListener("mousemove", e => {            
+            if (!this.isActive) return;
             this.uiCanvas.updateHover(e);
             this.gameCanvas.updateHover(e);
         });
 
         this.uiCanvas.canvas.addEventListener("wheel", e => {            
+            if (!this.isActive) return;
             if (!this.uiCanvas.tryScroll(e))
                 this.gameCanvas.tryScroll(e);
         });
+
+        this.uiCanvas.canvas.addEventListener("mousemove", e => {
+            if (!this.isActive) return;
+            this.uiCanvas.mouseMove(e);
+            this.gameCanvas.mouseMove(e);
+        })
     }
 
     addObject(name, obj, canvas) {
@@ -220,6 +271,15 @@ class Scene {
         for (const objId in this.gameCanvas.objects) {
             if (objId == name) return this.gameCanvas.objects[name];
         }
+    }
+
+    findGameObjects(name) {
+        let result = [];
+        for (const objId in this.gameCanvas.objects) {
+            if (objId.indexOf(name) != -1) 
+                result.push(this.gameCanvas.objects[objId]);
+        }
+        return result;
     }
 
     update() {
