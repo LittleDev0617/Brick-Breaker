@@ -34,7 +34,7 @@ window.onload = () => {
         for (j=0; j < 16; j++)
             scene1.addGameObject(`stone${i}_${j}`, new Block(j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "blocks/stone.png"));
 
-    gameManager.addScene(editorScene());
+    // gameManager.addScene(editorScene());
 
     gameManager.addScene(scene1);
     gameManager.addScene(sampleScene());
