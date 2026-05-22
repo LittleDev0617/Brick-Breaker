@@ -210,26 +210,30 @@ class Canvas {
 class Scene {
     constructor(name) {
         this.name = name;
-
+        this.isActive = false;
         this.uiCanvas = new Canvas("ui");
         this.gameCanvas = new Canvas("game");
 
         this.uiCanvas.canvas.addEventListener("click", e => {
+            if (!this.isActive) return;
             if (!this.uiCanvas.tryClick(e))
                 this.gameCanvas.tryClick(e);
         });
 
         this.uiCanvas.canvas.addEventListener("mousemove", e => {            
+            if (!this.isActive) return;
             this.uiCanvas.updateHover(e);
             this.gameCanvas.updateHover(e);
         });
 
         this.uiCanvas.canvas.addEventListener("wheel", e => {            
+            if (!this.isActive) return;
             if (!this.uiCanvas.tryScroll(e))
                 this.gameCanvas.tryScroll(e);
         });
 
         this.uiCanvas.canvas.addEventListener("mousemove", e => {
+            if (!this.isActive) return;
             this.uiCanvas.mouseMove(e);
             this.gameCanvas.mouseMove(e);
         })

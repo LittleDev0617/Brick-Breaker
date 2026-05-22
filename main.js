@@ -1,11 +1,23 @@
 class GameManager {
     constructor() {
         this.level = 0;
-        this.sceneIndex = 0;
+        this.sceneIndex = -1;
         this.sceneList = [];
     }
 
     addScene(scene) { this.sceneList.push(scene); }
+
+    play(sceneName) {
+        this.sceneList.forEach((scene, i) => {
+            scene.isActive = false;
+            if (scene.name == sceneName) {
+                scene.isActive = true;
+                this.sceneIndex = i;
+            }
+        })
+
+        this.update();
+    }
 
     update() {
         this.sceneList[this.sceneIndex].update();
@@ -38,5 +50,5 @@ window.onload = () => {
 
     gameManager.addScene(scene1);
     gameManager.addScene(sampleScene());
-    gameManager.update();
+    gameManager.play("editor");
 }
