@@ -15,21 +15,38 @@ const editorScene = () => {
     }
 
     let scrollUI = new UI(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0);
+    let previewBlock = new UIImage(0, 0, BLOCK_SIZE, BLOCK_SIZE, BLOCK_GRASS.sprite, 0, 0);
+    previewBlock.opacity = 0.7;
+
+    scrollUI.child.push(previewBlock);
+    
+    const updatePreviewBlock = (e) => {
+        const { offsetX, offsetY } = e;
+
+        previewBlock.transform.x = UNIT * Math.floor((offsetX + cameraPos.x % UNIT) / UNIT) - cameraPos.x % UNIT;
+        previewBlock.transform.y = UNIT * Math.floor((offsetY + cameraPos.y % UNIT) / UNIT) - cameraPos.y % UNIT;
+    }
+
     scrollUI.onScroll = function(e) {
         const { deltaX, deltaY } = e;
-        cameraPos.x += -deltaX / 2;
-        cameraPos.y += -deltaY / 2;
+        cameraPos.x += deltaX / 2;
+        cameraPos.y += deltaY / 2;
 
         for (let i=0; i <= CANVAS_WIDTH / (BLOCK_SIZE+LINE_WIDTH)+1; i++) {
             let line = scene.findUIObject(`lineVertical${i}`);
-            line.transform.x = i*UNIT + cameraPos.x % UNIT;
+            line.transform.x = i*UNIT - cameraPos.x % UNIT;
         }
 
-        
         for (let i=0; i <= CANVAS_HEIGHT / (BLOCK_SIZE+LINE_WIDTH)+1; i++) {
             let line = scene.findUIObject(`lineHorizontal${i}`);
-            line.transform.y = i*UNIT + cameraPos.y % UNIT;
+            line.transform.y = i*UNIT - cameraPos.y % UNIT;
         }
+
+        updatePreviewBlock(e);
+    }
+
+    scrollUI.onMouseMove = function(e) {
+        updatePreviewBlock(e);
     }
 
     scene.addUI('scrollUI', scrollUI);
@@ -59,6 +76,8 @@ const editorScene = () => {
             this.transform.x += d / 2;
     }
     scene.addUI("menu", menu);
+
+
 
 
     scene.update = function() {

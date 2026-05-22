@@ -51,11 +51,15 @@ class UIImage extends UI {
         } else if (img instanceof Image) {
             this.img = img;
         }
+
+        this.opacity = 1;
     }
 
     render(context) {
         context.imageSmoothingEnabled = false;
+        context.globalAlpha = this.opacity;
         context.drawImage(this.img, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
+        context.globalAlpha = 1;
     }
 }
 
@@ -176,6 +180,16 @@ class Canvas {
         return false;
     }
 
+    mouseMove(e) {        
+        if (!this.isActive) return false;
+        for (const objId in this.objects) {
+            let obj = this.objects[objId];
+            
+            if (obj.onMouseMove == undefined) continue;
+            obj.onMouseMove(e);
+        }
+    }
+
     draw() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
@@ -214,6 +228,11 @@ class Scene {
             if (!this.uiCanvas.tryScroll(e))
                 this.gameCanvas.tryScroll(e);
         });
+
+        this.uiCanvas.canvas.addEventListener("mousemove", e => {
+            this.uiCanvas.mouseMove(e);
+            this.gameCanvas.mouseMove(e);
+        })
     }
 
     addObject(name, obj, canvas) {
