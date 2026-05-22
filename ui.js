@@ -1,8 +1,15 @@
 class ObjectT {
     constructor(x, y, width, height, pivotX=0.5, pivotY=0.5) {
         this.isActive = true;
+        this.parent = null;
         this.child = [];
         this.transform = new Transform(x, y, width, height, pivotX, pivotY);
+    }
+
+    appendChild(child) {
+        this.child.push(child);
+        child.parent = this;
+        child.transform.parent = this.transform;
     }
 
     draw(context) {
@@ -122,7 +129,9 @@ class Canvas {
     }
     
     isMouseOver(target, mx, my) {
-        return mx >= target.transform.left && mx <= target.transform.right && my >= target.transform.top && my <= target.transform.bottom;
+        const absolute = target.transform.getAbsolute();          
+
+        return mx >= absolute.left && mx <= absolute.right && my >= absolute.top && my <= absolute.bottom;
     }
 
     tryClick(e) {
@@ -135,7 +144,7 @@ class Canvas {
             if (obj.onClick == undefined) continue;
 
             if (this.isMouseOver(obj, offsetX, offsetY)) {
-                obj.onClick();
+                obj.onClick(e);
                 return true;
             }
         }
@@ -203,6 +212,12 @@ class Canvas {
     }
 
     addObject(name, obj) { 
+        let originalName = name;
+        let i = 1;
+        
+        while (this.objects[name] != undefined)
+            name = `${originalName} (${i++})`;        
+            
         this.objects[name] = obj;
     }
 }
@@ -256,6 +271,15 @@ class Scene {
         for (const objId in this.gameCanvas.objects) {
             if (objId == name) return this.gameCanvas.objects[name];
         }
+    }
+
+    findGameObjects(name) {
+        let result = [];
+        for (const objId in this.gameCanvas.objects) {
+            if (objId.indexOf(name) != -1) 
+                result.push(this.gameCanvas.objects[name]);
+        }
+        return result;
     }
 
     update() {

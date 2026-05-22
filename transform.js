@@ -8,6 +8,7 @@ class Transform {
         this.height = height;
         this.velocity = velocity;
         this.radian = radian;
+        this.parent = null;
     }
     
     get left() { return this.x - this.width * this.pivotX };
@@ -16,6 +17,27 @@ class Transform {
     get bottom() { return this.top + this.height };
     get offsetX() { return -this.width * this.pivotX; }
     get offsetY() { return -this.height * this.pivotY; }
+
+    copy() {
+        let result = new Transform(
+            this.x, this.y, this.width, this.height, this.pivotX, this.pivotY, this.velocity, this.radian
+        );
+        result.parent = this.parent;
+        return result;
+    }
+
+    getAbsolute() {
+        let result = this.copy();
+        let transform = this;
+        while (transform.parent != null) {
+            result.x += transform.x;
+            result.y += transform.y;
+
+            transform = transform.parent;
+        }
+
+        return result;
+    }
 
     translate() {}
     rotate() {
