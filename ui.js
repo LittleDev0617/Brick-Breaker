@@ -1,3 +1,12 @@
+// 클래스 사용법
+// let scene = new Scene("name");           scene 생성
+// scene.addUI("name", new [UI객체]());     scene에 UI 추가
+// new UIText(x, y, text, fontSize, color);
+// new UIButton(x, y, width, height, text, onclick);
+
+
+
+
 class ObjectT {
     constructor(x, y, width, height, pivotX=0.5, pivotY=0.5) {
         this.isActive = true;
@@ -261,11 +270,11 @@ class Scene {
                 this.gameCanvas.tryScroll(e, this.gameCanvas.objects);
         });
 
-        this.uiCanvas.canvas.addEventListener("mousemove", e => {
+        this.uiCanvas.canvas.addEventListener("mousemove", e => {            
             if (!this.isActive) return;
             this.uiCanvas.mouseMove(e, this.uiCanvas.objects);
             this.gameCanvas.mouseMove(e, this.gameCanvas.objects);
-        })
+        });
     }
 
     addObject(name, obj, canvas) {
@@ -294,6 +303,65 @@ class Scene {
                 result.push(this.gameCanvas.objects[objId]);
         }
         return result;
+    }
+
+    checkCollision(obj) {
+
+        for (const objID in this.gameCanvas.objects) {
+            let otherObj = this.gameCanvas.objects[objID];
+
+            if (otherObj !== obj && otherObj.isActive && !(otherObj instanceof Ball)) {
+                
+                const a = obj.transform.getAbsolute();
+                const b = otherObj.transform.getAbsolute();
+
+                const aCenterX = a.left + (a.width / 2);
+                const aCenterY = a.top + (a.height / 2);
+                const bCenterX = b.left + (b.width / 2);
+                const bCenterY = b.top + (b.height / 2);
+
+                const diffX = aCenterX - bCenterX;
+                const diffY = aCenterY - bCenterY;
+
+                const minWidth = (a.width / 2) + (b.width / 2);
+                const minHeight = (a.height / 2) + (b.height / 2);
+
+                if (Math.abs(diffX) < minWidth && Math.abs(diffY) < minHeight) {
+                    
+                    const overlapX = minWidth - Math.abs(diffX);
+                    const overlapY = minHeight - Math.abs(diffY);
+
+                    // 충돌 면 판정 및 위치 보정(끼임 방지)
+                    if (overlapX < overlapY) {
+                        if (diffX > 0) {
+                            // obj: 왼쪽을 부딪힘
+                            obj.dx = Math.abs(obj.dx);
+                            obj.transform.x = b.right + (obj.transform.width * obj.transform.pivotX);
+                            return ["left", otherObj];
+                        } else {
+                            // obj: 오른쪽을 부딪힘
+                            obj.dx = -Math.abs(obj.dx);
+                            obj.transform.x = b.left - (obj.transform.width * (1 - obj.transform.pivotX));
+                            return ["right", otherObj];
+                        }
+                    } 
+                    else {
+                        if (diffY > 0) {
+                            // obj: 위를 부딪힘
+                            obj.dy = Math.abs(obj.dy);
+                            obj.transform.y = b.bottom + (obj.transform.height * obj.transform.pivotY);
+                            return ["top", otherObj];
+                        } else {
+                            // obj: 아래를 부딪힘
+                            obj.dy = -Math.abs(obj.dy);
+                            obj.transform.y = b.top - (obj.transform.height * (1 - obj.transform.pivotY));
+                            return ["bottom", otherObj];
+                        }
+                    }
+                }
+            }
+        }
+        return [null, null];
     }
 
     update() {

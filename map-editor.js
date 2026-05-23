@@ -1,3 +1,5 @@
+// 맵 에디터
+
 const editorScene = () => {
     let scene = new Scene("editor");
 

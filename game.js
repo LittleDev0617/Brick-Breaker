@@ -1,3 +1,6 @@
+// 게임 내 오브젝트 관련 클래스, 메서드
+// 새로운 오브젝트 만들 때 여기서 만들기
+
 class Vector2D {
     constructor(x, y) {
         this.x = x;
@@ -14,6 +17,8 @@ class Vector2D {
     }
 };
 
+// 새로운 오브젝트 만들 때 게임오브젝트를 상속받기
+// 게임오브젝트는 ObjectT를 상속받음. ObjectT: ui.js에 있음. 렌더링하기위한 기본적인 오브젝트 정보들
 class GameObject extends ObjectT {
     constructor(x, y, width, height, pivotX=0.5, pivotY=0.5, sprite=null) {
         super(x, y, width, height, pivotX, pivotY);
@@ -42,20 +47,48 @@ class Ball extends GameObject {
             this.toolImages[tool] = [];
             this.toolLevelList.forEach(level => {
                 let img = new Image();
-                img.src = `tools/${level}_${tool}.png`;
+                img.src = `assets/tools/${level}_${tool}.png`;
 
                 this.toolImages[tool].push(img);
             });
         });
     }
 
-    constructor(x, y, tool, level) {
+    constructor(x, y, tool, level, velocity=15, dx=-5, dy=-5) {
         super(x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
+        this.transform.velocity = velocity;
+        this.dx = dx;
+        this.dy = dy;
+
+        let current_velocity = Math.sqrt(dx*dx + dy*dy);
+        this.dx = (dx/current_velocity)*velocity;
+        this.dy = (dy/current_velocity)*velocity;
 
     }
 
+    move() {    
+        this.transform.x += this.dx;
+        this.transform.y += this.dy;
+
+        let a = this.transform.getAbsolute();
+        if (a.top <= 0) {
+            this.dy = Math.abs(this.dy);
+            this.transform.y = this.transform.height * this.transform.pivotY;
+        } else if (a.bottom >= CANVAS_HEIGHT) {
+            this.dy = -Math.abs(this.dy);
+            this.transform.y = CANVAS_HEIGHT - this.transform.height * this.transform.pivotY;
+        }
+        if (a.left <= 0) {
+            this.dx = Math.abs(this.dx);
+            this.transform.x = this.transform.width * this.transform.pivotX;
+        } else if (a.right >= CANVAS_WIDTH) {
+            this.dx = -Math.abs(this.dx);
+            this.transform.x = CANVAS_WIDTH - this.transform.width * this.transform.pivotX;
+        }
+    }
+
     render(context) {
-        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.width);
+        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
     }
 }
 
@@ -64,7 +97,7 @@ class Block extends GameObject {
     static {
         for (let i=0; i<10; i++) {
             let img = new Image();
-            img.src = `blocks/destroy/destroy_stage_${i}.png`;
+            img.src = `assets/blocks/destroy/destroy_stage_${i}.png`;
             this.destroyImages.push(img);
         }
     }
@@ -100,5 +133,29 @@ class Block extends GameObject {
             context.fillStyle = "rgb(0, 0, 0, 0.2)";
             context.fillRect(this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE, BLOCK_SIZE);
         }
+    }
+}
+
+class Player extends GameObject {
+    constructor(x, y, width, height, textureSrc) {
+        let img = new Image();
+        img.src = textureSrc;
+        super(x, y, width, height, 0.5, 0, img);
+    }
+
+    onMouseMove(e) {
+        this.transform.x = e.offsetX;
+
+        if (this.transform.x < this.transform.width/2) {
+            this.transform.x = this.transform.width/2;
+        }
+        if (this.transform.x > CANVAS_WIDTH - this.transform.width/2) {
+            this.transform.x = CANVAS_WIDTH - this.transform.width/2;
+        }
+    }
+
+    render(context) {
+        context.imageSmoothingEnabled = false;
+        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
     }
 }
