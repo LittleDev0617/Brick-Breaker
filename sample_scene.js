@@ -12,7 +12,7 @@ const sampleScene = () => {
 
     for (i=0; i < 12; i++)
         for (j=0; j < 16; j++)
-            sampleScene.addGameObject(`stone${i}_${j}`, new Block(j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "blocks/stone.png"));
+            sampleScene.addGameObject(`stone${i}_${j}`, new Block(j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "assets/blocks/stone.png"));
 
     let ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT-50, "pickaxe", 0);
     ball.transform.velocity = new Vector2D(0, 0);
