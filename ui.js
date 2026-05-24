@@ -253,28 +253,46 @@ class Scene {
         this.gameCanvas = new Canvas("game");
 
         this.uiCanvas.canvas.addEventListener("click", e => {
+            e.preventDefault();
             if (!this.isActive) return;
             if (!this.uiCanvas.tryClick(e, this.uiCanvas.objects))
                 this.gameCanvas.tryClick(e, this.gameCanvas.objects);
         });
 
         this.uiCanvas.canvas.addEventListener("mousemove", e => {            
+            e.preventDefault();
             if (!this.isActive) return;
             this.uiCanvas.updateHover(e, this.uiCanvas.objects);
             this.gameCanvas.updateHover(e, this.gameCanvas.objects);
         });
 
         this.uiCanvas.canvas.addEventListener("wheel", e => {            
+            e.preventDefault();
             if (!this.isActive) return;
             if (!this.uiCanvas.tryScroll(e, this.uiCanvas.objects))
                 this.gameCanvas.tryScroll(e, this.gameCanvas.objects);
         });
 
         this.uiCanvas.canvas.addEventListener("mousemove", e => {            
+            e.preventDefault();
             if (!this.isActive) return;
             this.uiCanvas.mouseMove(e, this.uiCanvas.objects);
             this.gameCanvas.mouseMove(e, this.gameCanvas.objects);
         });
+    }
+
+    removeObject(name) {
+        let gameObject = this.findGameObject(name);
+        let uiObject = this.findUIObject(name);
+
+        if (gameObject) {
+            delete this.gameCanvas.objects[name];
+        }
+
+        if (uiObject) {
+            delete this.uiCanvas.objects[name];
+        }
+
     }
 
     addObject(name, obj, canvas) {
