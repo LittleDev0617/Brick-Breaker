@@ -102,19 +102,29 @@ class UIButton extends UI {
     }
 }
 
+TEXT_ALIGN_LEFT = 0;
+TEXT_ALIGN_CENTER = 1;
+TEXT_ALIGN_RIGHT = 2;
+
 class UIText extends UI {
-    constructor(x, y, text, fontSize, color, pivotX=0.5, pivotY=0.5) {
+    constructor(x, y, text, fontSize, color, align, pivotX=0.5, pivotY=0.5) {
         super(x, y, 0, 0, pivotX, pivotY);
         this.text = text;
         this.fontSize = fontSize;
         this.color = color;
+        this.align = ["left", "center", "right"][align];
     }
 
     render(context) {
         context.font = `400 ${this.fontSize}px Minecraft`;
-        context.textAlign = 'center';
+        context.textAlign = this.align;
         context.textBaseline = 'middle';
         context.fillStyle = this.color;
+
+        // this.transform.width = context.measureText(this.text).width;
+        // this.transform.height = this.fontSize;
+
+
         context.fillText(this.text, this.transform.offsetX, this.transform.offsetY);
     }
 }
@@ -222,6 +232,10 @@ class Canvas {
         }
     }
 
+    keyDown() {
+        
+    }
+
     draw() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
@@ -251,36 +265,36 @@ class Scene {
         this.isActive = false;
         this.uiCanvas = new Canvas("ui");
         this.gameCanvas = new Canvas("game");
+        
+        this.layer = [this.uiCanvas, this.gameCanvas];
+        let topCanvas = this.layer[this.layer.length-1].canvas;
 
-        this.uiCanvas.canvas.addEventListener('contextmenu', e => e.preventDefault());
+        topCanvas.addEventListener('contextmenu', e => e.preventDefault());
 
-        this.uiCanvas.canvas.addEventListener("mouseup", e => {
+        const dispatchTopDown = (e, handlerName) => {
             e.preventDefault();
             if (!this.isActive) return;
-            if (!this.uiCanvas.tryClick(e, this.uiCanvas.objects))
-                this.gameCanvas.tryClick(e, this.gameCanvas.objects);
-        });
 
-        this.uiCanvas.canvas.addEventListener("mousemove", e => {            
+            for (let i=this.layer.length-1; i >= 0; i--) {
+                let canvas = this.layer[i];
+                if (canvas[handlerName](e, canvas.objects)) break;
+            }
+        }
+
+        const dispatchAll = (e, handlerName) => {           
             e.preventDefault();
             if (!this.isActive) return;
-            this.uiCanvas.updateHover(e, this.uiCanvas.objects);
-            this.gameCanvas.updateHover(e, this.gameCanvas.objects);
-        });
+            this.layer.forEach(canvas => {
+                canvas.updateHover(e, canvas.objects);
+            })
+        }
 
-        this.uiCanvas.canvas.addEventListener("wheel", e => {            
-            e.preventDefault();
-            if (!this.isActive) return;
-            if (!this.uiCanvas.tryScroll(e, this.uiCanvas.objects))
-                this.gameCanvas.tryScroll(e, this.gameCanvas.objects);
-        });
+        topCanvas.addEventListener("keydown", e => dispatchAll(e, "keyDown"))
+        topCanvas.addEventListener("mouseup", e => dispatchTopDown(e, "tryClick"));
+        topCanvas.addEventListener("wheel", e => dispatchTopDown(e, "tryScroll"));
+        topCanvas.addEventListener("mousemove", e => dispatchAll(e, "updateHover"));
+        topCanvas.addEventListener("mousemove", e => dispatchAll(e, "mouseMove"));
 
-        this.uiCanvas.canvas.addEventListener("mousemove", e => {            
-            e.preventDefault();
-            if (!this.isActive) return;
-            this.uiCanvas.mouseMove(e, this.uiCanvas.objects);
-            this.gameCanvas.mouseMove(e, this.gameCanvas.objects);
-        });
     }
 
     removeObject(name) {
