@@ -3,9 +3,15 @@
 const editorScene = () => {
     let scene = new Scene("editor");
 
+
     let mode = "draw";
     let camera = new ObjectT(0, 0, 0, 0);
     let cameraPos = camera.transform;
+
+    scene.addUI("currentMode", new UIText(20, 50, mode, 32, "black", TEXT_ALIGN_LEFT));
+    scene.addUI("guide", new UIText(20, 100, "d: draw", 16, "black", TEXT_ALIGN_LEFT));
+    scene.addUI("guide2", new UIText(20, 120, "e: erase", 16, "black", TEXT_ALIGN_LEFT));
+
 
     let map = new GameMap();
 
@@ -81,8 +87,8 @@ const editorScene = () => {
 
     editorManager.onScroll = function(e) {
         const { deltaX, deltaY } = e;
-        cameraPos.x += deltaX / 2;
-        cameraPos.y += deltaY / 2;
+        cameraPos.x += deltaX;
+        cameraPos.y += deltaY;
 
         for (let i=0; i <= CANVAS_WIDTH / (BLOCK_SIZE+LINE_WIDTH)+1; i++) {
             let line = scene.findUIObject(`lineVertical${i}`);
@@ -150,11 +156,22 @@ const editorScene = () => {
             editorManager.onClick(e, isRightBtnClicked);            
         } else if(isRightBtnClicked) {
             editorManager.onScroll({ 
-                'deltaX': -e.movementX * 1.2,
-                'deltaY': -e.movementY * 1.2 
+                'deltaX': -e.movementX,
+                'deltaY': -e.movementY 
             });
         }
         movePreviewBlock(e);
+    }
+
+    editorManager.onKeyDown = function(e) {
+        if (e.code == "KeyD") {
+            previewBlock.opacity = 0.7;
+            mode = "draw";
+        }
+        else if (e.code == "KeyE") {
+            previewBlock.opacity = 0;
+            mode = "erase";
+        }
     }
 
     editorManager.hover = false;

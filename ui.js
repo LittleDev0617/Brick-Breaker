@@ -178,7 +178,6 @@ class Canvas {
 
     tryScroll(e, target) {
         const { offsetX, offsetY }  = e;
-        e.preventDefault();
         if (!this.isActive) return false;
 
         for (const objId in target) {
@@ -232,8 +231,14 @@ class Canvas {
         }
     }
 
-    keyDown() {
-        
+    keyDown(e, target) {   
+        if (!this.isActive) return false;
+        for (const objId in target) {
+            let obj = target[objId];
+            
+            if (obj.onKeyDown == undefined) continue;
+            obj.onKeyDown(e);
+        }
     }
 
     draw() {
@@ -266,13 +271,12 @@ class Scene {
         this.uiCanvas = new Canvas("ui");
         this.gameCanvas = new Canvas("game");
         
-        this.layer = [this.uiCanvas, this.gameCanvas];
+        this.layer = [this.gameCanvas, this.uiCanvas];
         let topCanvas = this.layer[this.layer.length-1].canvas;
 
         topCanvas.addEventListener('contextmenu', e => e.preventDefault());
 
         const dispatchTopDown = (e, handlerName) => {
-            e.preventDefault();
             if (!this.isActive) return;
 
             for (let i=this.layer.length-1; i >= 0; i--) {
@@ -282,15 +286,14 @@ class Scene {
         }
 
         const dispatchAll = (e, handlerName) => {           
-            e.preventDefault();
             if (!this.isActive) return;
             this.layer.forEach(canvas => {
-                canvas.updateHover(e, canvas.objects);
+                canvas[handlerName](e, canvas.objects);
             })
         }
 
-        topCanvas.addEventListener("keydown", e => dispatchAll(e, "keyDown"))
-        topCanvas.addEventListener("mouseup", e => dispatchTopDown(e, "tryClick"));
+        document.addEventListener("keydown", e => dispatchAll(e, "keyDown"))
+        topCanvas.addEventListener("mousedown", e => dispatchTopDown(e, "tryClick"));
         topCanvas.addEventListener("wheel", e => dispatchTopDown(e, "tryScroll"));
         topCanvas.addEventListener("mousemove", e => dispatchAll(e, "updateHover"));
         topCanvas.addEventListener("mousemove", e => dispatchAll(e, "mouseMove"));
