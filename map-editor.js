@@ -163,19 +163,21 @@ const editorScene = () => {
         movePreviewBlock(e);
     }
 
-    editorManager.onKeyDown = function(e) {
+    editorManager.onKeyDown = function(e) {        
         if (e.code == "KeyD") {
-            previewBlock.opacity = 0.7;
-            mode = "draw";
+            previewBlock.sprite = BLOCK_LIST[blockSelected].sprite;
+            mode = "draw";            
         }
         else if (e.code == "KeyE") {
-            previewBlock.opacity = 0;
+            previewBlock.sprite = Block.destroyImages[5];
             mode = "erase";
         }
+
+        scene.findUIObject("currentMode").text = mode;
     }
 
     editorManager.hover = false;
-    editorManager.onHover = function() {
+    editorManager.onHover = function() {        
         previewBlock.opacity = 0.7;
     }
 
