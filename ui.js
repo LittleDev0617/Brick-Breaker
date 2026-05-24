@@ -87,7 +87,8 @@ class UIButton extends UI {
         this.onClick = onclick;
 
         if (text) {
-            this.text = new UIText(x, y, text, height * 0.5, 'black');
+            let obj = new UIText(0, 0, text, height * 0.5, 'black');
+            this.appendChild(obj);
         }
     }
 
@@ -98,16 +99,12 @@ class UIButton extends UI {
         context.strokeStyle = 'black';
         context.lineWidth = 2;
         context.strokeRect(this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
-
-        if (this.text) {
-            this.text.render(context);
-        }
     }
 }
 
 class UIText extends UI {
-    constructor(x, y, text, fontSize, color) {
-        super(x, y, 0, 0);
+    constructor(x, y, text, fontSize, color, pivotX=0.5, pivotY=0.5) {
+        super(x, y, 0, 0, pivotX, pivotY);
         this.text = text;
         this.fontSize = fontSize;
         this.color = color;
