@@ -74,11 +74,27 @@ const CANVAS_HEIGHT = 768;
 
 class GameMap {
 
-    constructor() {
+    constructor(name) {
+        this.name = name;
         this.map = {};
     }
 
-    coord(x, y) { return `(${x}, ${y})`; }
+    dump() {
+        return JSON.stringify({
+            'name': this.name,
+            'data': this.map
+        });
+    }
+
+    load(map) {
+        if (typeof map == 'string')
+            map = JSON.parse(map);
+
+        this.name = map.name;
+        this.map = map.data;
+    }
+
+    coord(x, y) { return `${x}, ${y}`; }
 
     getBlock(x, y) {
         if (this.map[this.coord(x, y)]) return this.map[this.coord(x, y)];
@@ -93,3 +109,6 @@ class GameMap {
         this.map[this.coord(x, y)] = blockId;
     }
 }
+
+let maps = [];
+maps.push(GameMap.load({"name":"", "data":{"390, 390":"b_grass","455, 390":"b_grass","520, 390":"b_grass","585, 390":"b_grass","520, 325":"b_oak_log","520, 260":"b_oak_log","520, 195":"b_oak_log","455, 325":"b_zombie","585, 325":"b_pig","390, 455":"b_dirt","390, 520":"b_dirt","390, 585":"b_dirt","455, 585":"b_dirt","520, 585":"b_dirt","585, 585":"b_dirt","585, 520":"b_dirt","585, 455":"b_dirt","520, 455":"b_dirt","455, 455":"b_dirt","455, 520":"b_dirt","520, 520":"b_dirt","520, 130":"b_spider","455, 260":"b_zombie","715, 390":"b_grass","650, 390":"b_grass","715, 455":"b_dirt","650, 455":"b_dirt","650, 520":"b_dirt","715, 520":"b_dirt","715, 585":"b_dirt","650, 585":"b_dirt"}}));

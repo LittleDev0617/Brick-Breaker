@@ -10,18 +10,23 @@ html {
 body {
     display: flex;
     height: 100%;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-around;
+    align-items: center;
     background-color: white;
 }
 
 #main {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#canvas-wrapper {
     position: relative;
-    margin: 0 auto;
     width: 1024px;
     height: 768px;
     background-color: white;
-
 }
 
 canvas {
@@ -39,4 +44,12 @@ canvas {
     font-family: 'Minecraft';
     src: url('assets/font/Minecraft.otf') format('opentype');
     font-weight: 400;
+}
+
+.sidebar {
+    width: 300px;
+}
+
+#map-editor {
+    margin-left: 20px;
 }
