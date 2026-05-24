@@ -3,9 +3,11 @@
 const editorScene = () => {
     let scene = new Scene("editor");
 
-    let drawMode = true;
+    let mode = "draw";
     let camera = new ObjectT(0, 0, 0, 0);
     let cameraPos = camera.transform;
+
+    let map = new GameMap();
 
     scene.addUI("camera", camera);
 
@@ -55,7 +57,7 @@ const editorScene = () => {
     }
     scene.addUI("menu", menu);
 
-    //////////////  //////////////
+    //////////////   //////////////
     let editorManager = new UI(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0);
     let previewBlock = new UIImage(0, 0, BLOCK_SIZE, BLOCK_SIZE, BLOCK_GRASS.sprite, 0, 0);
     previewBlock.opacity = 0.7;
@@ -96,20 +98,62 @@ const editorScene = () => {
         moveRelative(e);
     }
 
-    editorManager.onClick = function(e) {
+    const destroyBlock = (screenX, screenY) => {
+        let x = UNIT * Math.floor((screenX + cameraPos.x % UNIT) / UNIT) - cameraPos.x % UNIT;
+        let y = UNIT * Math.floor((screenY + cameraPos.y % UNIT) / UNIT) - cameraPos.y % UNIT;
+        let absX = cameraPos.x + x;
+        let absY = cameraPos.y + y;
+
+        console.log('Block destroyed at', absX, absY)
+        if (map.getBlock(absX, absY)) {
+            map.removeBlock(absX, absY);
+            scene.removeObject(`block_${absX}_${absY}`);
+        }
+    }
+
+    const place = (screenX, screenY, idx) => {
+        let x = UNIT * Math.floor((screenX + cameraPos.x % UNIT) / UNIT) - cameraPos.x % UNIT;
+        let y = UNIT * Math.floor((screenY + cameraPos.y % UNIT) / UNIT) - cameraPos.y % UNIT;
+        
+        let absX = cameraPos.x + x;
+        let absY = cameraPos.y + y;
+
+        if (map.getBlock(absX, absY)) {
+            scene.removeObject(`block_${absX}_${absY}`);
+        }
+
+        let block = new UIImage(x, y, BLOCK_SIZE, BLOCK_SIZE, BLOCK_LIST[blockSelected].sprite, 0, 0);
+        block.absX = absX;
+        block.absY = absY;
+
+        console.log('Block placed at', absX, absY)
+        scene.addGameObject(`block_${absX}_${absY}`, block);
+        map.placeBlock(absX, absY, BLOCK_LIST[idx].id);
+    }
+
+    editorManager.onClick = function(e, isRight) {
         const { offsetX, offsetY } = e;
 
-        let x = UNIT * Math.floor((offsetX + cameraPos.x % UNIT) / UNIT) - cameraPos.x % UNIT;
-        let y = UNIT * Math.floor((offsetY + cameraPos.y % UNIT) / UNIT) - cameraPos.y % UNIT;
-        
-        let block = new UIImage(x, y, BLOCK_SIZE, BLOCK_SIZE, BLOCK_LIST[blockSelected].sprite, 0, 0);
-        block.absX = cameraPos.x + x;
-        block.absY = cameraPos.y + y;
-
-        scene.addGameObject("block", block);
+        if (!isRight) { // 좌클릭
+            if (mode == "draw")             
+                place(offsetX, offsetY, blockSelected);
+            else 
+                destroyBlock(offsetX, offsetY);
+        }
     }
 
     editorManager.onMouseMove = function(e) {
+        const isLeftBtnClicked = e.buttons & 1;
+        const isRightBtnClicked = e.buttons & 2;        
+
+        if (isLeftBtnClicked) {
+            editorManager.onClick(e, isRightBtnClicked);            
+        } else if(isRightBtnClicked) {
+            editorManager.onScroll({ 
+                'deltaX': -e.movementX * 1.2,
+                'deltaY': -e.movementY * 1.2 
+            });
+        }
         movePreviewBlock(e);
     }
 

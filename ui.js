@@ -144,7 +144,7 @@ class Canvas {
     }
 
     tryClick(e, target) {
-        const { offsetX, offsetY } = e;
+        const { offsetX, offsetY, button } = e;
         if (!this.isActive) return false;
 
         for (const objId in target) {
@@ -158,7 +158,10 @@ class Canvas {
             }
 
             if (this.isMouseOver(obj, offsetX, offsetY)) {
-                obj.onClick(e);
+                if (button == 0)     // 좌클릭
+                    obj.onClick(e);
+                else if (button == 2)    // 우클릭
+                    obj.onClick(e, true);
                 return true;
             }
         }
@@ -252,7 +255,9 @@ class Scene {
         this.uiCanvas = new Canvas("ui");
         this.gameCanvas = new Canvas("game");
 
-        this.uiCanvas.canvas.addEventListener("click", e => {
+        this.uiCanvas.canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+        this.uiCanvas.canvas.addEventListener("mouseup", e => {
             e.preventDefault();
             if (!this.isActive) return;
             if (!this.uiCanvas.tryClick(e, this.uiCanvas.objects))

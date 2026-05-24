@@ -71,3 +71,25 @@ const BLOCK_SIZE  = 64;
 
 const CANVAS_WIDTH  = 1024;
 const CANVAS_HEIGHT = 768;
+
+class GameMap {
+
+    constructor() {
+        this.map = {};
+    }
+
+    coord(x, y) { return `(${x}, ${y})`; }
+
+    getBlock(x, y) {
+        if (this.map[this.coord(x, y)]) return this.map[this.coord(x, y)];
+        return false;
+    }
+
+    removeBlock(x, y) {
+        delete this.map[this.coord(x, y)];
+    }
+
+    placeBlock(x, y, blockId) {
+        this.map[this.coord(x, y)] = blockId;
+    }
+}

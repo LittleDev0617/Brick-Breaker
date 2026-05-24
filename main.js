@@ -56,5 +56,5 @@ window.onload = () => {
 
     gameManager.addScene(overWorldScene());
 
-    gameManager.play("overWorld");
+    gameManager.play("editor");
 }
