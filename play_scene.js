@@ -5,11 +5,11 @@ const lobby = () => {
 
     scene1.addUI("playBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
         // console.log("Play button clicked!");
-        gameManager.play("sample")
+        gameManager.play("overWorld");
     }));
 
-    scene1.addUI("howBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 80, 400, 50, "How to play", () => {
-        console.log("test!");
+    scene1.addUI("editorBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 80, 400, 50, "Map Editor", () => {
+        gameManager.play("editor");
     }));
 
     for (i=0; i < 12; i++)

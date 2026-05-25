@@ -86,14 +86,21 @@ class GameMap {
         });
     }
 
-    load(map) {
-        if (typeof map == 'string')
-            map = JSON.parse(map);
+    draw(scene) {
+        for (const _coord in this.map) {
+            let blockId = this.map[_coord];
+            let absX = parseInt(_coord.split(', ')[0]);
+            let absY = parseInt(_coord.split(', ')[1]);
 
-        this.name = map.name;
-        this.map = map.data;
+            let block = new UIImage(absX, absY, BLOCK_SIZE, BLOCK_SIZE, BLOCK_LIST[blockId].sprite, 0, 0);
+            block.absX = absX;
+            block.absY = absY;
+
+            console.log('Block placed at', absX, absY)
+            scene.addGameObject(`block_${absX}_${absY}`, block);
+        }
     }
-
+    
     coord(x, y) { return `${x}, ${y}`; }
 
     getBlock(x, y) {
@@ -110,5 +117,21 @@ class GameMap {
     }
 }
 
+GameMap.load = function(map) {
+    if (typeof map == 'string')
+        map = JSON.parse(map);
+
+    let _map = new GameMap(map.name);
+    _map.map = map.data;
+    return _map;
+}
+
+
 let maps = [];
-maps.push(GameMap.load({"name":"", "data":{"390, 390":"b_grass","455, 390":"b_grass","520, 390":"b_grass","585, 390":"b_grass","520, 325":"b_oak_log","520, 260":"b_oak_log","520, 195":"b_oak_log","455, 325":"b_zombie","585, 325":"b_pig","390, 455":"b_dirt","390, 520":"b_dirt","390, 585":"b_dirt","455, 585":"b_dirt","520, 585":"b_dirt","585, 585":"b_dirt","585, 520":"b_dirt","585, 455":"b_dirt","520, 455":"b_dirt","455, 455":"b_dirt","455, 520":"b_dirt","520, 520":"b_dirt","520, 130":"b_spider","455, 260":"b_zombie","715, 390":"b_grass","650, 390":"b_grass","715, 455":"b_dirt","650, 455":"b_dirt","650, 520":"b_dirt","715, 520":"b_dirt","715, 585":"b_dirt","650, 585":"b_dirt"}}));
+maps.push(GameMap.load({"name":"test","data":{"390, 390":"b_grass","455, 390":"b_grass","520, 390":"b_grass","585, 390":"b_grass","520, 325":"b_oak_log","520, 260":"b_oak_log","520, 195":"b_oak_log","455, 325":"b_zombie","585, 325":"b_pig","390, 455":"b_dirt","390, 520":"b_dirt","390, 585":"b_stone","455, 585":"b_stone","520, 585":"b_stone","585, 585":"b_stone","585, 520":"b_stone","585, 455":"b_grass","520, 455":"b_dirt","455, 455":"b_dirt","455, 520":"b_dirt","520, 520":"b_stone","520, 130":"b_spider","455, 260":"b_zombie","715, 390":"b_grass","650, 390":"b_grass","715, 455":"b_stone","650, 455":"b_dirt","650, 520":"b_stone","715, 520":"b_stone","715, 585":"b_stone","650, 585":"b_stone","780, 390":"b_grass","845, 390":"b_grass","910, 390":"b_grass","975, 390":"b_grass","1040, 390":"b_grass","1105, 390":"b_grass","780, 455":"b_dirt","845, 455":"b_dirt","910, 455":"b_dirt","975, 455":"b_dirt","1040, 455":"b_dirt","1105, 455":"b_dirt","1105, 520":"b_dirt","1040, 520":"b_iron_ore","975, 520":"b_stone","910, 520":"b_stone","845, 520":"b_diamond_ore","780, 520":"b_stone","780, 585":"b_stone","845, 585":"b_stone","910, 585":"b_stone","975, 585":"b_stone","1040, 585":"b_iron_ore","1105, 585":"b_stone","845, 325":"b_oak_log","845, 260":"b_oak_log","845, 195":"b_oak_log","845, 130":"b_oak_log","845, 65":"b_oak_log","715, 0":"b_zombie","780, 0":"b_zombie","845, 0":"b_creeper","910, 0":"b_zombie","975, 0":"b_zombie","780, -65":"b_zombie","845, -65":"b_zombie","910, -65":"b_zombie","845, -130":"b_zombie","910, 65":"b_tnt","1040, 325":"b_sheep","1170, 325":"b_grass","1235, 260":"b_grass","1300, 195":"b_grass","1365, 195":"b_grass","1430, 195":"b_grass","1235, 325":"b_dirt","1235, 390":"b_dirt","1170, 390":"b_dirt","1170, 455":"b_dirt","1170, 520":"b_dirt","1235, 520":"b_dirt","1300, 520":"b_stone","1300, 455":"b_stone","1365, 455":"b_stone","1300, 390":"b_dirt","1235, 455":"b_dirt","1365, 390":"b_stone","1365, 325":"b_dirt","1300, 325":"b_dirt","1365, 260":"b_dirt","1300, 260":"b_dirt","1430, 260":"b_dirt","1430, 325":"b_dirt","1430, 390":"b_stone","1430, 455":"b_stone","1430, 520":"b_stone","1365, 520":"b_stone","1365, 585":"b_stone","1300, 585":"b_diamond_ore","1235, 585":"b_stone","1235, 650":"b_stone","1170, 650":"b_stone","1170, 585":"b_stone","1430, 585":"b_creeper","780, 780":"b_stone","1105, 650":"b_stone","1300, 130":"b_obsidian","1365, 130":"b_obsidian","1430, 130":"b_obsidian","1495, 130":"b_obsidian","1495, 65":"b_obsidian","1495, 0":"b_obsidian","1495, -65":"b_obsidian","1495, -130":"b_obsidian","1430, -130":"b_obsidian","1365, -130":"b_obsidian","1300, -130":"b_obsidian","1300, -65":"b_obsidian","1300, 0":"b_obsidian","1300, 65":"b_obsidian","1495, 195":"b_grass","1560, 195":"b_grass","1625, 195":"b_grass","1495, 260":"b_dirt","1560, 260":"b_dirt","1625, 260":"b_dirt","1625, 325":"b_stone","1560, 325":"b_stone","1495, 325":"b_stone","1625, 390":"b_stone","1560, 390":"b_stone","1495, 390":"b_stone","1495, 455":"b_stone","1560, 455":"b_stone","1495, 520":"b_stone","390, 715":"b_stone","390, 650":"b_stone","455, 650":"b_stone","520, 650":"b_stone","585, 650":"b_stone","650, 650":"b_stone","715, 650":"b_stone","780, 650":"b_stone","845, 650":"b_stone","910, 650":"b_stone","975, 650":"b_stone","1040, 650":"b_stone","1040, 715":"b_stone","975, 715":"b_stone","910, 715":"b_stone","845, 715":"b_stone","780, 715":"b_creeper","715, 715":"b_stone","650, 715":"b_stone","585, 715":"b_stone","520, 715":"b_stone","455, 715":"b_stone","455, 780":"b_stone","390, 780":"b_stone","520, 780":"b_stone","585, 780":"b_stone","650, 780":"b_stone","715, 780":"b_stone","845, 780":"b_stone","910, 780":"b_stone","975, 780":"b_stone","1040, 780":"b_stone","1105, 780":"b_stone","1170, 780":"b_stone","1235, 780":"b_stone","1105, 715":"b_stone","1170, 715":"b_stone","1235, 715":"b_stone","1300, 715":"b_stone","1365, 715":"b_stone","1430, 715":"b_stone","1495, 715":"b_stone","1560, 715":"b_stone","1625, 715":"b_stone","1625, 650":"b_stone","1625, 585":"b_stone","1625, 520":"b_stone","1625, 455":"b_stone","1560, 585":"b_stone","1560, 520":"b_stone","1495, 585":"b_stone","1430, 650":"b_stone","1365, 650":"b_stone","1495, 650":"b_stone","1560, 650":"b_stone","1300, 650":"b_stone","1300, 780":"b_zombie","1365, 780":"b_stone","1430, 780":"b_stone","1495, 780":"b_stone","1560, 780":"b_stone","1625, 780":"b_creeper"}}));
+
+const log = (msg) => {
+    const debug = document.querySelector("#log");
+    debug.insertAdjacentHTML('beforeend', `<p>${msg}</p>`);
+    debug.scrollTop = debug.scrollHeight;
+};

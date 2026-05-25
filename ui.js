@@ -107,7 +107,7 @@ TEXT_ALIGN_CENTER = 1;
 TEXT_ALIGN_RIGHT = 2;
 
 class UIText extends UI {
-    constructor(x, y, text, fontSize, color, align, pivotX=0.5, pivotY=0.5) {
+    constructor(x, y, text, fontSize, color, align=TEXT_ALIGN_CENTER, pivotX=0.5, pivotY=0.5) {
         super(x, y, 0, 0, pivotX, pivotY);
         this.text = text;
         this.fontSize = fontSize;
@@ -154,7 +154,7 @@ class Canvas {
         const { offsetX, offsetY, button } = e;
         if (!this.isActive) return false;
 
-        for (const objId in target) {
+        for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
             if (obj.onClick == undefined) {
                 if (obj.child.length != 0) {
@@ -180,7 +180,7 @@ class Canvas {
         const { offsetX, offsetY }  = e;
         if (!this.isActive) return false;
 
-        for (const objId in target) {
+        for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
             
             if (obj.onScroll == undefined) continue;
@@ -199,13 +199,13 @@ class Canvas {
         if (!this.isActive) return false;
 
         // TODO: 땜빵용 코드. hover 겹쳐있는 대상 어떻게 할지 고민. mouse out 이벤트를 만들긴 해야하는데.
-        for (const objId in target) {
+        for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
             if (obj.hover == undefined) continue;
             obj.hover = false;
         }
 
-        for (const objId in target) {
+        for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
             
             // if (!(obj instanceof UIButton)) continue;
@@ -223,7 +223,7 @@ class Canvas {
 
     mouseMove(e, target) {        
         if (!this.isActive) return false;
-        for (const objId in target) {
+        for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
             
             if (obj.onMouseMove == undefined) continue;
@@ -233,7 +233,7 @@ class Canvas {
 
     keyDown(e, target) {   
         if (!this.isActive) return false;
-        for (const objId in target) {
+        for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
             
             if (obj.onKeyDown == undefined) continue;
@@ -267,6 +267,7 @@ class Canvas {
 class Scene {
     constructor(name) {
         this.name = name;
+        this.isEnd = false;
         this.isActive = false;
         this.uiCanvas = new Canvas("ui");
         this.gameCanvas = new Canvas("game");
@@ -401,9 +402,21 @@ class Scene {
         return [null, null];
     }
 
+    start() {
+        // 각자 Scene 객체에서 구현.
+        // Scene이 play 될 때 Scene 초기화 기능.
+    }
+
     update() {
         // 각자 Scene 객체에서 구현
         this.draw();
+    }
+
+    end() {
+        this.layer.forEach(canvas => {
+            canvas.objects = [];
+        })
+        this.isEnd = true;
     }
 
     draw() {
@@ -411,7 +424,8 @@ class Scene {
             this.background.draw();
         }
 
-        this.gameCanvas.draw();
-        this.uiCanvas.draw();
+        this.layer.forEach(canvas => {
+            canvas.draw();
+        })
     }
 }

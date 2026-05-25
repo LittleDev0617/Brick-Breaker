@@ -8,17 +8,38 @@ html {
 }
 
 body {
-    display: flex;
     height: 100%;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
     background-color: white;
 }
 
 #main {
     display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#center {
+    flex: 3;
+    display: flex;
     justify-content: center;
+}
+
+#top, #bottom {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+#title {
+    margin-top: 100px;
+}
+
+#bottom {
+    flex: 1;
     width: 100%;
 }
 
@@ -47,9 +68,47 @@ canvas {
 }
 
 .sidebar {
-    width: 300px;
+    flex: 1;
+}
+
+select {
+    width: 150px;
+    height: 30px;
+    border-radius: 10px;
+    text-align: end;
+    padding-right: 5px;
 }
 
 #map-editor {
-    margin-left: 20px;
+    display: none;
+    width: 1024px;
+    padding-bottom: 15px;
+}
+
+#map-editor input[type=text] {
+    width: 150px;
+    border-radius: 10px;
+    padding: 0 10px;
+    text-align: end;
+    height: 30px;
+}
+
+#map-editor img {
+    cursor: pointer;
+    height: 32px;
+}
+
+#map-editor div {
+    padding-top: 5px;
+    display: flex;
+    width: 450px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#log {
+    margin-top: 40px;
+    width: 1024px;
+    height: 150px;
+    overflow-y: scroll;
 }
