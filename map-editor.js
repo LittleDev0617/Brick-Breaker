@@ -23,36 +23,57 @@ const editorScene = () => {
         mapEditorUI.style.display = "block";
         
         if (maps.length == 0) {
-            // 임시 맵 이름 뭐로 할지 생각!
-            maps.push(new GameMap("Map1"));
         }
 
-        let map = null;
+        let map = maps[0];
         const select = mapEditorUI.querySelector("#map-select");
-
-        select.addEventListener("change", (e) => {
-
+        maps.forEach(map => {
+            select.insertAdjacentHTML('beforeend', `<option value="${map.name}">${map.name}</option>`);
         });
+
+        const createMap = () => {
+            let name = GameMap.makeRandomName();
+            let _map = new GameMap(name);
+
+            select.insertAdjacentHTML('beforeend', `<option value="${name}">${name}</option>`);
+            
+            maps.push(_map);
+            return _map;
+        }
 
         const clearMap = () => {
             cameraPos.x = 0, cameraPos.y = 0;
-            this.findGameObjects('block').forEach(block => {})
+            this.findGameObjects('block').forEach(block => {
+                this.removeObject(block.name);
+            });
         }
 
-        const loadMaps = () => {
-            maps.forEach(map => {
-                select.insertAdjacentHTML('beforeend', `<option>${map.name}</option>`);
-            });
-
-            map = maps[maps.length-1];
+        const loadMaps = (map) => {
+            select.value = map.name;
             mapEditorUI.querySelector("#map-name").value = map.name;
         
             map.draw(this);
         };
-        loadMaps();
+        loadMaps(map);
+
+        select.addEventListener("change", (e) => {
+            clearMap();
+            let mapName = e.target.value;
+            for (let i=0; i<maps.length; i++) {
+                if (maps[i].name == mapName) {
+                    map = maps[i];
+                    break;
+                }
+            }
+            loadMaps(map);
+        });
 
         mapEditorUI.querySelector("#add-btn").addEventListener("click", () => {
-            
+            clearMap();
+            let _map = createMap();
+
+
+            loadMaps(_map);
         });
 
         mapEditorUI.querySelector("#save-btn").addEventListener("click", () => {
