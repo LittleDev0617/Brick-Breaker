@@ -8,7 +8,8 @@
 
 
 class ObjectT {
-    constructor(x, y, width, height, pivotX=0.5, pivotY=0.5) {
+    constructor(name, x, y, width, height, pivotX=0.5, pivotY=0.5) {
+        this.name = name;
         this.isActive = true;
         this.parent = null;
         this.child = [];
@@ -40,14 +41,14 @@ class ObjectT {
 }
 
 class UI extends ObjectT {
-    constructor(x, y, width, height, pivotX=0.5, pivotY=0.5) {
-        super(x, y, width, height, pivotX, pivotY);
+    constructor(name, x, y, width, height, pivotX=0.5, pivotY=0.5) {
+        super(name, x, y, width, height, pivotX, pivotY);
     }
 }
 
 class UIRect extends UI {
-    constructor(x, y, width, height, color, pivotX=0.5, pivotY=0.5) {
-        super(x, y, width, height, pivotX, pivotY);
+    constructor(name, x, y, width, height, color, pivotX=0.5, pivotY=0.5) {
+        super(name, x, y, width, height, pivotX, pivotY);
         this.color = color;
     }
 
@@ -58,8 +59,8 @@ class UIRect extends UI {
 }
 
 class UIImage extends UI {
-    constructor(x, y, width, height, img, pivotX=0.5, pivotY=0.5) {
-        super(x, y, width, height, pivotX, pivotY);
+    constructor(name, x, y, width, height, img, pivotX=0.5, pivotY=0.5) {
+        super(name, x, y, width, height, pivotX, pivotY);
 
         if (typeof img === 'string') {
             this.sprite = new Image();
@@ -80,14 +81,14 @@ class UIImage extends UI {
 }
 
 class UIButton extends UI {
-    constructor(x, y, width, height, text, onclick) {
-        super(x, y, width, height);
+    constructor(name, x, y, width, height, text, onclick) {
+        super(name, x, y, width, height);
         
         this.hover = false;
         this.onClick = onclick;
 
         if (text) {
-            let obj = new UIText(0, 0, text, height * 0.5, 'black');
+            let obj = new UIText(`${name}_text`, 0, 0, text, height * 0.5, 'black');
             this.appendChild(obj);
         }
     }
@@ -107,8 +108,8 @@ TEXT_ALIGN_CENTER = 1;
 TEXT_ALIGN_RIGHT = 2;
 
 class UIText extends UI {
-    constructor(x, y, text, fontSize, color, align=TEXT_ALIGN_CENTER, pivotX=0.5, pivotY=0.5) {
-        super(x, y, 0, 0, pivotX, pivotY);
+    constructor(name, x, y, text, fontSize, color, align=TEXT_ALIGN_CENTER, pivotX=0.5, pivotY=0.5) {
+        super(name, x, y, 0, 0, pivotX, pivotY);
         this.text = text;
         this.fontSize = fontSize;
         this.color = color;
@@ -253,14 +254,14 @@ class Canvas {
         }
     }
 
-    addObject(name, obj) { 
-        let originalName = name;
+    addObject(obj) { 
+        let originalName = obj.name;
         let i = 1;
         
-        while (this.objects[name] != undefined)
-            name = `${originalName} (${i++})`;        
+        while (this.objects[obj.name] != undefined)
+            obj.name = `${originalName} (${i++})`;        
             
-        this.objects[name] = obj;
+        this.objects[obj.name] = obj;
     }
 }
 
@@ -315,12 +316,12 @@ class Scene {
 
     }
 
-    addObject(name, obj, canvas) {
-        canvas.addObject(name, obj);
+    addObject(obj, canvas) {
+        canvas.addObject(obj);
     }
 
-    addUI(name, uiObj) { this.addObject(name, uiObj, this.uiCanvas); }
-    addGameObject(name, gameObject) { this.addObject(name, gameObject, this.gameCanvas); }
+    addUI(uiObj) { this.addObject(uiObj, this.uiCanvas); }
+    addGameObject(gameObject) { this.addObject(gameObject, this.gameCanvas); }
 
     findUIObject(name) {
         for (const objId in this.uiCanvas.objects) {

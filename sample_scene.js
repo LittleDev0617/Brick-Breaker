@@ -1,9 +1,9 @@
 
 const sampleScene = () => {
     let sampleScene = new Scene("sample");
-    sampleScene.addUI("titleText", new UIText(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
+    sampleScene.addUI(new UIText("titleText", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
 
-    sampleScene.addUI("playBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
+    sampleScene.addUI(new UIButton("playBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
         // console.log("Play button clicked!");
         // let obj = sampleScene.findUIObject("titleText");
         // obj.isActive = !obj.isActive;
@@ -12,12 +12,12 @@ const sampleScene = () => {
 
     for (i=0; i < 12; i++)
         for (j=0; j < 16; j++)
-            sampleScene.addGameObject(`stone${i}_${j}`, new Block(j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "assets/blocks/stone.png"));
+            sampleScene.addGameObject(new Block(`stone${i}_${j}`, j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "assets/blocks/stone.png"));
 
-    let ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT-50, "pickaxe", 0);
+    let ball = new Ball("ball_0", CANVAS_WIDTH / 2, CANVAS_HEIGHT-50, "pickaxe", 0);
     ball.transform.velocity = new Vector2D(0, 0);
 
-    sampleScene.addGameObject("ball_0", ball);
+    sampleScene.addGameObject(ball);
     sampleScene.balls = [ball];
     sampleScene.update = function() {
         let title = sampleScene.findUIObject("titleText");
@@ -42,10 +42,10 @@ const sampleScene = () => {
                     let toolIndex = Math.floor(Math.random() * Ball.toolList.length);
                     let levelIndex = Math.floor(Math.random() * Ball.toolLevelList.length);
                     
-                    let _ball = new Ball(ball.transform.x, ball.transform.y, Ball.toolList[toolIndex], levelIndex);
+                    let _ball = new Ball(`ball_${sampleScene.balls.length}`, ball.transform.x, ball.transform.y, Ball.toolList[toolIndex], levelIndex);
                     _ball.transform.velocity = new Vector2D(ball.transform.velocity.x, ball.transform.velocity.y);
                     _ball.transform.velocity.rotate(Math.PI / 3);
-                    sampleScene.addGameObject(`ball_${sampleScene.balls.length}`, _ball);
+                    sampleScene.addGameObject(_ball);
                     sampleScene.balls.push(_ball);
                 }
             }
@@ -59,10 +59,10 @@ const sampleScene = () => {
                     let toolIndex = Math.floor(Math.random() * Ball.toolList.length);
                     let levelIndex = Math.floor(Math.random() * Ball.toolLevelList.length);
                     
-                    let _ball = new Ball(ball.transform.x, ball.transform.y, Ball.toolList[toolIndex], levelIndex);
+                    let _ball = new Ball(`ball_${sampleScene.balls.length}`, ball.transform.x, ball.transform.y, Ball.toolList[toolIndex], levelIndex);
                     _ball.transform.velocity = new Vector2D(ball.transform.velocity.x, ball.transform.velocity.y);
                     _ball.transform.velocity.rotate(Math.PI / 3);
-                    sampleScene.addGameObject(`ball_${sampleScene.balls.length}`, _ball);
+                    sampleScene.addGameObject(_ball);
                     sampleScene.balls.push(_ball);
                 }
             }

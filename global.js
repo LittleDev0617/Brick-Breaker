@@ -92,12 +92,12 @@ class GameMap {
             let absX = parseInt(_coord.split(', ')[0]);
             let absY = parseInt(_coord.split(', ')[1]);
 
-            let block = new UIImage(absX, absY, BLOCK_SIZE, BLOCK_SIZE, BLOCK_LIST[blockId].sprite, 0, 0);
+            let block = new UIImage(`block_${absX}_${absY}`, absX, absY, BLOCK_SIZE, BLOCK_SIZE, BLOCK_LIST[blockId].sprite, 0, 0);
             block.absX = absX;
             block.absY = absY;
 
             console.log('Block placed at', absX, absY)
-            scene.addGameObject(`block_${absX}_${absY}`, block);
+            scene.addGameObject(block);
         }
     }
     

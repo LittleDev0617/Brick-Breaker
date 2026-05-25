@@ -20,8 +20,8 @@ class Vector2D {
 // 새로운 오브젝트 만들 때 게임오브젝트를 상속받기
 // 게임오브젝트는 ObjectT를 상속받음. ObjectT: ui.js에 있음. 렌더링하기위한 기본적인 오브젝트 정보들
 class GameObject extends ObjectT {
-    constructor(x, y, width, height, pivotX=0.5, pivotY=0.5, sprite=null) {
-        super(x, y, width, height, pivotX, pivotY);
+    constructor(name, x, y, width, height, pivotX=0.5, pivotY=0.5, sprite=null) {
+        super(name, x, y, width, height, pivotX, pivotY);
 
         this.sprite = null;
         this.sprite = sprite;
@@ -54,8 +54,8 @@ class Ball extends GameObject {
         });
     }
 
-    constructor(x, y, tool, level, velocity=15, dx=-5, dy=-5) {
-        super(x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
+    constructor(name, x, y, tool, level, velocity=15, dx=-5, dy=-5) {
+        super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
         this.transform.velocity = velocity;
         this.dx = dx;
         this.dy = dy;
@@ -102,10 +102,10 @@ class Block extends GameObject {
         }
     }
 
-    constructor(x, y, textureSrc, hp=10) {        
+    constructor(name, x, y, textureSrc, hp=10) {        
         let img = new Image();
         img.src = textureSrc;
-        super(x, y, BLOCK_SIZE, BLOCK_SIZE, 0, 0, img);
+        super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0, 0, img);
         
         this.maxHp = hp;
         this.hp = hp;
@@ -137,10 +137,10 @@ class Block extends GameObject {
 }
 
 class Player extends GameObject {
-    constructor(x, y, width, height, textureSrc) {
+    constructor(name, x, y, width, height, textureSrc) {
         let img = new Image();
         img.src = textureSrc;
-        super(x, y, width, height, 0.5, 0, img);
+        super(name, x, y, width, height, 0.5, 0, img);
     }
 
     onMouseMove(e) {

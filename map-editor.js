@@ -5,18 +5,18 @@ const editorScene = () => {
 
     scene.start = function() {
         let mode = "draw";
-        let camera = new ObjectT(0, 0, 0, 0);
+        let camera = new ObjectT("camera", 0, 0, 0, 0);
         let cameraPos = camera.transform;
 
-        this.addUI("currentMode", new UIText(20, 50, mode, 32, "black", TEXT_ALIGN_LEFT));
-        this.addUI("guide", new UIText(20, 100, "Left Click: Place/Destroy Block", 16, "black", TEXT_ALIGN_LEFT));
-        this.addUI("guide2", new UIText(20, 120, "Right Click: Drag to move map", 16, "black", TEXT_ALIGN_LEFT));
-        this.addUI("guide3", new UIText(20, 140, "d: draw", 16, "black", TEXT_ALIGN_LEFT));
-        this.addUI("guide4", new UIText(20, 160, "e: erase", 16, "black", TEXT_ALIGN_LEFT));
-        let menuBtn = new UIButton(CANVAS_WIDTH-48, 48, 64, 64, "", () => {
+        this.addUI(new UIText("currentMode", 20, 50, mode, 32, "black", TEXT_ALIGN_LEFT));
+        this.addUI(new UIText("guide", 20, 100, "Left Click: Place/Destroy Block", 16, "black", TEXT_ALIGN_LEFT));
+        this.addUI(new UIText("guide2", 20, 120, "Right Click: Drag to move map", 16, "black", TEXT_ALIGN_LEFT));
+        this.addUI(new UIText("guide3", 20, 140, "d: draw", 16, "black", TEXT_ALIGN_LEFT));
+        this.addUI(new UIText("guide4", 20, 160, "e: erase", 16, "black", TEXT_ALIGN_LEFT));
+        let menuBtn = new UIButton("menuBtn", CANVAS_WIDTH-48, 48, 64, 64, "", () => {
             this.end();
         });
-        menuBtn.appendChild(new UIImage(0, 0, 48, 48, "assets/etc/menu-icon.png"));    
+        menuBtn.appendChild(new UIImage("menuIcon", 0, 0, 48, 48, "assets/etc/menu-icon.png"));    
 
 
         let mapEditorUI = document.querySelector("#map-editor");
@@ -62,19 +62,19 @@ const editorScene = () => {
             log(map.dump());
         });
 
-        this.addUI("camera", camera);
+        this.addUI(camera);
 
         ////////////// 그리드 선 생성 //////////////
         const LINE_WIDTH = 1;
         const UNIT = BLOCK_SIZE+LINE_WIDTH;
         for (let i=0; i <= CANVAS_WIDTH / (BLOCK_SIZE+LINE_WIDTH)+1; i++) {
-            let line = new UIRect(i*UNIT + cameraPos.x % UNIT, 0, LINE_WIDTH, CANVAS_HEIGHT, 'gray', 0.5, 0);
-            this.addUI(`lineVertical${i}`, line);
+            let line = new UIRect(`lineVertical${i}`, i*UNIT + cameraPos.x % UNIT, 0, LINE_WIDTH, CANVAS_HEIGHT, 'gray', 0.5, 0);
+            this.addUI(line);
         }
 
         for (let i=0; i <= CANVAS_HEIGHT / (BLOCK_SIZE+LINE_WIDTH)+1; i++) {
-            let line = new UIRect(0, i*UNIT + cameraPos.y % UNIT, CANVAS_WIDTH, LINE_WIDTH, 'gray', 0, 0.5);
-            this.addUI(`lineHorizontal${i}`, line);
+            let line = new UIRect(`lineHorizontal${i}`, 0, i*UNIT + cameraPos.y % UNIT, CANVAS_WIDTH, LINE_WIDTH, 'gray', 0, 0.5);
+            this.addUI(line);
         }
         
         ////////////// 하단 블럭 선택 메뉴 바 생성 //////////////
@@ -82,9 +82,9 @@ const editorScene = () => {
         let blockSelected = null;
         const menuBtnSize = 64;
 
-        let blockMenu = new ObjectT(16, CANVAS_HEIGHT-menuBtnSize, 0, menuBtnSize+16, 0, 0.5);
+        let blockMenu = new ObjectT("blockMenu", 16, CANVAS_HEIGHT-menuBtnSize, 0, menuBtnSize+16, 0, 0.5);
         for (const blockId in BLOCK_LIST) {
-            let block = new UIImage(i*(menuBtnSize+16), 0, menuBtnSize, menuBtnSize, BLOCK_LIST[blockId].sprite, 0, 0.5);
+            let block = new UIImage(`blockMenu_${blockId}`, i*(menuBtnSize+16), 0, menuBtnSize, menuBtnSize, BLOCK_LIST[blockId].sprite, 0, 0.5);
             block.onClick = function() {
                 blockSelected = blockId;
                 previewBlock.sprite = BLOCK_LIST[blockSelected].sprite;
@@ -110,8 +110,8 @@ const editorScene = () => {
         }
 
         //////////////   //////////////
-        let editorManager = new UI(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0);
-        let previewBlock = new UIImage(0, 0, BLOCK_SIZE, BLOCK_SIZE, BLOCK_GRASS.sprite, 0, 0);
+        let editorManager = new UI("editorManager", 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0);
+        let previewBlock = new UIImage("previewBlock", 0, 0, BLOCK_SIZE, BLOCK_SIZE, BLOCK_GRASS.sprite, 0, 0);
         previewBlock.opacity = 0.7;
 
         editorManager.appendChild(previewBlock);
@@ -174,12 +174,12 @@ const editorScene = () => {
                 this.removeObject(`block_${absX}_${absY}`);
             }
 
-            let block = new UIImage(x, y, BLOCK_SIZE, BLOCK_SIZE, BLOCK_LIST[blockSelected].sprite, 0, 0);
+            let block = new UIImage(`block_${absX}_${absY}`, x, y, BLOCK_SIZE, BLOCK_SIZE, BLOCK_LIST[blockSelected].sprite, 0, 0);
             block.absX = absX;
             block.absY = absY;
 
             console.log('Block placed at', absX, absY)
-            this.addGameObject(`block_${absX}_${absY}`, block);
+            this.addGameObject(block);
             map.placeBlock(absX, absY, BLOCK_LIST[idx].id);
         }
 
@@ -227,9 +227,9 @@ const editorScene = () => {
             previewBlock.opacity = 0.7;
         }
 
-        this.addUI('editorManager', editorManager);
-        this.addUI("menu", blockMenu);
-        this.addUI("menuBtn", menuBtn);
+        this.addUI(editorManager);
+        this.addUI(blockMenu);
+        this.addUI(menuBtn);
     }
 
     scene.update = function() {

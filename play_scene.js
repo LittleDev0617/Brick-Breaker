@@ -1,20 +1,20 @@
 const lobby = () => {
     let scene1 = new Scene("lobby");
-    scene1.addUI("test", new UIImage(0, 0, 50, 50, "assets/a.png"));
-    scene1.addUI("titleText", new UIText(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
+    scene1.addUI(new UIImage("test", 0, 0, 50, 50, "assets/a.png"));
+    scene1.addUI(new UIText("titleText", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
 
-    scene1.addUI("playBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
+    scene1.addUI(new UIButton("playBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
         // console.log("Play button clicked!");
         gameManager.play("overWorld");
     }));
 
-    scene1.addUI("editorBtn", new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 80, 400, 50, "Map Editor", () => {
+    scene1.addUI(new UIButton("editorBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 80, 400, 50, "Map Editor", () => {
         gameManager.play("editor");
     }));
 
     for (i=0; i < 12; i++)
         for (j=0; j < 16; j++)
-            scene1.addGameObject(`stone${i}_${j}`, new Block(j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "assets/blocks/stone.png"));
+            scene1.addGameObject(new Block(`stone${i}_${j}`, j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "assets/blocks/stone.png"));
 
     return scene1;
 }
@@ -24,14 +24,14 @@ const overWorldScene = () => {
 
     for (i = 0; i < 5; i++)
         for (j = 0; j < 16; j++)
-            scene.addGameObject(`stone${i}_${j}`, new Block(j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), "assets/blocks/stone.png"));
+            scene.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), "assets/blocks/stone.png"));
 
     let player_width = 256;
     let player_height = 32;
     let player_img = "assets/etc/hotbar.png";
 
-    let player = new Player(CANVAS_WIDTH / 2, CANVAS_HEIGHT - player_height - 20, player_width, player_height, player_img);
-    scene.addGameObject("player", player);
+    let player = new Player("player", CANVAS_WIDTH / 2, CANVAS_HEIGHT - player_height - 20, player_width, player_height, player_img);
+    scene.addGameObject(player);
 
     let game_start = false;
     const gameStart = () => {
@@ -42,8 +42,8 @@ const overWorldScene = () => {
         soundManager.playBGM(); // 게임 시작 후 배경음악 재생
     };
 
-    let start_button = new UIButton(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", gameStart);
-    scene.addGameObject("start_button", start_button);
+    let start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", gameStart);
+    scene.addGameObject(start_button);
 
     let balls = []
     for (let i = 0; i < 10; i++) {
@@ -51,9 +51,9 @@ const overWorldScene = () => {
         let velocity = Math.floor(10 + Math.random() * 15);
         let dx = Math.floor(5 + Math.random() * 5);
         let dy = Math.floor(5 + Math.random() * 5);
-        let ball = new Ball(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100, "pickaxe", level, velocity, dx, dy);
+        let ball = new Ball(`ball${i}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100, "pickaxe", level, velocity, dx, dy);
         balls.push(ball);
-        scene.addGameObject(`ball${i}`, ball);
+        scene.addGameObject(ball);
     }
 
     scene.update = function () {
