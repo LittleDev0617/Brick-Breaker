@@ -116,9 +116,6 @@ class Ball extends GameObject {
     }
 
     update() {
-        this.rigidbody.update();
-        this.move();
-        this.checkCollision();
     }
 
     move() {
@@ -159,24 +156,11 @@ class Ball extends GameObject {
                     this.transform.velocity.y = -Math.abs(this.transform.velocity.y);
                     this.transform.y = collisionObject.transform.top - (this.transform.height + this.transform.offsetY);                    
                     
-                    if (collisionObject instanceof Player) {
-                        this.transform.velocity.scale(0.8);                        
-                        this.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x, 3);
-                        this.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y, 3);
-                    }
                     break;
             }
         }
+        return [collisionSide, collisionObject];
 
-        if (collisionObject instanceof Block && collisionObject.isActive) {
-            collisionObject.onClick();
-
-            if (collisionObject.isActive) {
-                soundManager.playBlockHit();
-            } else {
-                soundManager.playBlockBreak();
-            }
-        }
     }
 
     render(context) {
@@ -210,8 +194,10 @@ class Block extends GameObject {
     onClick() {
         this.hp--;
 
-        if (this.hp == 0)
+        if (this.hp == 0) {
             this.isActive = false;
+            this.scene.removeObject(this.name);
+        }
     }
 
     render(context) {
@@ -266,9 +252,11 @@ class Camera extends GameObject {
     move(dx, dy) {
         this.scene.findGameObjects("").forEach(obj => {
             // Camera 자신이면 리턴
-            if (obj == this) return;
+            if (obj == this || obj == this.parent || obj instanceof Player) return;
             obj.transform.x -= dx;
             obj.transform.y -= dy;
         });
+        // this.transform.x += dx;
+        // this.transform.y += dy;
     }
 }

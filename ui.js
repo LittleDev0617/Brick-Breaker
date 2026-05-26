@@ -21,6 +21,7 @@ class ObjectT {
         this.child.push(child);
         child.parent = this;
         child.transform.parent = this.transform;
+        child.scene = this.scene;
     }
 
     draw(context) {
@@ -223,12 +224,15 @@ class Canvas {
         return false;
     }
 
+    // 이벤트 핸들러도 좀 리팩토링할 필요 있음
     mouseMove(e, target) {        
         if (!this.isActive) return false;
         for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
             
             if (obj.onMouseMove == undefined) continue;
+            if (obj.child.length != 0)
+                this.mouseMove(e, obj.child);     
             obj.onMouseMove(e);
         }
     }

@@ -1,11 +1,12 @@
 // 글로벌 변수: 블럭 등
 
-const makeBlockInfo = function(blockId, src) {
+const makeBlockInfo = function(blockId, src, hp=1) {
     let img = new Image();
     img.src = src;
     
     this.sprite = img;
     this.id = blockId;
+    this.hp = hp;
 
     return this;
 };
@@ -13,11 +14,11 @@ const makeBlockInfo = function(blockId, src) {
 // overworld blocks
 const BLOCK_GRASS       = new makeBlockInfo("b_grass",          "assets/blocks/over/grass.png");
 const BLOCK_DIRT        = new makeBlockInfo("b_dirt",           "assets/blocks/over/dirt.png");
-const BLOCK_STONE       = new makeBlockInfo("b_stone",          "assets/blocks/over/stone.png");
-const BLOCK_OAK_LOG     = new makeBlockInfo("b_oak_log",        "assets/blocks/over/oak_log.png");
-const BLOCK_IRON_ORE    = new makeBlockInfo("b_iron_ore",       "assets/blocks/over/iron_ore.png");
-const BLOCK_DIAMOND_ORE = new makeBlockInfo("b_diamond_ore",    "assets/blocks/over/diamond_ore.png");
-const BLOCK_OBSIDIAN    = new makeBlockInfo("b_obsidian",       "assets/blocks/over/obsidian.png");
+const BLOCK_STONE       = new makeBlockInfo("b_stone",          "assets/blocks/over/stone.png", 2);
+const BLOCK_OAK_LOG     = new makeBlockInfo("b_oak_log",        "assets/blocks/over/oak_log.png", 2);
+const BLOCK_IRON_ORE    = new makeBlockInfo("b_iron_ore",       "assets/blocks/over/iron_ore.png", 3);
+const BLOCK_DIAMOND_ORE = new makeBlockInfo("b_diamond_ore",    "assets/blocks/over/diamond_ore.png", 5);
+const BLOCK_OBSIDIAN    = new makeBlockInfo("b_obsidian",       "assets/blocks/over/obsidian.png", 50);
 const BLOCK_TNT         = new makeBlockInfo("b_tnt",            "assets/blocks/over/tnt.png");
 const BLOCK_ZOMBIE      = new makeBlockInfo("b_zombie",         "assets/blocks/over/zombie.png");
 const BLOCK_PIG         = new makeBlockInfo("b_pig",            "assets/blocks/over/pig.png");
@@ -93,7 +94,9 @@ class GameMap {
             let absX = parseInt(_coord.split(', ')[0]);
             let absY = parseInt(_coord.split(', ')[1]);
 
-            let block = new Block(`block_${absX}_${absY}`, absX, absY, BLOCK_LIST[blockId].sprite);
+            const blockInfo = BLOCK_LIST[blockId];
+
+            let block = new Block(`block_${absX}_${absY}`, absX, absY, blockInfo.sprite, blockInfo.hp);
             block.absX = absX;
             block.absY = absY;
 
