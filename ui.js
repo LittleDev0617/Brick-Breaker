@@ -13,6 +13,7 @@ class ObjectT {
         this.isActive = true;
         this.parent = null;
         this.child = [];
+        this.scene = null;
         this.transform = new Transform(x, y, width, height, pivotX, pivotY);
     }
 
@@ -242,6 +243,16 @@ class Canvas {
         }
     }
 
+    keyUp(e, target) {   
+        if (!this.isActive) return false;
+        for (const objId of Object.keys(target).reverse()) {
+            let obj = target[objId];
+            
+            if (obj.onKeyUp == undefined) continue;
+            obj.onKeyUp(e);
+        }
+    }
+
     draw() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
@@ -270,6 +281,10 @@ class Scene {
         this.name = name;
         this.isEnd = false;
         this.isActive = false;
+        this.deltaTime = 0;
+        this.last = 0;
+        this.keys = {};
+
         this.uiCanvas = new Canvas("ui");
         this.gameCanvas = new Canvas("game");
         
@@ -294,7 +309,16 @@ class Scene {
             })
         }
 
-        document.addEventListener("keydown", e => dispatchAll(e, "keyDown"))
+        document.addEventListener("keydown", e => {
+            this.keys[e.code] = true;
+            dispatchAll(e, "keyDown");
+        });
+
+        document.addEventListener("keyup", e => {
+            this.keys[e.code] = false;
+            dispatchAll(e, "keyUp")
+        });
+
         topCanvas.addEventListener("mousedown", e => dispatchTopDown(e, "tryClick"));
         topCanvas.addEventListener("wheel", e => dispatchTopDown(e, "tryScroll"));
         topCanvas.addEventListener("mousemove", e => dispatchAll(e, "updateHover"));
@@ -318,6 +342,7 @@ class Scene {
 
     addObject(obj, canvas) {
         canvas.addObject(obj);
+        obj.scene = this;
     }
 
     addUI(uiObj) { this.addObject(uiObj, this.uiCanvas); }
@@ -408,9 +433,17 @@ class Scene {
         // Scene이 play 될 때 Scene 초기화 기능.
     }
 
+    frame() {        
+        this.deltaTime = performance.now() - this.last;
+        
+        this.update();
+        this.draw();
+
+        this.last = performance.now();
+    }
+
     update() {
         // 각자 Scene 객체에서 구현
-        this.draw();
     }
 
     end() {

@@ -73,7 +73,7 @@ class GameManager {
             let lastScene = this.callStack.pop();
             return this.play(lastScene);
         }
-        this.playingScene.update();
+        this.playingScene.frame();
         requestAnimationFrame(() => { this.update(); });
     }
 };
@@ -165,17 +165,17 @@ class Block extends GameObject {
 
     render(context) {
         context.imageSmoothingEnabled = false;
-        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE, BLOCK_SIZE);
+        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE+1, BLOCK_SIZE+1);
 
         if (this.hp < this.maxHp) {
             let index = Block.destroyImages.length - Math.floor((this.hp / this.maxHp) * 10) - 1;
             let texture = Block.destroyImages[index];
-            context.drawImage(texture, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE, BLOCK_SIZE);
+            context.drawImage(texture, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE+1, BLOCK_SIZE+1);
         }
 
         if (this.hover) {
             context.fillStyle = "rgb(0, 0, 0, 0.2)";
-            context.fillRect(this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE, BLOCK_SIZE);
+            context.fillRect(this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE+1, BLOCK_SIZE+1);
         }
     }
 }
@@ -201,5 +201,20 @@ class Player extends GameObject {
     render(context) {
         context.imageSmoothingEnabled = false;
         context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
+    }
+}
+
+class Camera extends GameObject {
+    constructor(name) {
+        super(name, 0, 0, 0, 0);
+    }
+
+    move(dx, dy) {
+        this.scene.findGameObjects("").forEach(obj => {
+            // Camera 자신이면 리턴
+            if (obj == this) return;
+            obj.transform.x -= dx;
+            obj.transform.y -= dy;
+        });
     }
 }

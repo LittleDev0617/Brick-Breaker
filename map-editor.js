@@ -151,8 +151,10 @@ const editorScene = () => {
         const moveRelative = e => {        
             const { offsetX, offsetY, deltaX, deltaY } = e;
             this.findGameObjects("block").forEach(block => {            
-                block.transform.x = block.absX - cameraPos.x;
-                block.transform.y = block.absY - cameraPos.y;
+                // block.transform.x = block.absX - cameraPos.x;
+                // block.transform.y = block.absY - cameraPos.y;
+                block.transform.x -= deltaX;
+                block.transform.y -= deltaY;
             });
         }
 
@@ -259,8 +261,6 @@ const editorScene = () => {
 
     scene.update = function() {
         
-
-        this.draw();
     }
 
     return scene;
