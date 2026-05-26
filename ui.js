@@ -243,7 +243,7 @@ class Canvas {
         }
     }
 
-    keyDown(e, target) {   
+    keyUp(e, target) {   
         if (!this.isActive) return false;
         for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
