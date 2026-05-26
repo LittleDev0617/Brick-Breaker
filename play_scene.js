@@ -4,6 +4,7 @@ const lobby = () => {
     scene1.addUI(new UIText("titleText", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
     scene1.addUI(new UIButton("playBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
         // console.log("Play button clicked!");
+        scoreManager.reset(); // 새 게임 시작 시 점수 초기화
         gameManager.play("overWorld");
     }));
 
