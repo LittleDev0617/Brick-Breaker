@@ -95,35 +95,28 @@ class Ball extends GameObject {
         });
     }
 
-    constructor(name, x, y, tool, level, velocity=15, dx=-5, dy=-5) {
+    constructor(name, x, y, tool, level, speed) {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
-        this.transform.velocity = velocity;
-        this.dx = dx;
-        this.dy = dy;
-
-        let current_velocity = Math.sqrt(dx*dx + dy*dy);
-        this.dx = (dx/current_velocity)*velocity;
-        this.dy = (dy/current_velocity)*velocity;
-
+        this.transform.velocity = new Vector2D(speed, speed);        
     }
 
     move() {    
-        this.transform.x += this.dx;
-        this.transform.y += this.dy;
+        this.transform.x += this.transform.velocity.x;
+        this.transform.y += this.transform.velocity.y;
 
         let a = this.transform.getAbsolute();
         if (a.top <= 0) {
-            this.dy = Math.abs(this.dy);
+            this.transform.velocity.y = -this.transform.velocity.y;
             this.transform.y = this.transform.height * this.transform.pivotY;
         } else if (a.bottom >= CANVAS_HEIGHT) {
-            this.dy = -Math.abs(this.dy);
+            this.transform.velocity.y = -this.transform.velocity.y;
             this.transform.y = CANVAS_HEIGHT - this.transform.height * this.transform.pivotY;
         }
         if (a.left <= 0) {
-            this.dx = Math.abs(this.dx);
+            this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = this.transform.width * this.transform.pivotX;
         } else if (a.right >= CANVAS_WIDTH) {
-            this.dx = -Math.abs(this.dx);
+            this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = CANVAS_WIDTH - this.transform.width * this.transform.pivotX;
         }
     }
