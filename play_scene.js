@@ -21,12 +21,16 @@ const lobby = () => {
 const overWorldScene = () => {
     let scene = new Scene("overWorld");
 
-    for (i = 0; i < 5; i++)
-        for (j = 0; j < 16; j++)
-            scene.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), "assets/blocks/stone.png"));
+    // for (i = 0; i < 5; i++)
+    //     for (j = 0; j < 16; j++)
+    //         scene.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), "assets/blocks/stone.png"));
 
-    let player_width = 256;
-    let player_height = 32;
+
+    let map = maps.find(map => map.name == 'overworld');
+    map.draw(scene);
+
+    let player_width = 512;
+    let player_height = 64;
     let player_img = "assets/etc/hotbar.png";
 
     let player = new Player("player", CANVAS_WIDTH / 2, CANVAS_HEIGHT - player_height - 20, player_width, player_height, player_img);

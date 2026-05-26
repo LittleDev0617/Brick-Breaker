@@ -158,10 +158,9 @@ class Ball extends GameObject {
                 case "bottom":
                     this.transform.velocity.y = -Math.abs(this.transform.velocity.y);
                     this.transform.y = collisionObject.transform.top - (this.transform.height + this.transform.offsetY);                    
-                    this.transform.velocity.scale(0.8);
                     
                     if (collisionObject instanceof Player) {
-                        console.log(collisionObject.transform.velocity.y)
+                        this.transform.velocity.scale(0.8);                        
                         this.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x, 3);
                         this.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y, 3);
                     }
