@@ -9,7 +9,7 @@ class Vector2D {
 
     get size() { return Math.sqrt(this.x**2 + this.y**2); }
     scale(k) { this.x *= k; this.y *= k; }
-    add(v) { }
+    add(v) { this.x += v.x; this.y += v.y; }
     rotate(angle) {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
@@ -79,6 +79,19 @@ class GameManager {
     }
 };
 
+class Rigidbody {
+    constructor(transform, mass) {
+        this.transform = transform;
+        this.mass = mass;
+        transform.acceleration = new Vector2D(0, 0);
+        this.transform.acceleration.y = this.mass * 0.008;
+    }
+
+    update() {
+        // gravity
+        this.transform.velocity.add(this.transform.acceleration);
+    }
+}
 
 class Ball extends GameObject {
     static toolList = ["pickaxe", "axe", "shovel", "sword"];
@@ -99,9 +112,11 @@ class Ball extends GameObject {
     constructor(name, x, y, tool, level, velocity) {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
         this.transform.velocity = velocity;
+        this.rigidbody = new Rigidbody(this.transform, 1);
     }
 
-    update() {                
+    update() {
+        this.rigidbody.update();
         this.move();
         this.checkCollision();
     }
@@ -120,13 +135,13 @@ class Ball extends GameObject {
             this.transform.x = CANVAS_WIDTH - this.transform.width * this.transform.pivotX;
         }
         
-        this.transform.radian += 0.05 * this.transform.velocity.size * 0.4;
+        this.transform.radian += 0.02 * (this.transform.velocity.size * (Math.random() + 1));
     }
 
     checkCollision() {
         const [collisionSide, collisionObject] = this.scene.checkCollision(this);
 
-        if (!(collisionObject instanceof Ball)) {
+        if (!(collisionObject instanceof Ball)) {            
             switch (collisionSide) {
                 case "left":
                     this.transform.velocity.x = Math.abs(this.transform.velocity.x);
@@ -142,7 +157,14 @@ class Ball extends GameObject {
                     break;
                 case "bottom":
                     this.transform.velocity.y = -Math.abs(this.transform.velocity.y);
-                    this.transform.y = collisionObject.transform.top - (this.transform.height + this.transform.offsetY);
+                    this.transform.y = collisionObject.transform.top - (this.transform.height + this.transform.offsetY);                    
+                    this.transform.velocity.scale(0.8);
+                    
+                    if (collisionObject instanceof Player) {
+                        console.log(collisionObject.transform.velocity.y)
+                        this.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x, 3);
+                        this.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y, 3);
+                    }
                     break;
             }
         }
@@ -215,17 +237,20 @@ class Player extends GameObject {
         let img = new Image();
         img.src = textureSrc;
         super(name, x, y, width, height, 0.5, 0, img);
+
+        this.prevX = 0;
+        this.prevY = 0;
     }
 
     onMouseMove(e) {
-        this.transform.x = e.offsetX;
+        this.transform.x = Math.min(CANVAS_WIDTH-this.transform.width / 2, Math.max(e.offsetX, this.transform.width/2));
+        this.transform.y = Math.min(CANVAS_HEIGHT-50, Math.max(e.offsetY, CANVAS_HEIGHT-200));
 
-        if (this.transform.x < this.transform.width / 2) {
-            this.transform.x = this.transform.width / 2;
-        }
-        if (this.transform.x > CANVAS_WIDTH - this.transform.width / 2) {
-            this.transform.x = CANVAS_WIDTH - this.transform.width / 2;
-        }
+        this.transform.velocity.x = (this.transform.x - this.prevX) * this.scene.deltaTime;
+        this.transform.velocity.y = (this.transform.y - this.prevY) * this.scene.deltaTime;        
+
+        this.prevX = this.transform.x;
+        this.prevY = this.transform.y;
     }
 
     render(context) {

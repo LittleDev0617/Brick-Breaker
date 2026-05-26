@@ -1,5 +1,5 @@
 class Transform {
-    constructor(x, y, width, height, pivotX=0.5, pivotY=0.5, velocity=0, radian=0) {        
+    constructor(x, y, width, height, pivotX=0.5, pivotY=0.5, velocity=new Vector2D(0,0), radian=0) {        
         this.x = x;
         this.y = y;
         this.pivotX = pivotX;

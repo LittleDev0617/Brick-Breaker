@@ -49,8 +49,8 @@ const overWorldScene = () => {
         let level = Math.floor(Math.random() * 4);
         let velocity = new Vector2D(1, 1);
         velocity.rotate(Math.random() * (Math.PI/4 * 3) + Math.PI/4);
-        velocity.scale(0.1);
-        
+        velocity.scale(0.2);
+
         let ball = new Ball(`ball${i}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100, "pickaxe", level, velocity);
         ball.transform.velocity.rotate(Math.random() * Math.PI);
 
