@@ -75,18 +75,46 @@ const sampleScene = () => {
 
             ball.transform.radian += 0.05 * ball.transform.velocity.x;
         });
-        
-        this.draw();
     }
     return sampleScene;
 };
 
 const sampleScene2 = () => {
-    let scene = new Scene("sample2");
+    let scene = new Scene("sample2");    
 
     scene.start = function() {
         let map = maps.find(map => map.name == "test");
         map.draw(this);
+
+        let camera = new Camera("MainCamera");
+        this.addGameObject(camera);
+
+        let eventListener = new ObjectT("EventListener", 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);        
+
+        this.addGameObject(eventListener);
+    }
+
+    scene.update = function() {
+        let camera = this.findGameObject("MainCamera");
+        let dx = 0; let dy = 0;
+
+        if (this.keys["ArrowLeft"]) {
+            dx += -5;
+        }
+        
+        if (this.keys["ArrowRight"]) {
+            dx += 5;
+        }
+        
+        if (this.keys["ArrowUp"]) {
+            dy += -5;
+        }
+        
+        if (this.keys["ArrowDown"]) {
+            dy += 5;
+        }
+
+        camera.move(dx, dy);
     }
 
     return scene;

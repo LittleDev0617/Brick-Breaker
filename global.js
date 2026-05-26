@@ -67,7 +67,7 @@ let BLOCK_LIST = {};
     BLOCK_LIST[blockInfo.id] = blockInfo;
 })
 
-const BLOCK_SIZE  = 65;
+const BLOCK_SIZE  = 64;
 
 const CANVAS_WIDTH  = 1024;
 const CANVAS_HEIGHT = 768;

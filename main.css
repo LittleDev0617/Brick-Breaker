@@ -107,6 +107,7 @@ select {
 }
 
 #log {
+    display: none;
     margin-top: 40px;
     width: 1024px;
     height: 150px;
