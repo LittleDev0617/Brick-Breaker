@@ -52,7 +52,11 @@ const editorScene = () => {
             select.value = map.name;
             mapEditorUI.querySelector("#map-name").value = map.name;
         
-            map.draw(this);
+            let blocks = map.draw(this);
+            blocks.forEach(block => {
+                block.onClick = undefined;
+                block.hover = undefined;
+            });
         };
         loadMaps(map);
 

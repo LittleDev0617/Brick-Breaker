@@ -67,7 +67,7 @@ let BLOCK_LIST = {};
     BLOCK_LIST[blockInfo.id] = blockInfo;
 })
 
-const BLOCK_SIZE  = 64;
+const BLOCK_SIZE  = 65;
 
 const CANVAS_WIDTH  = 1024;
 const CANVAS_HEIGHT = 768;
@@ -87,18 +87,21 @@ class GameMap {
     }
 
     draw(scene) {
+        let blocks = [];
         for (const _coord in this.map) {
             let blockId = this.map[_coord];
             let absX = parseInt(_coord.split(', ')[0]);
             let absY = parseInt(_coord.split(', ')[1]);
 
-            let block = new UIImage(`block_${absX}_${absY}`, absX, absY, BLOCK_SIZE, BLOCK_SIZE, BLOCK_LIST[blockId].sprite, 0, 0);
+            let block = new Block(`block_${absX}_${absY}`, absX, absY, BLOCK_LIST[blockId].sprite);
             block.absX = absX;
             block.absY = absY;
 
             console.log('Block placed at', absX, absY)
             scene.addGameObject(block);
+            blocks.push(block);
         }
+        return blocks;
     }
     
     coord(x, y) { return `${x}, ${y}`; }

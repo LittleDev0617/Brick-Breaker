@@ -80,3 +80,14 @@ const sampleScene = () => {
     }
     return sampleScene;
 };
+
+const sampleScene2 = () => {
+    let scene = new Scene("sample2");
+
+    scene.start = function() {
+        let map = maps.find(map => map.name == "test");
+        map.draw(this);
+    }
+
+    return scene;
+};

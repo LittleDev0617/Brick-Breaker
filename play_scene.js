@@ -1,8 +1,7 @@
 const lobby = () => {
     let scene1 = new Scene("lobby");
-    scene1.addUI(new UIImage("test", 0, 0, 50, 50, "assets/a.png"));
+    
     scene1.addUI(new UIText("titleText", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
-
     scene1.addUI(new UIButton("playBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
         // console.log("Play button clicked!");
         gameManager.play("overWorld");
