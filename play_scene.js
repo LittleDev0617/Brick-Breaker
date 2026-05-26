@@ -47,10 +47,13 @@ const overWorldScene = () => {
     let balls = []
     for (let i = 0; i < 10; i++) {
         let level = Math.floor(Math.random() * 4);
-        let velocity = Math.floor(10 + Math.random() * 15);
-        let dx = Math.floor(5 + Math.random() * 5);
-        let dy = Math.floor(5 + Math.random() * 5);
-        let ball = new Ball(`ball${i}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100, "pickaxe", level, velocity, dx, dy);
+        let velocity = new Vector2D(1, 1);
+        velocity.rotate(Math.random() * (Math.PI/4 * 3) + Math.PI/4);
+        velocity.scale(0.1);
+        
+        let ball = new Ball(`ball${i}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100, "pickaxe", level, velocity);
+        ball.transform.velocity.rotate(Math.random() * Math.PI);
+
         balls.push(ball);
         scene.addGameObject(ball);
     }
@@ -59,17 +62,8 @@ const overWorldScene = () => {
 
         if (game_start) {
             balls.forEach(ball => {
-                ball.move();
-                const [collisionSide, collisionObject] = scene.checkCollision(ball);
-                if (collisionObject instanceof Block && collisionObject.isActive) {
-                    collisionObject.onClick();
-
-                    if (collisionObject.isActive) {
-                        soundManager.playBlockHit();
-                    } else {
-                        soundManager.playBlockBreak();
-                    }
-                }
+                ball.update();
+                
             });
         }
 

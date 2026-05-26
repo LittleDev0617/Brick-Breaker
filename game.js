@@ -7,20 +7,21 @@ class Vector2D {
         this.y = y;
     }
 
+    get size() { return Math.sqrt(this.x**2 + this.y**2); }
     scale(k) { this.x *= k; this.y *= k; }
-    add(v) {  }
+    add(v) { }
     rotate(angle) {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
         this.x = this.x * cos - this.y * sin;
-        this.y = this.x * sin + this.y * cos;        
+        this.y = this.x * sin + this.y * cos;
     }
 };
 
 // 새로운 오브젝트 만들 때 게임오브젝트를 상속받기
 // 게임오브젝트는 ObjectT를 상속받음. ObjectT: ui.js에 있음. 렌더링하기위한 기본적인 오브젝트 정보들
 class GameObject extends ObjectT {
-    constructor(name, x, y, width, height, pivotX=0.5, pivotY=0.5, sprite=null) {
+    constructor(name, x, y, width, height, pivotX = 0.5, pivotY = 0.5, sprite = null) {
         super(name, x, y, width, height, pivotX, pivotY);
 
         this.sprite = null;
@@ -28,7 +29,7 @@ class GameObject extends ObjectT {
     }
 
     update() {
-        this.move(); 
+        this.move();
         this.render();
     }
 
@@ -49,7 +50,7 @@ class GameManager {
     get playingScene() { return this.sceneIndex == -1 ? null : this.sceneList[this.sceneIndex]; }
     addScene(scene) { this.sceneList.push(scene); }
 
-    play(sceneName) {        
+    play(sceneName) {
         if (this.playingScene != null)
             this.callStack.push(this.playingScene.name);
 
@@ -60,7 +61,7 @@ class GameManager {
                 this.sceneIndex = i;
             }
         })
-        
+
         console.log(`Scene ${sceneName} started`);
         this.playingScene.isEnd = false;
         this.playingScene.start();
@@ -95,29 +96,65 @@ class Ball extends GameObject {
         });
     }
 
-    constructor(name, x, y, tool, level, speed) {
+    constructor(name, x, y, tool, level, velocity) {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
-        this.transform.velocity = new Vector2D(speed, speed);        
+        this.transform.velocity = velocity;
     }
 
-    move() {    
+    update() {                
+        this.move();
+        this.checkCollision();
+    }
+
+    move() {
         this.transform.x += this.transform.velocity.x;
         this.transform.y += this.transform.velocity.y;
 
         let a = this.transform.getAbsolute();
-        if (a.top <= 0) {
-            this.transform.velocity.y = -this.transform.velocity.y;
-            this.transform.y = this.transform.height * this.transform.pivotY;
-        } else if (a.bottom >= CANVAS_HEIGHT) {
-            this.transform.velocity.y = -this.transform.velocity.y;
-            this.transform.y = CANVAS_HEIGHT - this.transform.height * this.transform.pivotY;
-        }
+        
         if (a.left <= 0) {
             this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = this.transform.width * this.transform.pivotX;
         } else if (a.right >= CANVAS_WIDTH) {
             this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = CANVAS_WIDTH - this.transform.width * this.transform.pivotX;
+        }
+        
+        this.transform.radian += 0.05 * this.transform.velocity.size * 0.4;
+    }
+
+    checkCollision() {
+        const [collisionSide, collisionObject] = this.scene.checkCollision(this);
+
+        if (!(collisionObject instanceof Ball)) {
+            switch (collisionSide) {
+                case "left":
+                    this.transform.velocity.x = Math.abs(this.transform.velocity.x);
+                    this.transform.x = collisionObject.transform.right + Math.abs(this.transform.offsetX);
+                    break;
+                case "right":
+                    this.transform.velocity.x = -Math.abs(this.transform.velocity.x);
+                    this.transform.x = collisionObject.transform.left - (this.transform.width + this.transform.offsetX);
+                    break;
+                case "top":
+                    this.transform.velocity.y = Math.abs(this.transform.velocity.y);
+                    this.transform.y = collisionObject.transform.bottom + -this.transform.offsetY;
+                    break;
+                case "bottom":
+                    this.transform.velocity.y = -Math.abs(this.transform.velocity.y);
+                    this.transform.y = collisionObject.transform.top - (this.transform.height + this.transform.offsetY);
+                    break;
+            }
+        }
+
+        if (collisionObject instanceof Block && collisionObject.isActive) {
+            collisionObject.onClick();
+
+            if (collisionObject.isActive) {
+                soundManager.playBlockHit();
+            } else {
+                soundManager.playBlockBreak();
+            }
         }
     }
 
@@ -129,21 +166,21 @@ class Ball extends GameObject {
 class Block extends GameObject {
     static destroyImages = [];
     static {
-        for (let i=0; i<10; i++) {
+        for (let i = 0; i < 10; i++) {
             let img = new Image();
             img.src = `assets/blocks/destroy/destroy_stage_${i}.png`;
             this.destroyImages.push(img);
         }
     }
 
-    constructor(name, x, y, textureSrc, hp=10) {        
+    constructor(name, x, y, textureSrc, hp = 10) {
         let img = textureSrc;
         if (typeof textureSrc === 'string') {
             img = new Image();
             img.src = textureSrc;
         }
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0, 0, img);
-        
+
         this.maxHp = hp;
         this.hp = hp;
         this.hover = false;
@@ -152,23 +189,23 @@ class Block extends GameObject {
     onClick() {
         this.hp--;
 
-        if (this.hp == 0) 
+        if (this.hp == 0)
             this.isActive = false;
     }
 
     render(context) {
         context.imageSmoothingEnabled = false;
-        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE+1, BLOCK_SIZE+1);
+        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE + 1, BLOCK_SIZE + 1);
 
         if (this.hp < this.maxHp) {
             let index = Block.destroyImages.length - Math.floor((this.hp / this.maxHp) * 10) - 1;
             let texture = Block.destroyImages[index];
-            context.drawImage(texture, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE+1, BLOCK_SIZE+1);
+            context.drawImage(texture, this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE + 1, BLOCK_SIZE + 1);
         }
 
         if (this.hover) {
             context.fillStyle = "rgb(0, 0, 0, 0.2)";
-            context.fillRect(this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE+1, BLOCK_SIZE+1);
+            context.fillRect(this.transform.offsetX, this.transform.offsetY, BLOCK_SIZE + 1, BLOCK_SIZE + 1);
         }
     }
 }
@@ -183,11 +220,11 @@ class Player extends GameObject {
     onMouseMove(e) {
         this.transform.x = e.offsetX;
 
-        if (this.transform.x < this.transform.width/2) {
-            this.transform.x = this.transform.width/2;
+        if (this.transform.x < this.transform.width / 2) {
+            this.transform.x = this.transform.width / 2;
         }
-        if (this.transform.x > CANVAS_WIDTH - this.transform.width/2) {
-            this.transform.x = CANVAS_WIDTH - this.transform.width/2;
+        if (this.transform.x > CANVAS_WIDTH - this.transform.width / 2) {
+            this.transform.x = CANVAS_WIDTH - this.transform.width / 2;
         }
     }
 

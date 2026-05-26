@@ -374,7 +374,7 @@ class Scene {
         for (const objID in this.gameCanvas.objects) {
             let otherObj = this.gameCanvas.objects[objID];
 
-            if (otherObj !== obj && otherObj.isActive && !(otherObj instanceof Ball)) {
+            if (otherObj !== obj && otherObj.isActive) {
                 
                 const a = obj.transform.getAbsolute();
                 const b = otherObj.transform.getAbsolute();
@@ -399,26 +399,18 @@ class Scene {
                     if (overlapX < overlapY) {
                         if (diffX > 0) {
                             // obj: 왼쪽을 부딪힘
-                            obj.dx = Math.abs(obj.dx);
-                            obj.transform.x = b.right + (obj.transform.width * obj.transform.pivotX);
                             return ["left", otherObj];
                         } else {
                             // obj: 오른쪽을 부딪힘
-                            obj.dx = -Math.abs(obj.dx);
-                            obj.transform.x = b.left - (obj.transform.width * (1 - obj.transform.pivotX));
                             return ["right", otherObj];
                         }
                     } 
                     else {
                         if (diffY > 0) {
                             // obj: 위를 부딪힘
-                            obj.dy = Math.abs(obj.dy);
-                            obj.transform.y = b.bottom + (obj.transform.height * obj.transform.pivotY);
                             return ["top", otherObj];
                         } else {
                             // obj: 아래를 부딪힘
-                            obj.dy = -Math.abs(obj.dy);
-                            obj.transform.y = b.top - (obj.transform.height * (1 - obj.transform.pivotY));
                             return ["bottom", otherObj];
                         }
                     }
