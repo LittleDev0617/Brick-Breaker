@@ -38,6 +38,47 @@ class GameObject extends ObjectT {
 }
 
 
+class GameManager {
+    constructor() {
+        this.level = 0;
+        this.sceneIndex = -1;
+        this.sceneList = [];
+        this.callStack = [];
+    }
+
+    get playingScene() { return this.sceneIndex == -1 ? null : this.sceneList[this.sceneIndex]; }
+    addScene(scene) { this.sceneList.push(scene); }
+
+    play(sceneName) {        
+        if (this.playingScene != null)
+            this.callStack.push(this.playingScene.name);
+
+        this.sceneList.forEach((scene, i) => {
+            scene.isActive = false;
+            if (scene.name == sceneName) {
+                scene.isActive = true;
+                this.sceneIndex = i;
+            }
+        })
+        
+        console.log(`Scene ${sceneName} started`);
+        this.playingScene.isEnd = false;
+        this.playingScene.start();
+        this.update();
+    }
+
+    update() {
+        if (this.playingScene.isEnd) {
+            this.sceneIndex = -1;
+            let lastScene = this.callStack.pop();
+            return this.play(lastScene);
+        }
+        this.playingScene.update();
+        requestAnimationFrame(() => { this.update(); });
+    }
+};
+
+
 class Ball extends GameObject {
     static toolList = ["pickaxe", "axe", "shovel", "sword"];
     static toolLevelList = ["wood", "stone", "iron", "diamond"];
@@ -103,8 +144,11 @@ class Block extends GameObject {
     }
 
     constructor(name, x, y, textureSrc, hp=10) {        
-        let img = new Image();
-        img.src = textureSrc;
+        let img = textureSrc;
+        if (typeof textureSrc === 'string') {
+            img = new Image();
+            img.src = textureSrc;
+        }
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0, 0, img);
         
         this.maxHp = hp;
