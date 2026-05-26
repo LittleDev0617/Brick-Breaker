@@ -281,6 +281,8 @@ class Scene {
         this.name = name;
         this.isEnd = false;
         this.isActive = false;
+        this.deltaTime = 0;
+        this.last = 0;
         this.keys = {};
 
         this.uiCanvas = new Canvas("ui");
@@ -431,9 +433,13 @@ class Scene {
         // Scene이 play 될 때 Scene 초기화 기능.
     }
 
-    frame() {
+    frame() {        
+        this.deltaTime = performance.now() - this.last;
+        
         this.update();
         this.draw();
+
+        this.last = performance.now();
     }
 
     update() {

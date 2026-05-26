@@ -99,22 +99,22 @@ const sampleScene2 = () => {
         let dx = 0; let dy = 0;
 
         if (this.keys["ArrowLeft"]) {
-            dx += -5;
+            dx += -1;
         }
         
         if (this.keys["ArrowRight"]) {
-            dx += 5;
+            dx += 1;
         }
         
         if (this.keys["ArrowUp"]) {
-            dy += -5;
+            dy += -1;
         }
         
         if (this.keys["ArrowDown"]) {
-            dy += 5;
+            dy += 1;
         }
 
-        camera.move(dx, dy);
+        camera.move(dx * this.deltaTime, dy * this.deltaTime);
     }
 
     return scene;
