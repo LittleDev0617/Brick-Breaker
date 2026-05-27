@@ -144,6 +144,8 @@ class Ball extends GameObject {
             if (collisionObject instanceof Block) {
                 this.transform.velocity.scale(0.9);
 
+                if (this.damage >= collisionObject.hp)
+                    return [collisionSide, collisionObject];
             }
             switch (collisionSide) {
                 case "left":
@@ -203,7 +205,7 @@ class Block extends GameObject {
     hit(dmg) {
         this.hp -= dmg;
 
-        if (this.hp == 0) {
+        if (this.hp <= 0) {
             this.isActive = false;
             this.scene.removeObject(this.name);
         }

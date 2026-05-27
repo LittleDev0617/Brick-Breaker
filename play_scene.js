@@ -136,7 +136,7 @@ const overWorldScene = () => {
                 }
                 
                 if (collisionObject instanceof Block && collisionObject.isActive) {
-                    collisionObject.hit();
+                    collisionObject.hit(ball.damage);
 
                     if (collisionObject.isActive) {
                         soundManager.playBlockHit();
