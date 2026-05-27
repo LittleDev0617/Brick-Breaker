@@ -129,9 +129,15 @@ class Ball extends GameObject {
         if (a.left <= 0) {
             this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = this.transform.width * this.transform.pivotX;
+
+            this.transform.velocity.rotate(90 * Math.PI / 180);
+            this.transform.velocity.scale(0.9);
         } else if (a.right >= CANVAS_WIDTH) {
             this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = CANVAS_WIDTH - this.transform.width * this.transform.pivotX;
+            
+            this.transform.velocity.rotate(-90 * Math.PI / 180);
+            this.transform.velocity.scale(0.9);
         }
         
         this.transform.radian += 0.02 * (this.transform.velocity.size * (Math.random() + 1));

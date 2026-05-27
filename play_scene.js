@@ -68,7 +68,7 @@ const overWorldScene = () => {
     scene.addGameObject(player);    
 
     let camera = new Camera("camera");
-    camera.transform.y -= 500;
+    camera.transform.y -= 400;
 
     player.appendChild(camera);
     
@@ -106,7 +106,7 @@ const overWorldScene = () => {
     camera.onMouseMove = function(e) {
         const { offsetX, offsetY } = e;
 
-        console.log(offsetY + player.transform.y , 800)
+        console.log(offsetY, 700)
         let cntBlocksInMap = 0;
         this.scene.findGameObjects('block_').forEach(block => {
             if (block.transform.y >= camera.transform.getAbsolute().y)
@@ -115,7 +115,7 @@ const overWorldScene = () => {
 
         canCameraMove = cntBlocksInMap <= 10;
         console.log(cntBlocksInMap)
-        isCameraMoving = canCameraMove && offsetY + player.transform.y <= 800;
+        isCameraMoving = canCameraMove && offsetY <= CANVAS_HEIGHT-200;
     }
 
 
@@ -130,7 +130,7 @@ const overWorldScene = () => {
                 const [collisionSide, collisionObject] = ball.checkCollision();
                 
                 if (collisionSide == 'bottom' && collisionObject instanceof Player) {
-                    // ball.transform.velocity.scale(0.8);                        
+                    // ball.transform.velocity.scale(0.8);
                     ball.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x, 1);
                     ball.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y, 1);
                 }
