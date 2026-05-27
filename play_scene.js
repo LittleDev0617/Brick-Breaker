@@ -50,11 +50,7 @@ const overWorldScene = () => {
     scene.addUI(scoreText);
 
     // scoreManager가 이 scoreText를 갱신하도록 연결
-    scoreManager.setTexwtObject(scoreText);
-
-    for (i = 0; i < 5; i++)
-        for (j = 0; j < 16; j++)
-            scene.addGameObject(ne Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), "assets/blocks/stone.png"));
+    scoreManager.setTextObject(scoreText);
 
     // for (i = 0; i < 5; i++)
     //     for (j = 0; j < 16; j++)
