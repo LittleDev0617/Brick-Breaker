@@ -1,9 +1,10 @@
 const lobby = () => {
     let scene1 = new Scene("lobby");
-    
+
     scene1.addUI(new UIText("titleText", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
     scene1.addUI(new UIButton("playBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
         // console.log("Play button clicked!");
+        scoreManager.reset(); // 새 게임 시작 시 점수 초기화
         gameManager.play("overWorld");
     }));
 
@@ -11,9 +12,9 @@ const lobby = () => {
         gameManager.play("editor");
     }));
 
-    for (i=0; i < 12; i++)
-        for (j=0; j < 16; j++)
-            scene1.addGameObject(new Block(`stone${i}_${j}`, j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "assets/blocks/stone.png"));
+    for (i = 0; i < 12; i++)
+        for (j = 0; j < 16; j++)
+            scene1.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), "assets/blocks/stone.png"));
 
     return scene1;
 }
@@ -21,6 +22,39 @@ const lobby = () => {
 const overWorldScene = () => {
     let scene = new Scene("overWorld");
 
+    // 점수 배경 UI
+    scene.addUI(new UIRect(
+        "scoreBg",
+        5,
+        5,
+        210,
+        40,
+        "rgba(0,0,0,0.55)",
+        0,
+        0
+    ));
+
+    // 점수 텍스트 UI
+    let scoreText = new UIText(
+        "scoreText",
+        15,
+        25,
+        "Score: 0",
+        22,
+        "white",
+        TEXT_ALIGN_LEFT,
+        0,
+        0
+    );
+
+    scene.addUI(scoreText);
+
+    // scoreManager가 이 scoreText를 갱신하도록 연결
+    scoreManager.setTexwtObject(scoreText);
+
+    for (i = 0; i < 5; i++)
+        for (j = 0; j < 16; j++)
+            scene.addGameObject(ne Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), "assets/blocks/stone.png"));
 
     // for (i = 0; i < 5; i++)
     //     for (j = 0; j < 16; j++)
@@ -113,6 +147,7 @@ const overWorldScene = () => {
                     } else {
                         soundManager.playBlockBreak();
                         this.removeObject(collisionObject.name);
+                        scoreManager.addByBlock(collisionObject);
                     }
                 }
             });
