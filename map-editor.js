@@ -13,7 +13,12 @@ const editorScene = () => {
         this.addUI(new UIText("guide2", 20, 120, "Right Click: Drag to move map", 16, "black", TEXT_ALIGN_LEFT));
         this.addUI(new UIText("guide3", 20, 140, "d: draw", 16, "black", TEXT_ALIGN_LEFT));
         this.addUI(new UIText("guide4", 20, 160, "e: erase", 16, "black", TEXT_ALIGN_LEFT));
+
+        const logTag = document.querySelector('#log');
+        logTag.style.display = 'block';
+
         let menuBtn = new UIButton("menuBtn", CANVAS_WIDTH-48, 48, 64, 64, "", () => {
+            logTag.style.display = 'none';
             this.end();
         });
         menuBtn.appendChild(new UIImage("menuIcon", 0, 0, 48, 48, "assets/etc/menu-icon.png"));    

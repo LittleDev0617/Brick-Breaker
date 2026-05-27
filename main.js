@@ -14,6 +14,6 @@ window.onload = () => {
     gameManager.addScene(overWorldScene());
     
     gameManager.addScene(sampleScene2());
-    // gameManager.play("lobby");
-    gameManager.play("overWorld");
+    gameManager.play("lobby");
+    // gameManager.play("sample2");
 }

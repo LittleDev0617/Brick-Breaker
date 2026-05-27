@@ -21,6 +21,7 @@ class ObjectT {
         this.child.push(child);
         child.parent = this;
         child.transform.parent = this.transform;
+        child.scene = this.scene;
     }
 
     draw(context) {
@@ -223,12 +224,15 @@ class Canvas {
         return false;
     }
 
+    // 이벤트 핸들러도 좀 리팩토링할 필요 있음
     mouseMove(e, target) {        
         if (!this.isActive) return false;
         for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
             
             if (obj.onMouseMove == undefined) continue;
+            if (obj.child.length != 0)
+                this.mouseMove(e, obj.child);     
             obj.onMouseMove(e);
         }
     }
@@ -374,7 +378,7 @@ class Scene {
         for (const objID in this.gameCanvas.objects) {
             let otherObj = this.gameCanvas.objects[objID];
 
-            if (otherObj !== obj && otherObj.isActive && !(otherObj instanceof Ball)) {
+            if (otherObj !== obj && otherObj.isActive) {
                 
                 const a = obj.transform.getAbsolute();
                 const b = otherObj.transform.getAbsolute();
@@ -399,26 +403,18 @@ class Scene {
                     if (overlapX < overlapY) {
                         if (diffX > 0) {
                             // obj: 왼쪽을 부딪힘
-                            obj.dx = Math.abs(obj.dx);
-                            obj.transform.x = b.right + (obj.transform.width * obj.transform.pivotX);
                             return ["left", otherObj];
                         } else {
                             // obj: 오른쪽을 부딪힘
-                            obj.dx = -Math.abs(obj.dx);
-                            obj.transform.x = b.left - (obj.transform.width * (1 - obj.transform.pivotX));
                             return ["right", otherObj];
                         }
                     } 
                     else {
                         if (diffY > 0) {
                             // obj: 위를 부딪힘
-                            obj.dy = Math.abs(obj.dy);
-                            obj.transform.y = b.bottom + (obj.transform.height * obj.transform.pivotY);
                             return ["top", otherObj];
                         } else {
                             // obj: 아래를 부딪힘
-                            obj.dy = -Math.abs(obj.dy);
-                            obj.transform.y = b.top - (obj.transform.height * (1 - obj.transform.pivotY));
                             return ["bottom", otherObj];
                         }
                     }
