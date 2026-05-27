@@ -30,8 +30,8 @@ const overWorldScene = () => {
     let map = maps.find(map => map.name == 'overworld');
     map.draw(scene);
 
-    let player_width = 256;
-    let player_height = 32;
+    let player_width = 512;
+    let player_height = 64;
     let player_img = "assets/etc/hotbar.png";
 
     let player = new Player("player", CANVAS_WIDTH / 2, CANVAS_HEIGHT - player_height - 20, player_width, player_height, player_img);
@@ -61,7 +61,7 @@ const overWorldScene = () => {
         let level = Math.floor(Math.random() * 4);
         let velocity = new Vector2D(1, 1);
         velocity.rotate(Math.random() * (Math.PI/4 * 3) + Math.PI/4);
-        velocity.scale(0.2);
+        velocity.scale(1.2);
 
         let ball = new Ball(`ball${i}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100, "pickaxe", level, velocity);
         ball.transform.velocity.rotate(Math.random() * Math.PI);
@@ -100,13 +100,13 @@ const overWorldScene = () => {
                 const [collisionSide, collisionObject] = ball.checkCollision();
                 
                 if (collisionSide == 'bottom' && collisionObject instanceof Player) {
-                    ball.transform.velocity.scale(0.8);                        
-                    ball.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x, 3);
-                    ball.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y*2, 5);
+                    // ball.transform.velocity.scale(0.8);                        
+                    ball.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x, 1);
+                    ball.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y, 1);
                 }
                 
                 if (collisionObject instanceof Block && collisionObject.isActive) {
-                    collisionObject.onClick();
+                    collisionObject.hit();
 
                     if (collisionObject.isActive) {
                         soundManager.playBlockHit();
@@ -119,7 +119,7 @@ const overWorldScene = () => {
 
             if (isCameraMoving) {
                 camera.move(0, -1 * this.deltaTime);
-                // player.transform.y -= 1 * this.deltaTime;
+                player.transform.y -= 1 * this.deltaTime;
             }
             dot.transform.x = camera.transform.getAbsolute().x;
             dot.transform.y = camera.transform.getAbsolute().y;

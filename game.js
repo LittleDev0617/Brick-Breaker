@@ -96,6 +96,7 @@ class Rigidbody {
 class Ball extends GameObject {
     static toolList = ["pickaxe", "axe", "shovel", "sword"];
     static toolLevelList = ["wood", "stone", "iron", "diamond"];
+    static damageList = [1, 2, 4, 8];
     static toolImages = {};
     static {
         this.toolList.forEach(tool => {
@@ -113,6 +114,7 @@ class Ball extends GameObject {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
         this.transform.velocity = velocity;
         this.rigidbody = new Rigidbody(this.transform, 1);
+        this.damage = Ball.damageList[level];
     }
 
     update() {
@@ -138,7 +140,11 @@ class Ball extends GameObject {
     checkCollision() {
         const [collisionSide, collisionObject] = this.scene.checkCollision(this);
 
-        if (!(collisionObject instanceof Ball)) {            
+        if (!(collisionObject instanceof Ball)) {
+            if (collisionObject instanceof Block) {
+                this.transform.velocity.scale(0.9);
+
+            }
             switch (collisionSide) {
                 case "left":
                     this.transform.velocity.x = Math.abs(this.transform.velocity.x);
@@ -155,7 +161,6 @@ class Ball extends GameObject {
                 case "bottom":
                     this.transform.velocity.y = -Math.abs(this.transform.velocity.y);
                     this.transform.y = collisionObject.transform.top - (this.transform.height + this.transform.offsetY);                    
-                    
                     break;
             }
         }
@@ -192,7 +197,11 @@ class Block extends GameObject {
     }
 
     onClick() {
-        this.hp--;
+        this.hit(1);
+    }
+
+    hit(dmg) {
+        this.hp -= dmg;
 
         if (this.hp == 0) {
             this.isActive = false;
