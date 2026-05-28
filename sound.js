@@ -14,6 +14,8 @@ class SoundManager {
         this.blockBreakSound.volume = 0.8;
 
         this.muted = false;
+        this.bgmEnabled = true;
+        this.sfxEnabled = true;
 
         this.lastHitSoundTime = 0;
         this.hitSoundDelay = 80;
@@ -22,8 +24,21 @@ class SoundManager {
         this.breakSoundDelay = 80;
     }
 
+    toggleBgm() {
+        this.bgmEnabled = !this.bgmEnabled;
+        if (this.bgmEnabled) {
+            this.bgm.play().catch(() => {});
+        } else {
+            this.bgm.pause();
+        }
+    }
+
+    toggleSfx() {
+        this.sfxEnabled = !this.sfxEnabled;
+    }
+
     playEffectSound(audioObject, errorMessage) {
-        if (this.muted) return;
+        if (this.muted || !this.sfxEnabled) return;
 
         const sound = audioObject.cloneNode();
         sound.volume = audioObject.volume;
@@ -34,7 +49,7 @@ class SoundManager {
     }
 
     playBGM() {
-        if (this.muted) return;
+        if (this.muted || !this.bgmEnabled) return;
         if (!this.bgm.paused) return;
 
         this.bgm.play().catch(error => {
