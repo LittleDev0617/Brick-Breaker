@@ -14,7 +14,7 @@ const lobby = () => {
 
     for (i = 0; i < 12; i++)
         for (j = 0; j < 16; j++)
-            scene1.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), "assets/blocks/stone.png"));
+            scene1.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), BLOCK_STONE));
 
     return scene1;
 }
@@ -22,141 +22,119 @@ const lobby = () => {
 const overWorldScene = () => {
     let scene = new Scene("overWorld");
 
-    // 점수 배경 UI
-    scene.addUI(new UIRect(
-        "scoreBg",
-        5,
-        5,
-        210,
-        40,
-        "rgba(0,0,0,0.55)",
-        0,
-        0
-    ));
+    scene.start = function() {
+        // 점수 배경 UI
+        this.addUI(new UIRect("scoreBg", 5, 5, 210, 40, "rgba(0,0,0,0.55)", 0, 0));
 
-    // 점수 텍스트 UI
-    let scoreText = new UIText(
-        "scoreText",
-        15,
-        25,
-        "Score: 0",
-        22,
-        "white",
-        TEXT_ALIGN_LEFT,
-        0,
-        0
-    );
+        // 점수 텍스트 UI
+        let scoreText = new UIText("scoreText", 15, 25, "Score: 0", 22, "white", TEXT_ALIGN_LEFT, 0, 0);
 
-    scene.addUI(scoreText);
+        this.addUI(scoreText);
 
-    // scoreManager가 이 scoreText를 갱신하도록 연결
-    scoreManager.setTextObject(scoreText);
+        // scoreManager가 이 scoreText를 갱신하도록 연결
+        scoreManager.setTextObject(scoreText);
 
-    // for (i = 0; i < 5; i++)
-    //     for (j = 0; j < 16; j++)
-    //         scene.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), "assets/blocks/stone.png"));
+        let map = maps.find(map => map.name == 'overworld');
+        map.draw(this);
 
+        let player_width = 512;
+        let player_height = 64;
+        let player_img = "assets/etc/hotbar.png";
 
-    let map = maps.find(map => map.name == 'overworld');
-    map.draw(scene);
+        let player = new Player("player", CANVAS_WIDTH / 2, CANVAS_HEIGHT - player_height - 20, player_width, player_height, player_img);
+        this.addGameObject(player);    
 
-    let player_width = 512;
-    let player_height = 64;
-    let player_img = "assets/etc/hotbar.png";
+        this.camera = new Camera("camera");
+        this.camera.transform.y -= 400;
 
-    let player = new Player("player", CANVAS_WIDTH / 2, CANVAS_HEIGHT - player_height - 20, player_width, player_height, player_img);
-    scene.addGameObject(player);    
+        player.appendChild(this.camera);
+        
 
-    let camera = new Camera("camera");
-    camera.transform.y -= 400;
+        this.game_start = false;
+        const gameStart = () => {
+            start_button.isActive = false;
+            this.game_start = true;
 
-    player.appendChild(camera);
-    
+            soundManager.playClick();//  시작 버튼 클릭 효과음
+            soundManager.playBGM(); // 게임 시작 후 배경음악 재생
+        };
 
-    let game_start = false;
-    const gameStart = () => {
-        start_button.isActive = false;
-        game_start = true;
+        let start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", gameStart);
+        this.addGameObject(start_button);
 
-        soundManager.playClick();//  시작 버튼 클릭 효과음
-        soundManager.playBGM(); // 게임 시작 후 배경음악 재생
-    };
+        let ball = new Ball('ball', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100, "pickaxe", LEVEL_WOOD, new Vector2D(0, -1));
+        
+        ball.transform.velocity.rotate(Math.random() * (Math.PI/4)) - Math.PI/4;
+        ball.transform.velocity.scale(1.2);
+        
+        this.addGameObject(ball);
 
-    let start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", gameStart);
-    scene.addGameObject(start_button);
+        let canCameraMove = false;
+        this.isCameraMoving = false;
+        this.camera.onMouseMove = e => {
+            const { offsetX, offsetY } = e;
 
-    let balls = [];
-    const NUM_BALLS = 5;
-    for (let i = 0; i < NUM_BALLS; i++) {
-        let level = Math.floor(Math.random() * 4);
-        let velocity = new Vector2D(1, 1);
-        velocity.rotate(Math.random() * (Math.PI/4 * 3) + Math.PI/4);
-        velocity.scale(1.2);
-
-        let ball = new Ball(`ball${i}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100, "pickaxe", level, velocity);
-        ball.transform.velocity.rotate(Math.random() * Math.PI);
-
-        balls.push(ball);
-        scene.addGameObject(ball);
-    }
-
-
-    let canCameraMove = false;
-    let isCameraMoving = false;
-    camera.onMouseMove = function(e) {
-        const { offsetX, offsetY } = e;
-
-        console.log(offsetY, 700)
-        let cntBlocksInMap = 0;
-        this.scene.findGameObjects('block_').forEach(block => {
-            if (block.transform.y >= camera.transform.getAbsolute().y)
-                cntBlocksInMap++;
-        });
-
-        canCameraMove = cntBlocksInMap <= 10;
-        console.log(cntBlocksInMap)
-        isCameraMoving = canCameraMove && offsetY <= CANVAS_HEIGHT-200;
-    }
-
-
-    let dot = new UIRect("debug", 0, 0, 5, 5, 'red');
-    scene.addUI(dot);
-    scene.update = function () {
-
-        if (game_start) {
-            balls.forEach(ball => {
-                ball.rigidbody.update();
-                ball.move();
-                const [collisionSide, collisionObject] = ball.checkCollision();
-                
-                if (collisionSide == 'bottom' && collisionObject instanceof Player) {
-                    // ball.transform.velocity.scale(0.8);
-                    ball.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x, 1);
-                    ball.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y, 1);
-                }
-                
-                if (collisionObject instanceof Block && collisionObject.isActive) {
-                    collisionObject.hit(ball.damage);
-
-                    if (collisionObject.isActive) {
-                        soundManager.playBlockHit();
-                    } else {
-                        soundManager.playBlockBreak();
-                        this.removeObject(collisionObject.name);
-                        scoreManager.addByBlock(collisionObject);
-                    }
-                }
+            console.log(offsetY, 700)
+            let cntBlocksInMap = 0;
+            this.findGameObjects('block_').forEach(block => {
+                if (block.transform.y >= this.camera.transform.getAbsolute().y)
+                    cntBlocksInMap++;
             });
 
-            if (isCameraMoving) {
-                camera.move(0, -1 * this.deltaTime);
-                player.transform.y -= 1 * this.deltaTime;
-            }
-            dot.transform.x = camera.transform.getAbsolute().x;
-            dot.transform.y = camera.transform.getAbsolute().y;
+            canCameraMove = cntBlocksInMap <= 5;
+            this.isCameraMoving = canCameraMove && offsetY <= CANVAS_HEIGHT-200;
         }
 
-        scene.draw();
+
+        let dot = new UIRect("debug", 0, 0, 5, 5, 'red');
+        this.addUI(dot);
+    }
+
+
+    scene.update = function () {
+        if (!this.game_start) return;
+        const dot = this.findUIObject('debug');
+
+        this.findGameObjects('ball').forEach(ball => {
+            ball.move();
+            const [collisionSide, collisionObject] = ball.checkCollision();
+            
+            if (collisionSide == 'bottom' && collisionObject instanceof Player) {
+                // ball.transform.velocity.scale(0.8);
+                ball.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x, 1);
+                ball.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y, 1);
+            }
+            
+            if (collisionObject instanceof Block && collisionObject.isActive) {
+                collisionObject.hit(ball.damage);
+
+                if (collisionObject.isActive) {
+                    soundManager.playBlockHit();
+                } else {
+                    soundManager.playBlockBreak();
+                    this.removeObject(collisionObject.name);
+                    scoreManager.addByBlock(collisionObject);
+                }
+            }
+        });
+
+        this.findGameObjects('item').forEach(item => {
+            item.transform.y += item.transform.velocity.y;
+            
+            const [collisionSide, collisionObject] = this.checkCollision(item);
+            
+            if (collisionSide == 'bottom' && collisionObject instanceof Player) {
+                
+                this.removeObject(item.name);
+            }
+        });
+
+        if (this.isCameraMoving) {
+            this.camera.move(0, -1 * this.deltaTime);
+            this.isCameraMoving = false;
+        }
+        dot.transform.x = this.camera.transform.getAbsolute().x;
+        dot.transform.y = this.camera.transform.getAbsolute().y;        
     };
 
     return scene;

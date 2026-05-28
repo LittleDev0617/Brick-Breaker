@@ -433,6 +433,10 @@ class Scene {
         this.deltaTime = performance.now() - this.last;
         
         this.update();
+        Object.values(this.gameCanvas.objects).forEach(obj => {
+            if (obj.rigidbody)
+                obj.rigidbody.update();
+        })
         this.draw();
 
         this.last = performance.now();

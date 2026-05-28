@@ -32,9 +32,11 @@ class GameObject extends ObjectT {
         this.move();
         this.render();
     }
-
+    
     render(context) {
-
+        if (!this.sprite) return;
+        context.imageSmoothingEnabled = false;
+        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
     }
 }
 
@@ -131,13 +133,16 @@ class Ball extends GameObject {
             this.transform.x = this.transform.width * this.transform.pivotX;
 
             this.transform.velocity.rotate(90 * Math.PI / 180);
-            this.transform.velocity.scale(0.9);
+            this.transform.velocity.scale(0.5);
         } else if (a.right >= CANVAS_WIDTH) {
             this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = CANVAS_WIDTH - this.transform.width * this.transform.pivotX;
             
             this.transform.velocity.rotate(-90 * Math.PI / 180);
-            this.transform.velocity.scale(0.9);
+            this.transform.velocity.scale(0.5);
+        } else if (a.top <= 0) {
+            this.transform.velocity.y = -this.transform.velocity.y;
+            this.transform.y = this.transform.height * this.transform.pivotY;
         }
         
         this.transform.radian += 0.02 * (this.transform.velocity.size * (Math.random() + 1));
@@ -146,9 +151,9 @@ class Ball extends GameObject {
     checkCollision() {
         const [collisionSide, collisionObject] = this.scene.checkCollision(this);
 
-        if (!(collisionObject instanceof Ball)) {
+        if (!(collisionObject instanceof Ball) && !(collisionObject instanceof Item)) {
             if (collisionObject instanceof Block) {
-                this.transform.velocity.scale(0.9);
+                this.transform.velocity.scale(0.8);
 
                 if (this.damage >= collisionObject.hp)
                     return [collisionSide, collisionObject];
@@ -172,17 +177,23 @@ class Ball extends GameObject {
                     break;
             }
         }
+        
         return [collisionSide, collisionObject];
 
     }
 
-    render(context) {
-        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
+}
+
+class Item extends GameObject {
+    constructor(name, x, y, itemInfo) {
+        super(name, x, y, 32, 32);
+        this.sprite = itemInfo.sprite;
+        this.rigidbody = new Rigidbody(this.transform, 1);
     }
 }
 
 class Block extends GameObject {
-    static destroyImages = [];
+    static destroyImages = [];    
     static {
         for (let i = 0; i < 10; i++) {
             let img = new Image();
@@ -191,16 +202,12 @@ class Block extends GameObject {
         }
     }
 
-    constructor(name, x, y, textureSrc, hp = 10) {
-        let img = textureSrc;
-        if (typeof textureSrc === 'string') {
-            img = new Image();
-            img.src = textureSrc;
-        }
-        super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0, 0, img);
+    constructor(name, x, y, blockInfo) {
+        super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0, 0, blockInfo.sprite);
 
-        this.maxHp = hp;
-        this.hp = hp;
+        this.blockInfo = blockInfo;
+        this.maxHp = blockInfo.hp;
+        this.hp = blockInfo.hp;
         this.hover = false;
     }
 
@@ -213,6 +220,11 @@ class Block extends GameObject {
 
         if (this.hp <= 0) {
             this.isActive = false;
+            
+            if (this.blockInfo.itemInfo) {
+                let item = new Item('item', this.transform.x, this.transform.y, this.blockInfo.itemInfo);
+                this.scene.addGameObject(item);
+            }
             this.scene.removeObject(this.name);
         }
     }
@@ -254,11 +266,6 @@ class Player extends GameObject {
         this.prevX = this.transform.x;
         this.prevY = this.transform.y;
     }
-
-    render(context) {
-        context.imageSmoothingEnabled = false;
-        context.drawImage(this.sprite, this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
-    }
 }
 
 class Camera extends GameObject {
@@ -274,6 +281,6 @@ class Camera extends GameObject {
             obj.transform.y -= dy;
         });
         // this.transform.x += dx;
-        // this.transform.y += dy;
+        // this.transform.y += dy;  
     }
 }
