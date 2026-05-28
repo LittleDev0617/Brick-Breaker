@@ -153,7 +153,7 @@ class Ball extends GameObject {
 
         if (!(collisionObject instanceof Ball) && !(collisionObject instanceof Item)) {
             if (collisionObject instanceof Block) {
-                this.transform.velocity.scale(0.8);
+                // this.transform.velocity.scale(0.8);
 
                 if (this.damage >= collisionObject.hp)
                     return [collisionSide, collisionObject];
@@ -244,7 +244,7 @@ class Item extends GameObject {
         super(name, x, y, 32, 32);
         this.itemInfo = itemInfo;
         this.sprite = itemInfo.sprite;
-        this.rigidbody = new Rigidbody(this.transform, 1);
+        this.rigidbody = new Rigidbody(this.transform, Math.random() + 1);
     }
 }
 
@@ -258,11 +258,27 @@ class ItemSlot extends GameObject {
         this.count = 0;
     }
 
+    update() {
+        this.child[0].text = `${this.count}`;
+        if (this.count <= 0) {
+            this.itemInfo = null;
+            this.child[0].text = '';
+            this.sprite = null;
+            return;
+        }
+        this.child[0].text = `${this.count}`;
+        this.sprite = this.itemInfo.sprite;
+    }
+
+    addCount(amount) {
+        this.count += amount;
+        this.update();
+    }
+
     setItem(itemInfo, count) {
         this.itemInfo = itemInfo;
         this.count = count;
-        this.child[0].text = `${this.count}`;
-        this.sprite = itemInfo.sprite;
+        this.update();  
     }
 }
 

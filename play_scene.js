@@ -22,20 +22,41 @@ const lobby = () => {
 const overWorldScene = () => {
     let scene = new Scene("overWorld");
 
+    const BALL_SPAWN_POINT = new Vector2D(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100);
+
+    const createBall = (level) => {
+        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, new Vector2D(0, -1));
+        
+        ball.transform.velocity.rotate(Math.random() * (Math.PI/4)) - Math.PI/4;
+        ball.transform.velocity.scale(1.2);
+        
+        scene.addGameObject(ball);
+    }
+
     scene.start = function() {
-        // 점수 배경 UI
-        this.addUI(new UIRect("scoreBg", 5, 5, 210, 40, "rgba(0,0,0,0.55)", 0, 0));
+        this.game_start = false;
+        const gameStart = () => {
+            start_button.isActive = false;
+            this.game_start = true;
 
-        // 점수 텍스트 UI
-        let scoreText = new UIText("scoreText", 15, 25, "Score: 0", 22, "white", TEXT_ALIGN_LEFT, 0, 0);
+            soundManager.playClick();//  시작 버튼 클릭 효과음
+            soundManager.playBGM(); // 게임 시작 후 배경음악 재생
+        };
 
-        this.addUI(scoreText);
-
-        // scoreManager가 이 scoreText를 갱신하도록 연결
-        scoreManager.setTextObject(scoreText);
-
+        ////////////////////////        UI / Map 생성       ///////////////////////////////
         let map = maps.find(map => map.name == 'overworld');
         map.draw(this);
+
+
+        // 점수 배경 UI
+        this.addUI(new UIRect("scoreBg", 5, 5, 210, 40, "rgba(0,0,0,0.55)", 0, 0));
+        let scoreText = new UIText("scoreText", 15, 25, "Score: 0", 22, "white", TEXT_ALIGN_LEFT, 0, 0);
+        this.addUI(scoreText);
+        scoreManager.setTextObject(scoreText);
+        let dot = new UIRect("debug", 0, 0, 5, 5, 'red');
+        this.addUI(dot);
+
+        ////////////////////////        GameObject 생성       ///////////////////////////////
 
         let player_width = 512;
         let player_height = 64;
@@ -50,25 +71,11 @@ const overWorldScene = () => {
         player.appendChild(this.camera);
         
 
-        this.game_start = false;
-        const gameStart = () => {
-            start_button.isActive = false;
-            this.game_start = true;
-
-            soundManager.playClick();//  시작 버튼 클릭 효과음
-            soundManager.playBGM(); // 게임 시작 후 배경음악 재생
-        };
-
         let start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", gameStart);
         this.addGameObject(start_button);
 
-        let ball = new Ball('ball', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100, "pickaxe", LEVEL_WOOD, new Vector2D(0, -1));
+        createBall(LEVEL_WOOD);
         
-        ball.transform.velocity.rotate(Math.random() * (Math.PI/4)) - Math.PI/4;
-        ball.transform.velocity.scale(1.2);
-        
-        this.addGameObject(ball);
-
         let canCameraMove = false;
         this.isCameraMoving = false;
         this.camera.onMouseMove = e => {
@@ -84,15 +91,13 @@ const overWorldScene = () => {
             canCameraMove = cntBlocksInMap <= 5;
             this.isCameraMoving = canCameraMove && offsetY <= CANVAS_HEIGHT-200;
         }
-
-
-        let dot = new UIRect("debug", 0, 0, 5, 5, 'red');
-        this.addUI(dot);
     }
 
 
     scene.update = function () {
         if (!this.game_start) return;
+
+        const player = this.findGameObject('player');
         const dot = this.findUIObject('debug');
 
         this.findGameObjects('ball').forEach(ball => {
@@ -126,6 +131,20 @@ const overWorldScene = () => {
             if (collisionSide == 'bottom' && collisionObject instanceof Player) {
                 collisionObject.addItem(item.itemInfo);
                 this.removeObject(item.name);
+            }
+        });
+
+        const ITEM_COST = 3;
+        const itemList = [ITEM_OAK_LOG, ITEM_COBBLESTONE, ITEM_IRON_INGOT, ITEM_DIAMOND];
+        let newBalls = [];
+        player.inventory.forEach(slot => {
+            if (slot.itemInfo == null) return;
+            
+            let itemLevel = itemList.indexOf(slot.itemInfo);
+
+            if (itemLevel != -1 && slot.count >= ITEM_COST) {
+                createBall(itemLevel);
+                slot.addCount(-ITEM_COST);                
             }
         });
 
