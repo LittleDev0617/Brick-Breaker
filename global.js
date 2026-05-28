@@ -87,6 +87,8 @@ const LEVEL_STONE   = 1;
 const LEVEL_IRON    = 2;
 const LEVEL_DIAMOND = 3;
 
+const SLOT_COUNT = 9;
+
 const CANVAS_WIDTH  = 1024;
 const CANVAS_HEIGHT = 768;
 

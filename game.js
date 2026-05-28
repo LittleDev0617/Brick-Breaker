@@ -184,13 +184,6 @@ class Ball extends GameObject {
 
 }
 
-class Item extends GameObject {
-    constructor(name, x, y, itemInfo) {
-        super(name, x, y, 32, 32);
-        this.sprite = itemInfo.sprite;
-        this.rigidbody = new Rigidbody(this.transform, 1);
-    }
-}
 
 class Block extends GameObject {
     static destroyImages = [];    
@@ -246,14 +239,67 @@ class Block extends GameObject {
     }
 }
 
+class Item extends GameObject {
+    constructor(name, x, y, itemInfo) {
+        super(name, x, y, 32, 32);
+        this.itemInfo = itemInfo;
+        this.sprite = itemInfo.sprite;
+        this.rigidbody = new Rigidbody(this.transform, 1);
+    }
+}
+
+class ItemSlot extends GameObject {
+    constructor(name, x, y) {
+        super(name, x, y, 40, 40);
+        
+        let countText = new UIText(`slot_count`, 16, 16, '', 16, 'white');
+        this.appendChild(countText);
+        this.itemInfo = null;
+        this.count = 0;
+    }
+
+    setItem(itemInfo, count) {
+        this.itemInfo = itemInfo;
+        this.count = count;
+        this.child[0].text = `${this.count}`;
+        this.sprite = itemInfo.sprite;
+    }
+}
+
 class Player extends GameObject {
+    
     constructor(name, x, y, width, height, textureSrc) {
         let img = new Image();
         img.src = textureSrc;
         super(name, x, y, width, height, 0.5, 0, img);
 
+        this.inventory = [];
+        for (let i=0; i < SLOT_COUNT; i++) {
+            let slot = new ItemSlot('slot', -width/2 + 32 + i*56, height/2);
+            // slot.count++;
+            // slot.setItem(ITEM_COBBLESTONE);
+
+            this.appendChild(slot);
+            this.inventory.push(slot);
+        }
+
         this.prevX = 0;
         this.prevY = 0;
+    }
+
+    addItem(itemInfo) {        
+        let isExist = false;
+
+        let targetSlot = this.inventory.find(slot => slot.itemInfo == itemInfo);
+        if (targetSlot == undefined)
+            targetSlot = this.inventory.find(slot => slot.itemInfo == undefined);
+
+        targetSlot.setItem(itemInfo, targetSlot.count+1);
+
+        this.inventory.forEach(slot => {
+            if (!slot.itemInfo) return;
+
+        });
     }
 
     onMouseMove(e) {

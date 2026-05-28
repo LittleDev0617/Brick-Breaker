@@ -124,7 +124,7 @@ const overWorldScene = () => {
             const [collisionSide, collisionObject] = this.checkCollision(item);
             
             if (collisionSide == 'bottom' && collisionObject instanceof Player) {
-                
+                collisionObject.addItem(item.itemInfo);
                 this.removeObject(item.name);
             }
         });
