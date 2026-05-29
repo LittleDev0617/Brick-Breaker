@@ -34,7 +34,15 @@ const overWorldScene = () => {
     }
 
     scene.start = function() {
-        this.game_start = false;
+        this.gameCanvas.objects = {};
+        this.uiCanvas.objects = {};
+
+        const isRespawn = !!gameManager.respawning;
+        gameManager.respawning = false;
+
+        this.game_start = isRespawn;
+        if (isRespawn) soundManager.playBGM();
+
         const gameStart = () => {
             start_button.isActive = false;
             this.game_start = true;
@@ -72,7 +80,7 @@ const overWorldScene = () => {
         
 
         let start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", gameStart);
-        this.addGameObject(start_button);
+        if (!isRespawn) this.addGameObject(start_button);
 
         createBall(LEVEL_WOOD);
         
@@ -153,7 +161,47 @@ const overWorldScene = () => {
             this.isCameraMoving = false;
         }
         dot.transform.x = this.camera.transform.getAbsolute().x;
-        dot.transform.y = this.camera.transform.getAbsolute().y;        
+        dot.transform.y = this.camera.transform.getAbsolute().y;
+
+        const balls = this.findGameObjects('ball');
+        if (balls.length > 0 && balls.every(ball => ball.transform.y > CANVAS_HEIGHT)) {
+            gameManager.play("gameOver");
+            return;
+        }
+    };
+
+    return scene;
+};
+
+const gameOverScene = () => {
+    let scene = new Scene("gameOver");
+
+    scene.start = function() {
+        this.gameCanvas.objects = {};
+        this.uiCanvas.objects = {};
+
+        // 어두운 배경
+        this.addUI(new UIRect("overlay", CANVAS_WIDTH/2, CANVAS_HEIGHT/2, CANVAS_WIDTH, CANVAS_HEIGHT, "rgba(0,0,0,0.75)"));
+        // 붉은 틴트
+        this.addUI(new UIRect("redOverlay", CANVAS_WIDTH/2, CANVAS_HEIGHT/2, CANVAS_WIDTH, CANVAS_HEIGHT, "rgba(255,0,0,0.12)"));
+
+        // "You Died!"
+        this.addUI(new UIText("diedText", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 120, "You Died!", 72, "#FF3333"));
+
+        // 점수
+        this.addUI(new UIText("scoreText", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 30, `Score: ${scoreManager.getScore()}`, 28, "white"));
+
+        // Respawn 버튼
+        this.addUI(new UIButton("respawnBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 60, 290, 50, "Respawn", () => {
+            scoreManager.reset();
+            gameManager.respawning = true;
+            gameManager.play("overWorld");
+        }));
+
+        // Title Screen 버튼
+        this.addUI(new UIButton("titleBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 145, 290, 50, "Title Screen", () => {
+            gameManager.play("lobby");
+        }));
     };
 
     return scene;
