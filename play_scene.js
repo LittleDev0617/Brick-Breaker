@@ -12,12 +12,57 @@ const lobby = () => {
         gameManager.play("editor");
     }));
 
+    scene1.addUI(new UIButton("settingsBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 160, 400, 50, "Settings", () => {
+        gameManager.play("settings");
+    }));
+
     for (i = 0; i < 12; i++)
         for (j = 0; j < 16; j++)
             scene1.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), BLOCK_STONE));
 
     return scene1;
 }
+
+const settingsScene = () => {
+    let scene = new Scene("settings");
+
+    scene.start = function() {
+        this.gameCanvas.objects = {};
+        this.uiCanvas.objects = {};
+
+        const cx = CANVAS_WIDTH / 2;
+        const cy = CANVAS_HEIGHT / 2;
+
+        this.addUI(new UIRect("bg", cx, cy, CANVAS_WIDTH, CANVAS_HEIGHT, "rgba(0,0,0,0.85)"));
+        this.addUI(new UIText("title", cx, cy - 150, "Settings", 48, "white"));
+
+        let bgmBtn = new UIButton("bgmBtn", cx, cy - 40, 300, 50,
+            soundManager.bgmEnabled ? "BGM: ON" : "BGM: OFF", () => {
+                soundManager.toggleBgm();
+                bgmText.text = soundManager.bgmEnabled ? "BGM: ON" : "BGM: OFF";
+                bgmText.color = soundManager.bgmEnabled ? "#22ee77" : "#ee5555";
+            });
+        let bgmText = bgmBtn.child[0];
+        bgmText.color = soundManager.bgmEnabled ? "#22ee77" : "#ee5555";
+        this.addUI(bgmBtn);
+
+        let sfxBtn = new UIButton("sfxBtn", cx, cy + 30, 300, 50,
+            soundManager.sfxEnabled ? "Sound Effects: ON" : "Sound Effects: OFF", () => {
+                soundManager.toggleSfx();
+                sfxText.text = soundManager.sfxEnabled ? "Sound Effects: ON" : "Sound Effects: OFF";
+                sfxText.color = soundManager.sfxEnabled ? "#22ee77" : "#ee5555";
+            });
+        let sfxText = sfxBtn.child[0];
+        sfxText.color = soundManager.sfxEnabled ? "#22ee77" : "#ee5555";
+        this.addUI(sfxBtn);
+
+        this.addUI(new UIButton("backBtn", cx, cy + 130, 300, 50, "Back", () => {
+            this.isEnd = true;
+        }));
+    };
+
+    return scene;
+};
 
 const overWorldScene = () => {
     let scene = new Scene("overWorld");
@@ -83,7 +128,71 @@ const overWorldScene = () => {
         if (!isRespawn) this.addGameObject(start_button);
 
         createBall(LEVEL_WOOD);
-        
+
+        // 인게임 Settings 버튼
+        const cx = CANVAS_WIDTH / 2;
+        const cy = CANVAS_HEIGHT / 2;
+        this.settingsPanelOpen = false;
+        const settingsOverlay = [];
+        const addToOverlay = (el) => { el.isActive = false; settingsOverlay.push(el); this.addUI(el); return el; };
+
+        this.addUI(new UIButton("ow_settingsBtn", CANVAS_WIDTH - 65, 25, 110, 40, "Settings", () => {
+            this.settingsPanelOpen = true;
+            settingsOverlay.forEach(el => el.isActive = true);
+            owBgmText.text = soundManager.bgmEnabled ? "BGM: ON" : "BGM: OFF";
+            owBgmText.color = soundManager.bgmEnabled ? "#22ee77" : "#ee5555";
+            owSfxText.text = soundManager.sfxEnabled ? "Sound Effects: ON" : "Sound Effects: OFF";
+            owSfxText.color = soundManager.sfxEnabled ? "#22ee77" : "#ee5555";
+
+            // 공 속도 저장 후 0으로 정지
+            this.savedBallVelocities = this.findGameObjects('ball').map(ball => ({
+                vx: ball.transform.velocity.x,
+                vy: ball.transform.velocity.y,
+                ay: ball.transform.acceleration.y
+            }));
+            this.findGameObjects('ball').forEach(ball => {
+                ball.transform.velocity.x = 0;
+                ball.transform.velocity.y = 0;
+                ball.transform.acceleration.y = 0;
+            });
+        }));
+
+        addToOverlay(new UIRect("ow_bg", cx, cy, CANVAS_WIDTH, CANVAS_HEIGHT, "rgba(0,0,0,0.85)"));
+        addToOverlay(new UIText("ow_title", cx, cy - 150, "Settings", 48, "white"));
+
+        let owBgmBtn = new UIButton("ow_bgmBtn", cx, cy - 40, 300, 50, "BGM: ON", () => {
+            soundManager.toggleBgm();
+            owBgmText.text = soundManager.bgmEnabled ? "BGM: ON" : "BGM: OFF";
+            owBgmText.color = soundManager.bgmEnabled ? "#22ee77" : "#ee5555";
+        });
+        let owBgmText = owBgmBtn.child[0];
+        owBgmText.color = "#22ee77";
+        addToOverlay(owBgmBtn);
+
+        let owSfxBtn = new UIButton("ow_sfxBtn", cx, cy + 30, 300, 50, "Sound Effects: ON", () => {
+            soundManager.toggleSfx();
+            owSfxText.text = soundManager.sfxEnabled ? "Sound Effects: ON" : "Sound Effects: OFF";
+            owSfxText.color = soundManager.sfxEnabled ? "#22ee77" : "#ee5555";
+        });
+        let owSfxText = owSfxBtn.child[0];
+        owSfxText.color = "#22ee77";
+        addToOverlay(owSfxBtn);
+
+        addToOverlay(new UIButton("ow_resumeBtn", cx, cy + 130, 300, 50, "Resume", () => {
+            this.settingsPanelOpen = false;
+            settingsOverlay.forEach(el => el.isActive = false);
+
+            // 공 속도 복원
+            const balls = this.findGameObjects('ball');
+            balls.forEach((ball, i) => {
+                if (!this.savedBallVelocities || !this.savedBallVelocities[i]) return;
+                ball.transform.velocity.x = this.savedBallVelocities[i].vx;
+                ball.transform.velocity.y = this.savedBallVelocities[i].vy;
+                ball.transform.acceleration.y = this.savedBallVelocities[i].ay;
+            });
+            this.savedBallVelocities = null;
+        }));
+
         let canCameraMove = false;
         this.isCameraMoving = false;
         this.camera.onMouseMove = e => {
@@ -104,6 +213,7 @@ const overWorldScene = () => {
 
     scene.update = function () {
         if (!this.game_start) return;
+        if (this.settingsPanelOpen) return;
 
         const player = this.findGameObject('player');
         const dot = this.findUIObject('debug');

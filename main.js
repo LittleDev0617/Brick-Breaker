@@ -11,6 +11,7 @@ window.onload = () => {
     gameManager.addScene(lobby());
     gameManager.addScene(sampleScene());
 
+    gameManager.addScene(settingsScene());
     gameManager.addScene(overWorldScene());
     gameManager.addScene(gameOverScene());
 
