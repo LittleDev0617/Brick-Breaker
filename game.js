@@ -13,8 +13,9 @@ class Vector2D {
     rotate(angle) {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
+        const temp_x = this.x;
         this.x = this.x * cos - this.y * sin;
-        this.y = this.x * sin + this.y * cos;
+        this.y = temp_x * sin + this.y * cos;
     }
 };
 
@@ -47,6 +48,7 @@ class GameManager {
         this.sceneIndex = -1;
         this.sceneList = [];
         this.callStack = [];
+        this.isLoopRunning = false; // this.update 중복 호출 방지
     }
 
     get playingScene() { return this.sceneIndex == -1 ? null : this.sceneList[this.sceneIndex]; }
@@ -66,8 +68,16 @@ class GameManager {
 
         console.log(`Scene ${sceneName} started`);
         this.playingScene.isEnd = false;
+
+        // deltatime으로 인해 튀는것 방지
+        this.playingScene.last = performance.now();
+
         this.playingScene.start();
-        this.update();
+
+        if (!this.isLoopRunning) {
+            this.isLoopRunning = true;
+            this.update();
+        }
     }
 
     update() {
@@ -115,7 +125,8 @@ class Ball extends GameObject {
     constructor(name, x, y, tool, level, velocity) {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
         this.transform.velocity = velocity;
-        this.rigidbody = new Rigidbody(this.transform, 1);
+        // this.rigidbody = new Rigidbody(this.transform, 1);
+        this.rigidbody = null;
         this.damage = Ball.damageList[level];
     }
 
@@ -123,25 +134,25 @@ class Ball extends GameObject {
     }
 
     move() {
-        this.transform.x += this.transform.velocity.x;
-        this.transform.y += this.transform.velocity.y;
+        this.transform.x += this.transform.velocity.x * 5;
+        this.transform.y += this.transform.velocity.y * 5;
 
         let a = this.transform.getAbsolute();
         
         if (a.left <= 0) {
-            this.transform.velocity.x = -this.transform.velocity.x;
+            this.transform.velocity.x = Math.abs(this.transform.velocity.x);
             this.transform.x = this.transform.width * this.transform.pivotX;
 
-            this.transform.velocity.rotate(90 * Math.PI / 180);
-            this.transform.velocity.scale(0.5);
+            // this.transform.velocity.rotate(90 * Math.PI / 180);
+            // this.transform.velocity.scale(0.5);
         } else if (a.right >= CANVAS_WIDTH) {
-            this.transform.velocity.x = -this.transform.velocity.x;
+            this.transform.velocity.x = -Math.abs(this.transform.velocity.x);
             this.transform.x = CANVAS_WIDTH - this.transform.width * this.transform.pivotX;
             
-            this.transform.velocity.rotate(-90 * Math.PI / 180);
-            this.transform.velocity.scale(0.5);
+            // this.transform.velocity.rotate(-90 * Math.PI / 180);
+            // this.transform.velocity.scale(0.5);
         } else if (a.top <= 0) {
-            this.transform.velocity.y = -this.transform.velocity.y;
+            this.transform.velocity.y = Math.abs(this.transform.velocity.y);
             this.transform.y = this.transform.height * this.transform.pivotY;
         }
         
@@ -320,13 +331,13 @@ class Player extends GameObject {
 
     onMouseMove(e) {
         this.transform.x = Math.min(CANVAS_WIDTH-this.transform.width / 2, Math.max(e.offsetX, this.transform.width/2));
-        this.transform.y = Math.min(CANVAS_HEIGHT-50, Math.max(e.offsetY, CANVAS_HEIGHT-200));
+        // this.transform.y = Math.min(CANVAS_HEIGHT-50, Math.max(e.offsetY, CANVAS_HEIGHT-200));
 
-        this.transform.velocity.x = (this.transform.x - this.prevX) * this.scene.deltaTime;
-        this.transform.velocity.y = (this.transform.y - this.prevY) * this.scene.deltaTime;        
+        // this.transform.velocity.x = (this.transform.x - this.prevX);
+        // this.transform.velocity.y = (this.transform.y - this.prevY);
 
-        this.prevX = this.transform.x;
-        this.prevY = this.transform.y;
+        // this.prevX = this.transform.x;
+        // this.prevY = this.transform.y;
     }
 }
 
