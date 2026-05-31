@@ -6,10 +6,13 @@ let gameManager = new GameManager();
 
 // 처음 로드
 window.onload = () => {
+    // gameManager.addScene(overWorldScene());
     gameManager.addScene(editorScene());
 
     gameManager.addScene(lobby());
-    gameManager.addScene(sampleScene());
+    gameManager.addScene(settingsScene());
+    // gameManager.addScene(sampleScene());
+    // gameManager.addScene(sampleScene2());
 
     gameManager.addScene(level1Scene());
     gameManager.addScene(level2Scene());
@@ -17,11 +20,9 @@ window.onload = () => {
     gameManager.addScene(endingScene());
 
     gameManager.addScene(gameClearScene());
-    gameManager.addScene(settingsScene());
-    gameManager.addScene(overWorldScene());
     gameManager.addScene(gameOverScene());
 
-    gameManager.addScene(sampleScene2());
+    // gameManager.addScene(sampleScene2());
     gameManager.play("lobby");
     // gameManager.play("sample2");
 }

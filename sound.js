@@ -1,6 +1,16 @@
 class SoundManager {
+
+    static musics = [
+        new Audio("assets/sounds/bgm_C418.mp3"),
+        new Audio("assets/sounds/bgm_Haggstrom.mp3"),
+        new Audio("assets/sounds/bgm_Minecraft.mp3"),
+        new Audio("assets/sounds/bgm_SubwooferLullaby.mp3"),
+        new Audio("assets/sounds/bgm_WetHands.mp3")
+    ];
+
     constructor() {
-        this.bgm = new Audio("assets/sounds/overworld_bgm.mp3");
+        this.bgm = SoundManager.musics[0];
+        this.bgm_index = 0;
         this.bgm.loop = true;
         this.bgm.volume = 0.4;
 
@@ -21,6 +31,23 @@ class SoundManager {
 
         this.lastBreakSoundTime = 0;
         this.breakSoundDelay = 80;
+    }
+
+    changeBgm() {
+        this.stopBGM();
+        this.bgm_index = (this.bgm_index+1) % 5;
+        this.bgm = SoundManager.musics[this.bgm_index];
+        this.playBGM();
+    }
+
+    getBgm() {
+        switch (this.bgm_index) {
+            case 0: return "Music: C418";
+            case 1: return "Music: Haggstorm";
+            case 2: return "Music: Minecraft";
+            case 3: return "Music: SubwooferLullaby";
+            case 4: return "Music: WetHands";
+        }
     }
 
     toggleBgm() {

@@ -84,7 +84,7 @@ class GameManager {
         if (this.playingScene.isEnd) {
             this.sceneIndex = -1;
             let lastScene = this.callStack.pop();
-            return this.play(lastScene);
+            this.play(lastScene);
         }
         this.playingScene.frame();
         requestAnimationFrame(() => { this.update(); });
