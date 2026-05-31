@@ -17,16 +17,16 @@ const editorScene = () => {
         const logTag = document.querySelector('#log');
         logTag.style.display = 'block';
 
+        let mapEditorUI = document.querySelector("#map-editor");
+        mapEditorUI.style.display = "block";
+
         let menuBtn = new UIButton("menuBtn", CANVAS_WIDTH-48, 48, 64, 64, "", () => {
             logTag.style.display = 'none';
-            gameManager
+            mapEditorUI.style.display = 'none';
             this.end();
         });
         menuBtn.appendChild(new UIImage("menuIcon", 0, 0, 48, 48, "assets/etc/menu-icon.png"));    
 
-
-        let mapEditorUI = document.querySelector("#map-editor");
-        mapEditorUI.style.display = "block";
         
         if (maps.length == 0) {
         }
