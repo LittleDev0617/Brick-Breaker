@@ -36,7 +36,16 @@ const settingsScene = () => {
         this.addUI(new UIRect("bg", cx, cy, CANVAS_WIDTH, CANVAS_HEIGHT, "rgba(0,0,0,0.85)"));
         this.addUI(new UIText("title", cx, cy - 150, "Settings", 48, "white"));
 
-        let bgmBtn = new UIButton("bgmBtn", cx, cy - 40, 300, 50,
+        let musicSelectBtn = new UIButton("musicSelectBtn", cx, cy - 40, 400, 50, 
+            soundManager.getBgm(), () => {
+                soundManager.changeBgm();
+                musicSelectBtnText.text = soundManager.getBgm();
+                musicSelectBtn.text = soundManager.getBgm();
+            });
+        let musicSelectBtnText = musicSelectBtn.child[0];
+        this.addUI(musicSelectBtn);
+
+        let bgmBtn = new UIButton("bgmBtn", cx, cy + 30, 400, 50,
             soundManager.bgmEnabled ? "BGM: ON" : "BGM: OFF", () => {
                 soundManager.toggleBgm();
                 bgmText.text = soundManager.bgmEnabled ? "BGM: ON" : "BGM: OFF";
@@ -46,7 +55,7 @@ const settingsScene = () => {
         bgmText.color = soundManager.bgmEnabled ? "#22ee77" : "#ee5555";
         this.addUI(bgmBtn);
 
-        let sfxBtn = new UIButton("sfxBtn", cx, cy + 30, 300, 50,
+        let sfxBtn = new UIButton("sfxBtn", cx, cy + 100, 400, 50,
             soundManager.sfxEnabled ? "Sound Effects: ON" : "Sound Effects: OFF", () => {
                 soundManager.toggleSfx();
                 sfxText.text = soundManager.sfxEnabled ? "Sound Effects: ON" : "Sound Effects: OFF";
@@ -56,7 +65,8 @@ const settingsScene = () => {
         sfxText.color = soundManager.sfxEnabled ? "#22ee77" : "#ee5555";
         this.addUI(sfxBtn);
 
-        this.addUI(new UIButton("backBtn", cx, cy + 130, 300, 50, "Back", () => {
+        // 뒤로가기
+        this.addUI(new UIButton("backBtn", cx, cy + 200, 400, 50, "Back", () => {
             this.isEnd = true;
         }));
     };
