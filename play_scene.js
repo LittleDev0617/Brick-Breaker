@@ -2,6 +2,7 @@ const lobby = () => {
     let scene1 = new Scene("lobby");
 
     scene1.start = function() {
+        document.body.className = 'lobby-bg';
         scene1.addUI(new UIText("titleText", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
         scene1.addUI(new UIButton("playBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
             // console.log("Play button clicked!");
@@ -30,6 +31,7 @@ const settingsScene = () => {
     let scene = new Scene("settings");
 
     scene.start = function() {
+        document.body.className = 'lobby-bg';
         this.gameCanvas.objects = {};
         this.uiCanvas.objects = {};
 
@@ -70,7 +72,7 @@ const settingsScene = () => {
 
         // 뒤로가기
         this.addUI(new UIButton("backBtn", cx, cy + 200, 400, 50, "Back", () => {
-            this.isEnd = true;
+            gameManager.play("lobby");
         }));
     };
 
@@ -112,8 +114,8 @@ const gameScene = () => {
     const createBall = (level) => {
         let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, new Vector2D(0, -1));
         
-        // ball.transform.velocity.rotate(Math.random() * (Math.PI/4)) - Math.PI/4;
-        ball.transform.velocity.scale(120);
+        ball.transform.velocity.rotate(Math.random() * (Math.PI/4)) - Math.PI/4;
+        ball.transform.velocity.scale(200);
         
         
         scene.addGameObject(ball);
@@ -135,7 +137,11 @@ const gameScene = () => {
         console.log('SCENE STARTED!!!!')
 
         const [level, inventory] = arg;
-        
+
+        // 스테이지별 바깥 배경색
+        const bgClasses = ['overworld-bg', 'nether-bg', 'ender-bg'];
+        document.body.className = bgClasses[level] || 'overworld-bg';
+
         console.log('level', level);
         this.level = level;
         this.stage = STAGES[level];
