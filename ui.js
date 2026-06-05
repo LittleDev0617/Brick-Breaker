@@ -198,8 +198,8 @@ class Canvas {
                 if (event == EVENT_MOUSE_HOVER && obj.hover != undefined) {
                     obj.hover = true;
                 }
-
-                obj[event](e);
+                if (obj[event] != undefined)
+                    obj[event](e);
                 return true;
             }
         }

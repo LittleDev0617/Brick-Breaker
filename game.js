@@ -179,7 +179,7 @@ class Ball extends GameObject {
     checkCollision() {
         const [collisionSide, collisionObject] = this.scene.checkCollision(this);
 
-        if (!(collisionObject instanceof Ball) && !(collisionObject instanceof Item)) {
+        if (collisionObject instanceof Block || collisionObject instanceof Player) {
             if (collisionObject instanceof Block) {
                 // this.transform.velocity.scale(0.8);
 
@@ -251,6 +251,8 @@ class Block extends GameObject {
                 let item = new Item('item', this.transform.x + Math.random() * 10 + 32, this.transform.y + Math.random() * 10 - 10, this.blockInfo.itemInfo);
                 this.scene.addGameObject(item);
             }
+
+            this.scene.addGameObject(new Particle(`destroy`, this.transform.x+BLOCK_SIZE, this.transform.y+BLOCK_SIZE, this.blockInfo.color))
             this.scene.removeObject(this.name);
         }
     }
