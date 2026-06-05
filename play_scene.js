@@ -284,6 +284,14 @@ const gameScene = () => {
             this.savedBallVelocities = null;
         }));
 
+        addToOverlay(new UIButton("ow_quitBtn", cx, cy + 200, 300, 50, "Quit", () => {
+            soundManager.playClick();
+            soundManager.stopBGM();
+            scoreManager.saveHighScore();
+            scoreManager.reset();
+            gameManager.play("lobby");
+        }));
+
         let canCameraMove = false;
         this.isCameraMoving = false;
         this.camera.onMouseMove = e => {
