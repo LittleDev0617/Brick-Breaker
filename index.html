@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Brick Breaker</title>
     <link rel="stylesheet" href="./main.css">
     <script src="./global.js"></script>
     <script src="./transform.js"></script>
@@ -18,62 +18,55 @@
 </head>
 
 <body>
-    <div id="main">
-        <div id="top">
-            <div id="title">
-                <h1>Brick - Breaker</h1>
-            </div>
-            <div id="map-editor">
-                <h2>Map Editor</h2>
-                <div>
-                    <span>Map: </span>
-                    <select id="map-select"></select>
-                    <input type="text" id="map-name">
-                    <img src="assets/etc/plus-icon.png" id="add-btn">
-                    <img src="assets/etc/save-icon.png" id="save-btn">
-                </div>
+    <!-- 상단 네비게이션 바 -->
+    <div id="topnav">
+        <div class="nav-logo"><span class="pick">⛏</span> Brick Breaker</div>
+        <nav class="nav-menu">
+            <span>게임</span>
+            <span>맵 에디터</span>
+            <span>환경설정</span>
+            <span>게임방법</span>
+            <span>팀</span>
+        </nav>
+    </div>
+
+    <!-- 본문 가운데 컬럼 -->
+    <div id="page">
+        <div class="breadcrumb">자작 게임</div>
+        <h1 class="page-title">Brick Breaker : Minecraft</h1>
+        <hr class="divider">
+
+        <!-- 게임 아이콘 바 -->
+        <div class="icon-bar">
+            <div class="game-icon"><img src="assets/blocks/over/grass.png"><span>오버월드</span></div>
+            <div class="game-icon"><img src="assets/blocks/nether/netherrack.png"><span>네더</span></div>
+            <div class="game-icon"><img src="assets/blocks/ender/end_crystal.png"><span>엔더</span></div>
+            <div class="game-icon"><img src="assets/blocks/over/diamond_ore.png"><span>다이아</span></div>
+            <div class="game-icon"><img src="assets/blocks/nether/blaze.png"><span>블레이즈</span></div>
+            <div class="game-icon"><img src="assets/tools/diamond_pickaxe.png"><span>곡괭이</span></div>
+            <div class="icon-arrow">→</div>
+        </div>
+
+        <!-- 맵 에디터 패널 (기존 유지) -->
+        <div id="map-editor">
+            <h2>Map Editor</h2>
+            <div>
+                <span>Map: </span>
+                <select id="map-select"></select>
+                <input type="text" id="map-name">
+                <img src="assets/etc/plus-icon.png" id="add-btn">
+                <img src="assets/etc/save-icon.png" id="save-btn">
             </div>
         </div>
 
-        <div id="center">
-            <div class="sidebar">
-                <div class="panel">
-                    <h3>조작</h3>
-                    <p>마우스 - 패들 이동</p>
-                    <p>공으로 블록 채굴</p>
-                    <p>우상단 - 설정 / 일시정지</p>
-                    <h3 style="margin-top:18px">곡괭이 강화</h3>
-                    <div class="icon-row">
-                        <img src="assets/tools/wood_pickaxe.png" title="나무">
-                        <img src="assets/tools/stone_pickaxe.png" title="돌">
-                        <img src="assets/tools/iron_pickaxe.png" title="철">
-                        <img src="assets/tools/diamond_pickaxe.png" title="다이아">
-                    </div>
-                    <p>같은 아이템 3개 → 강화</p>
-                </div>
-            </div>
-            <div id="canvas-wrapper">
-                <canvas id="game" width="1024" height="768"></canvas>
-                <canvas id="ui" width="1024" height="768"></canvas>
-            </div>
-            <div class="sidebar">
-                <div class="panel">
-                    <h3>블록 점수</h3>
-                    <div class="row"><img src="assets/blocks/over/diamond_ore.png"><span>다이아 500</span></div>
-                    <div class="row"><img src="assets/blocks/over/obsidian.png"><span>흑요석 300</span></div>
-                    <div class="row"><img src="assets/blocks/ender/enderman.png"><span>엔더맨 300</span></div>
-                    <div class="row"><img src="assets/blocks/nether/blaze.png"><span>블레이즈 250</span></div>
-                    <div class="row"><img src="assets/blocks/over/iron_ore.png"><span>철 200</span></div>
-                    <div class="row"><img src="assets/blocks/over/dirt.png"><span>흙 30</span></div>
-                </div>
-            </div>
+        <!-- 게임 화면 -->
+        <div id="canvas-wrapper">
+            <canvas id="game" width="1024" height="768"></canvas>
+            <canvas id="ui" width="1024" height="768"></canvas>
         </div>
 
-        <div id="bottom">
-            <div id="log">
-
-            </div>
-        </div>
+        <!-- 로그 (기존 유지) -->
+        <div id="log"></div>
     </div>
 </body>
 
