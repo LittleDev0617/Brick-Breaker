@@ -2,6 +2,7 @@ const lobby = () => {
     let scene1 = new Scene("lobby");
 
     scene1.start = function() {
+        document.body.className = 'lobby-bg';
         scene1.addUI(new UIText("titleText", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
         scene1.addUI(new UIButton("playBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
             scoreManager.reset(); // 새 게임 시작 시 점수 초기화
@@ -32,6 +33,7 @@ const settingsScene = () => {
     let scene = new Scene("settings");
 
     scene.start = function() {
+        document.body.className = 'lobby-bg';
         this.gameCanvas.objects = {};
         this.uiCanvas.objects = {};
 
@@ -76,8 +78,6 @@ const settingsScene = () => {
         // 뒤로가기
         this.addUI(new UIButton("backBtn", cx, cy + 200, 400, 50, "Back", () => {
             this.isEnd = true;
-            gameManager.play("lobby");
-            soundManager.playClick();
         }));
     };
 
@@ -86,6 +86,15 @@ const settingsScene = () => {
 
 const gameScene = () => {
     let scene = new Scene("game");
+    const backgroundImages = {
+        level1: new Image(),
+        level2: new Image(),
+        level3: new Image()
+    };
+
+    backgroundImages.level1.src = "assets/background/level1.png";
+    backgroundImages.level2.src = "assets/background/level2.png";
+    backgroundImages.level3.src = "assets/background/level3.png";
 
     const STAGES = [
         {
@@ -131,8 +140,6 @@ const gameScene = () => {
             scene.removeObject(block.name);
         });
         
-        this.level++;
-        this.stage = STAGES[this.level];
         let map = maps.find(map => map.name == `level${scene.level+1}`);
         map.draw(scene);
     };
@@ -145,6 +152,18 @@ const gameScene = () => {
         this.level = level;
         this.stage = STAGES[level];
         ////////////////////////        UI / Map 생성       ///////////////////////////////
+        let background = new UIImage(
+            "background",
+            CANVAS_WIDTH / 2,
+            CANVAS_HEIGHT / 2,
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT,
+            backgroundImages[`level${level + 1}`]
+        );
+        background.isCollisionDisabled = true;
+        background.isFixedToScreen = true;
+
+        this.addGameObject(background);
         loadMap();
 
 
