@@ -77,6 +77,7 @@ const settingsScene = () => {
 
         // 뒤로가기
         this.addUI(new UIButton("backBtn", cx, cy + 200, 400, 50, "Back", () => {
+            soundManager.playClick();
             gameManager.play("lobby");
         }));
     };
