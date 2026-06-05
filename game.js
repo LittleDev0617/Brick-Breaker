@@ -347,8 +347,8 @@ class Player extends GameObject {
             this.inventory.push(slot);
         }
 
-        this.prevX = 0;
-        this.prevY = 0;
+        this.prevX = this.transform.x;
+        this.prevY = this.transform.y;
     }
 
     addItem(itemInfo) {        
