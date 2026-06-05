@@ -10,9 +10,10 @@ const sampleScene = () => {
     }));
 
 
-    for (i=0; i < 12; i++)
-        for (j=0; j < 16; j++)
-            sampleScene.addGameObject(new Block(`stone${i}_${j}`, j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), "assets/blocks/stone.png"));
+    // 버그(sampleScene): let 없이 i/j를 쓰고 예전 Block 인자를 넘겨 샘플 실행 시 오류가 날 수 있음.
+    for (let i=0; i < 12; i++)
+        for (let j=0; j < 16; j++)
+            sampleScene.addGameObject(new Block(`stone${i}_${j}`, j*(BLOCK_SIZE+1), i*(BLOCK_SIZE+1), BLOCK_STONE));
 
     let ball = new Ball("ball_0", CANVAS_WIDTH / 2, CANVAS_HEIGHT-50, "pickaxe", 0);
     ball.transform.velocity = new Vector2D(0, 0);

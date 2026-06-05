@@ -20,8 +20,9 @@ const lobby = () => {
             soundManager.playClick();
         }));
 
-        for (i = 0; i < 12; i++)
-            for (j = 0; j < 16; j++)
+        // 버그(lobby.start): let 없이 i/j를 쓰면 전역 변수가 생겨 다른 반복문과 충돌할 수 있음.
+        for (let i = 0; i < 12; i++)
+            for (let j = 0; j < 16; j++)
                 scene1.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), BLOCK_STONE));
     }
 
@@ -117,8 +118,6 @@ const gameScene = () => {
         {
             'map': 'level3',
             'isClear': () => {
-                const player = scene.findGameObject('player');
-                
                 return scene.goal_crystal == 0;
             }
         },
@@ -143,6 +142,12 @@ const gameScene = () => {
         
         let map = maps.find(map => map.name == `level${scene.level+1}`);
         map.draw(scene);
+    };
+
+    const countGoalCrystals = () => {
+        return scene.findGameObjects('block_')
+            .filter(block => block.blockInfo == BLOCK_END_CRYSTAL)
+            .length;
     };
 
     scene.start = function (arg=null) {
@@ -172,17 +177,20 @@ const gameScene = () => {
         // this.uiCanvas.objects = {};
         
 
-        this.goal_crystal = 4;
+        // 버그(countGoalCrystals): 크리스탈 수를 4로 고정하면 실제 맵의 크리스탈 개수와 달라 클리어가 막힘.
+        this.goal_crystal = countGoalCrystals();
 
         const isRespawn = !!gameManager.respawning;
         gameManager.respawning = false;
 
-        this.game_start = isRespawn;
-        if (isRespawn) soundManager.playBGM();
+        this.game_start = false;
+        let start_button = null;
 
         const gameStart = () => {
-            start_button.isActive = false;
+            if (this.game_start) return;
+            if (start_button) start_button.isActive = false;
             this.game_start = true;
+            createBall(LEVEL_WOOD);
 
             soundManager.playBGM(); // 게임 시작 후 배경음악 재생
         };
@@ -214,13 +222,14 @@ const gameScene = () => {
         player.appendChild(this.camera);
         
 
-        let start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", () => {
-            gameStart;
+        start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", () => {
+            // 버그(gameStart): 함수 이름만 쓰면 실행되지 않아서 버튼을 눌러도 시작 상태가 바뀌지 않음.
+            gameStart();
             soundManager.playClick();
         });
         if (!isRespawn) this.addGameObject(start_button);
 
-        createBall(LEVEL_WOOD);
+        if (isRespawn) gameStart();
 
         // 인게임 Settings 버튼
         const cx = CANVAS_WIDTH / 2;
@@ -306,13 +315,12 @@ const gameScene = () => {
             this.isCameraMoving = canCameraMove && offsetY <= CANVAS_HEIGHT-200;
         }
 
-        
-        gameStart();
     }
     
 
     scene.update = function () {
         if (this.settingsPanelOpen) return;
+        if (!this.game_start) return;
 
         const player = this.findGameObject('player');
         const dot = this.findUIObject('debug');
