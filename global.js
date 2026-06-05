@@ -35,11 +35,11 @@ const BlockInfo = function(blockId, src, hp=1, itemInfo=null) {
 // overworld blocks
 const BLOCK_GRASS       = new BlockInfo("b_grass",          "assets/blocks/over/grass.png", 2, ITEM_DIRT);
 const BLOCK_DIRT        = new BlockInfo("b_dirt",           "assets/blocks/over/dirt.png", 2, ITEM_DIRT);
-const BLOCK_STONE       = new BlockInfo("b_stone",          "assets/blocks/over/stone.png", 4, ITEM_COBBLESTONE);
+const BLOCK_STONE       = new BlockInfo("b_stone",          "assets/blocks/over/stone.png", 2, ITEM_COBBLESTONE);
 const BLOCK_OAK_LOG     = new BlockInfo("b_oak_log",        "assets/blocks/over/oak_log.png", 2, ITEM_OAK_LOG);
-const BLOCK_IRON_ORE    = new BlockInfo("b_iron_ore",       "assets/blocks/over/iron_ore.png", 5, ITEM_IRON_INGOT);
-const BLOCK_DIAMOND_ORE = new BlockInfo("b_diamond_ore",    "assets/blocks/over/diamond_ore.png", 5, ITEM_DIAMOND);
-const BLOCK_OBSIDIAN    = new BlockInfo("b_obsidian",       "assets/blocks/over/obsidian.png", 10, ITEM_OBSIDIAN);
+const BLOCK_IRON_ORE    = new BlockInfo("b_iron_ore",       "assets/blocks/over/iron_ore.png", 4, ITEM_IRON_INGOT);
+const BLOCK_DIAMOND_ORE = new BlockInfo("b_diamond_ore",    "assets/blocks/over/diamond_ore.png", 7, ITEM_DIAMOND);
+const BLOCK_OBSIDIAN    = new BlockInfo("b_obsidian",       "assets/blocks/over/obsidian.png", 20, ITEM_OBSIDIAN);
 const BLOCK_TNT         = new BlockInfo("b_tnt",            "assets/blocks/over/tnt.png");
 const BLOCK_ZOMBIE      = new BlockInfo("b_zombie",         "assets/blocks/over/zombie.png");
 const BLOCK_PIG         = new BlockInfo("b_pig",            "assets/blocks/over/pig.png");
