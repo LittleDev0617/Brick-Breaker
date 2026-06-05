@@ -4,17 +4,19 @@ const lobby = () => {
     scene1.start = function() {
         scene1.addUI(new UIText("titleText", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
         scene1.addUI(new UIButton("playBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
-            // console.log("Play button clicked!");
             scoreManager.reset(); // 새 게임 시작 시 점수 초기화
             gameManager.play("game", [0, undefined]);
+            soundManager.playClick();
         }));
 
         scene1.addUI(new UIButton("editorBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 80, 400, 50, "Map Editor", () => {
             gameManager.play("editor");
+            soundManager.playClick();
         }));
 
         scene1.addUI(new UIButton("settingsBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 160, 400, 50, "Settings", () => {
             gameManager.play("settings");
+            soundManager.playClick();
         }));
 
         for (i = 0; i < 12; i++)
@@ -44,6 +46,7 @@ const settingsScene = () => {
                 soundManager.changeBgm();
                 musicSelectBtnText.text = soundManager.getBgm();
                 musicSelectBtn.text = soundManager.getBgm();
+                soundManager.playClick();
             });
         let musicSelectBtnText = musicSelectBtn.child[0];
         this.addUI(musicSelectBtn);
@@ -53,6 +56,7 @@ const settingsScene = () => {
                 soundManager.toggleBgm();
                 bgmText.text = soundManager.bgmEnabled ? "BGM: ON" : "BGM: OFF";
                 bgmText.color = soundManager.bgmEnabled ? "#22ee77" : "#ee5555";
+                soundManager.playClick();
             });
         let bgmText = bgmBtn.child[0];
         bgmText.color = soundManager.bgmEnabled ? "#22ee77" : "#ee5555";
@@ -63,6 +67,7 @@ const settingsScene = () => {
                 soundManager.toggleSfx();
                 sfxText.text = soundManager.sfxEnabled ? "Sound Effects: ON" : "Sound Effects: OFF";
                 sfxText.color = soundManager.sfxEnabled ? "#22ee77" : "#ee5555";
+                soundManager.playClick();
             });
         let sfxText = sfxBtn.child[0];
         sfxText.color = soundManager.sfxEnabled ? "#22ee77" : "#ee5555";
@@ -71,6 +76,8 @@ const settingsScene = () => {
         // 뒤로가기
         this.addUI(new UIButton("backBtn", cx, cy + 200, 400, 50, "Back", () => {
             this.isEnd = true;
+            gameManager.play("lobby");
+            soundManager.playClick();
         }));
     };
 
@@ -108,13 +115,13 @@ const gameScene = () => {
     ]
 
     const BALL_SPAWN_POINT = new Vector2D(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100);
+    const MAX_BALL_COUNT = 5;
 
     const createBall = (level) => {
-        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, new Vector2D(0, -1));
+        let randDx = Math.floor(Math.random()*8 - 4);
+        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, new Vector2D(randDx, -3));
         
-        // ball.transform.velocity.rotate(Math.random() * (Math.PI/4)) - Math.PI/4;
         ball.transform.velocity.scale(120);
-        
         
         scene.addGameObject(ball);
     }
@@ -132,11 +139,9 @@ const gameScene = () => {
 
     scene.start = function (arg=null) {
         if (arg == null) return;
-        console.log('SCENE STARTED!!!!')
 
         const [level, inventory] = arg;
         
-        console.log('level', level);
         this.level = level;
         this.stage = STAGES[level];
         ////////////////////////        UI / Map 생성       ///////////////////////////////
@@ -159,7 +164,6 @@ const gameScene = () => {
             start_button.isActive = false;
             this.game_start = true;
 
-            soundManager.playClick();//  시작 버튼 클릭 효과음
             soundManager.playBGM(); // 게임 시작 후 배경음악 재생
         };
 
@@ -190,7 +194,10 @@ const gameScene = () => {
         player.appendChild(this.camera);
         
 
-        let start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", gameStart);
+        let start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", () => {
+            gameStart;
+            soundManager.playClick();
+        });
         if (!isRespawn) this.addGameObject(start_button);
 
         createBall(LEVEL_WOOD);
@@ -221,6 +228,8 @@ const gameScene = () => {
                 ball.transform.velocity.y = 0;
                 ball.transform.acceleration.y = 0;
             });
+
+            soundManager.playClick();
         }));
 
         addToOverlay(new UIRect("ow_bg", cx, cy, CANVAS_WIDTH, CANVAS_HEIGHT, "rgba(0,0,0,0.85)"));
@@ -230,6 +239,7 @@ const gameScene = () => {
             soundManager.toggleBgm();
             owBgmText.text = soundManager.bgmEnabled ? "BGM: ON" : "BGM: OFF";
             owBgmText.color = soundManager.bgmEnabled ? "#22ee77" : "#ee5555";
+            soundManager.playClick();
         });
         let owBgmText = owBgmBtn.child[0];
         owBgmText.color = "#22ee77";
@@ -239,6 +249,7 @@ const gameScene = () => {
             soundManager.toggleSfx();
             owSfxText.text = soundManager.sfxEnabled ? "Sound Effects: ON" : "Sound Effects: OFF";
             owSfxText.color = soundManager.sfxEnabled ? "#22ee77" : "#ee5555";
+            soundManager.playClick();
         });
         let owSfxText = owSfxBtn.child[0];
         owSfxText.color = "#22ee77";
@@ -257,6 +268,7 @@ const gameScene = () => {
                 ball.transform.acceleration.y = this.savedBallVelocities[i].ay;
             });
             this.savedBallVelocities = null;
+            soundManager.playClick();
         }));
 
         let canCameraMove = false;
@@ -264,7 +276,6 @@ const gameScene = () => {
         this.camera.onMouseMove = e => {
             const { offsetX, offsetY } = e;
 
-            // console.log(offsetY, 700)
             let cntBlocksInMap = 0;
             this.findGameObjects('block_').forEach(block => {
                 if (block.transform.y >= this.camera.transform.getAbsolute().y)
@@ -281,7 +292,6 @@ const gameScene = () => {
     
 
     scene.update = function () {
-        // if (!this.game_start) return;
         if (this.settingsPanelOpen) return;
 
         const player = this.findGameObject('player');
@@ -293,7 +303,8 @@ const gameScene = () => {
         }
         
         const balls = this.findGameObjects('ball');
-        if (balls.length > 0 && balls.every(ball => ball.transform.y > CANVAS_HEIGHT)) {
+        
+        if (balls.length == 0) {
             scoreManager.reset();
             gameManager.play("gameOver", [this.level, player.inventory]);
             return;
@@ -304,7 +315,6 @@ const gameScene = () => {
             const [collisionSide, collisionObject] = ball.checkCollision();
             
             if (collisionSide == 'bottom' && collisionObject instanceof Player) {
-                // ball.transform.velocity.scale(0.8);
                 ball.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x * 5, 400);
                 ball.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y * 5, 400);
             }
@@ -320,17 +330,22 @@ const gameScene = () => {
                     scoreManager.addByBlock(collisionObject);
                 }
             }
+
+            if (ball.transform.y > CANVAS_HEIGHT + 100) {
+                this.removeObject(ball.name);
+            }
         });
 
         const ITEM_COST = 3;
-        const itemList = [ITEM_OAK_LOG, ITEM_COBBLESTONE, ITEM_IRON_INGOT, ITEM_DIAMOND];
-        let newBalls = [];
+        const itemList = [ITEM_OAK_LOG, ITEM_COBBLESTONE, ITEM_IRON_INGOT, ITEM_GOLD_INGOT, ITEM_DIAMOND];
+
         player.inventory.forEach(slot => {
             if (slot.itemInfo == null) return;
             
             let itemLevel = itemList.indexOf(slot.itemInfo);
 
-            if (itemLevel != -1 && slot.count >= ITEM_COST) {
+            let ballCounter = balls.length;
+            if (itemLevel != -1 && slot.count >= ITEM_COST && ballCounter < MAX_BALL_COUNT) {
                 createBall(itemLevel);
                 slot.addCount(-ITEM_COST);                
             }
@@ -373,6 +388,7 @@ const endingScene = () => {
         // Title Screen 버튼
         this.addUI(new UIButton("titleBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 145, 290, 50, "Title Screen", () => {
             gameManager.play("lobby");
+            soundManager.playClick();
         }));
     };
 
@@ -405,11 +421,13 @@ const gameClearScene = () => {
         // Next Level 버튼
         this.addUI(new UIButton("nextLevelBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 60, 290, 50, "Next Level", () => {
             gameManager.play("game", [level+1, inventory]);
+            soundManager.playClick();
         }));
 
         // Title Screen 버튼
         this.addUI(new UIButton("titleBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 145, 290, 50, "Title Screen", () => {
             gameManager.play("lobby");
+            soundManager.playClick();
         }));
     };
 
@@ -443,11 +461,13 @@ const gameOverScene = () => {
         // Respawn 버튼
         this.addUI(new UIButton("respawnBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 60, 290, 50, "Respawn", () => {
             gameManager.play("game", [level, undefined]);
+            soundManager.playClick();
         }));
 
         // Title Screen 버튼
         this.addUI(new UIButton("titleBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 145, 290, 50, "Title Screen", () => {
             gameManager.play("lobby");
+            soundManager.playClick();
         }));
     };
 

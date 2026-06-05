@@ -11,14 +11,10 @@ window.onload = () => {
 
     gameManager.addScene(lobby());
     gameManager.addScene(settingsScene());
-    // gameManager.addScene(sampleScene());
-    // gameManager.addScene(sampleScene2());
 
     gameManager.addScene(endingScene());
     gameManager.addScene(gameClearScene());
     gameManager.addScene(gameOverScene());
 
-    // gameManager.addScene(sampleScene2());
     gameManager.play("lobby");
-    // gameManager.play("sample2");
 }

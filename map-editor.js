@@ -24,7 +24,7 @@ const editorScene = () => {
             logTag.style.display = 'none';
             mapEditorUI.style.display = 'none';
             gameManager.play("lobby");
-            // this.end();
+            soundManager.playClick();
         });
         menuBtn.appendChild(new UIImage("menuIcon", 0, 0, 48, 48, "assets/etc/menu-icon.png"));    
 
