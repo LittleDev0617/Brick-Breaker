@@ -6,7 +6,7 @@ let gameManager = new GameManager();
 
 // 처음 로드
 window.onload = () => {
-    // gameManager.addScene(overWorldScene());
+    gameManager.addScene(gameScene());
     gameManager.addScene(editorScene());
 
     gameManager.addScene(lobby());
@@ -14,11 +14,7 @@ window.onload = () => {
     // gameManager.addScene(sampleScene());
     // gameManager.addScene(sampleScene2());
 
-    gameManager.addScene(level1Scene());
-    gameManager.addScene(level2Scene());
-    gameManager.addScene(level3Scene());
     gameManager.addScene(endingScene());
-
     gameManager.addScene(gameClearScene());
     gameManager.addScene(gameOverScene());
 

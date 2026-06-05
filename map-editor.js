@@ -23,7 +23,8 @@ const editorScene = () => {
         let menuBtn = new UIButton("menuBtn", CANVAS_WIDTH-48, 48, 64, 64, "", () => {
             logTag.style.display = 'none';
             mapEditorUI.style.display = 'none';
-            this.end();
+            gameManager.play("lobby");
+            // this.end();
         });
         menuBtn.appendChild(new UIImage("menuIcon", 0, 0, 48, 48, "assets/etc/menu-icon.png"));    
 
