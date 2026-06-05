@@ -337,7 +337,7 @@ const gameScene = () => {
         });
 
         if (this.isCameraMoving) {
-            this.camera.move(0, -1);
+            this.camera.move(0, -2);
             this.isCameraMoving = false;
         }
         dot.transform.x = this.camera.transform.getAbsolute().x;

@@ -105,7 +105,7 @@ class Rigidbody {
         this.transform = transform;
         this.mass = mass;
         transform.acceleration = new Vector2D(0, 0);
-        this.transform.acceleration.y = this.mass * 0.01;
+        this.transform.acceleration.y = this.mass * 0.02;
         // console.log(transform.velocity)
     }
 
