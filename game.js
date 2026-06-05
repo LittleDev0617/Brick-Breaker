@@ -69,7 +69,6 @@ class GameManager {
 
         this.resume(sceneName);
 
-        console.log(`Scene ${sceneName} started`);
         this.playingScene.isEnd = false;
 
         // deltatime으로 인해 튀는것 방지
@@ -107,7 +106,6 @@ class Rigidbody {
         this.mass = mass;
         transform.acceleration = new Vector2D(0, 0);
         this.transform.acceleration.y = this.mass * 0.02;
-        // console.log(transform.velocity)
     }
 
     update() {
@@ -118,8 +116,8 @@ class Rigidbody {
 
 class Ball extends GameObject {
     static toolList = ["pickaxe", "axe", "shovel", "sword"];
-    static toolLevelList = ["wood", "stone", "iron", "diamond"];
-    static damageList = [1, 2, 4, 8];
+    static toolLevelList = ["wood", "stone", "iron", "gold", "diamond"];
+    static damageList = [1, 2, 4, 4, 8];
     static toolImages = {};
     static {
         this.toolList.forEach(tool => {
@@ -137,11 +135,7 @@ class Ball extends GameObject {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
         this.transform.velocity = velocity;
         
-        console.log("NEW BALLLLLLLLLLLLLLLLLLLLLLL")
-        console.log(this.transform)
-        console.log(this.transform.velocity)
         this.rigidbody = new Rigidbody(this.transform, 150);
-        // this.rigidbody = null;
         this.damage = Ball.damageList[level];
 
         this.maxSpeed = 500;
@@ -151,8 +145,6 @@ class Ball extends GameObject {
     }
 
     move() {
-        console.log(this.transform.velocity.y)
-
         this.transform.x += this.transform.velocity.x * this.scene.deltaTime*2;
         this.transform.y += this.transform.velocity.y * this.scene.deltaTime*2;
         
@@ -167,17 +159,11 @@ class Ball extends GameObject {
         if (a.left <= 0 && this.transform.velocity.x < 0) {
             this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = this.transform.width * this.transform.pivotX;
-
-            // this.transform.velocity.rotate(90 * Math.PI / 180);
-            // this.transform.velocity.scale(0.95);
         } else if (a.right >= CANVAS_WIDTH && this.transform.velocity.x > 0) {
             this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = CANVAS_WIDTH - this.transform.width * this.transform.pivotX;
-            
-            // this.transform.velocity.rotate(-90 * Math.PI / 180);
-            // this.transform.velocity.scale(0.95);
         } 
-        
+
         if (a.top <= 0 && this.transform.velocity.y < 0) {
             this.transform.velocity.y = -this.transform.velocity.y;
             this.transform.y = this.transform.height * this.transform.pivotY;
@@ -352,7 +338,8 @@ class Player extends GameObject {
         this.prevY = this.transform.y;
     }
 
-    addItem(itemInfo) {        
+    addItem(itemInfo) {    
+        soundManager.playGetItem();    
         let isExist = false;
 
         let targetSlot = this.inventory.find(slot => slot.itemInfo == itemInfo);
@@ -363,7 +350,6 @@ class Player extends GameObject {
 
         this.inventory.forEach(slot => {
             if (!slot.itemInfo) return;
-
         });
     }
 

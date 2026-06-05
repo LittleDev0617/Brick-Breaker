@@ -23,6 +23,9 @@ class SoundManager {
         this.blockBreakSound = new Audio("assets/sounds/block_break.mp3");
         this.blockBreakSound.volume = 0.8;
 
+        this.getItemSound = new Audio("assets/sounds/get_item.mp3");
+        this.getItemSound.volume = 0.2;
+
         this.bgmEnabled = true;
         this.sfxEnabled = true;
 
@@ -81,6 +84,10 @@ class SoundManager {
         this.bgm.play().catch(error => {
             console.log("BGM 재생 실패:", error);
         });
+    }
+
+    playGetItem() {
+        this.playEffectSound(this.getItemSound, "아이템 획득 효과음 재생 실패:");
     }
 
     stopBGM() {
