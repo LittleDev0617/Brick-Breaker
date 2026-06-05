@@ -11,6 +11,7 @@ body {
     height: 100%;
     background: #1a1a1a; /* 기본값 (로비 등) */
     transition: background 0.4s ease;
+    overflow: hidden;
 }
 
 /* 월드별 바깥 배경색 */
@@ -27,9 +28,10 @@ body.ender-bg     { background: linear-gradient(#241a38, #100a1c); }
 }
 
 #center {
-    flex: 3;
+    flex: 1;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 #top, #bottom {
@@ -51,7 +53,10 @@ body.ender-bg     { background: linear-gradient(#241a38, #100a1c); }
 }
 
 #canvas-wrapper {
-    position: relative;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     width: 1024px;
     height: 768px;
     background-color: white;
