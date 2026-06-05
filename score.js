@@ -2,6 +2,8 @@ class ScoreManager {
     constructor() {
         this.score = 0;
         this.scoreText = null;
+        // 최고 점수 초기화
+        this.highScore = Number(localStorage.getItem("highScore")) || 0;
     }
 
     setTextObject(scoreText) {
@@ -53,13 +55,38 @@ class ScoreManager {
     }
 
     updateText() {
+        if (this.score > this.highScore) {
+            this.highScore = this.score;
+    
+            localStorage.setItem(
+                "highScore",
+                this.highScore
+            );
+        }
+    
         if (this.scoreText) {
-            this.scoreText.text = `Score: ${this.score}`;
+            this.scoreText.text =
+                `Score: ${this.score} | Best: ${this.highScore}`;
         }
     }
 
     getScore() {
         return this.score;
+    }
+
+    // 최고 점수 저장 및 불러오기
+    saveHighScore() {
+        if (this.score > this.highScore) {
+            this.highScore = this.score;
+            localStorage.setItem(
+                "highScore",
+                this.highScore
+            );
+        }
+    }
+    
+    getHighScore() {
+        return this.highScore;
     }
 }
 

@@ -112,8 +112,8 @@ const overWorldScene = () => {
 
 
         // 점수 배경 UI
-        this.addUI(new UIRect("scoreBg", 5, 5, 210, 40, "rgba(0,0,0,0.55)", 0, 0));
-        let scoreText = new UIText("scoreText", 15, 25, "Score: 0", 22, "white", TEXT_ALIGN_LEFT, 0, 0);
+        this.addUI(new UIRect("scoreBg", 5, 5, 350, 40, "rgba(0,0,0,0.55)", 0, 0));
+        let scoreText = new UIText("scoreText", 15, 25, `Score: 0 | Best: ${scoreManager.getHighScore()}`, 22, "white", TEXT_ALIGN_LEFT, 0, 0);
         this.addUI(scoreText);
         scoreManager.setTextObject(scoreText);
         let dot = new UIRect("debug", 0, 0, 5, 5, 'red');
@@ -344,8 +344,8 @@ const level1Scene = () => {
 
 
         // 점수 배경 UI
-        this.addUI(new UIRect("scoreBg", 5, 5, 210, 40, "rgba(0,0,0,0.55)", 0, 0));
-        let scoreText = new UIText("scoreText", 15, 25, "Score: 0", 22, "white", TEXT_ALIGN_LEFT, 0, 0);
+        this.addUI(new UIRect("scoreBg", 5, 5, 350, 40, "rgba(0,0,0,0.55)", 0, 0));
+        let scoreText = new UIText("scoreText", 15, 25, `Score:0 | Best: ${scoreManager.getHighScore()}`, 22, "white", TEXT_ALIGN_LEFT, 0, 0);
         this.addUI(scoreText);
         scoreManager.setTextObject(scoreText);
         let dot = new UIRect("debug", 0, 0, 5, 5, 'red');
@@ -515,8 +515,8 @@ const level2Scene = () => {
 
 
         // 점수 배경 UI
-        this.addUI(new UIRect("scoreBg", 5, 5, 210, 40, "rgba(0,0,0,0.55)", 0, 0));
-        let scoreText = new UIText("scoreText", 15, 25, "Score: 0", 22, "white", TEXT_ALIGN_LEFT, 0, 0);
+        this.addUI(new UIRect("scoreBg", 5, 5, 350, 40, "rgba(0,0,0,0.55)", 0, 0));
+        let scoreText = new UIText("scoreText", 15, 25, `Score: 0 | Best: ${scoreManager.getHighScore()}`, 22, "white", TEXT_ALIGN_LEFT, 0, 0);
         this.addUI(scoreText);
         scoreManager.setTextObject(scoreText);
         let dot = new UIRect("debug", 0, 0, 5, 5, 'red');
@@ -684,8 +684,8 @@ const level3Scene = () => {
 
 
         // 점수 배경 UI
-        this.addUI(new UIRect("scoreBg", 5, 5, 210, 40, "rgba(0,0,0,0.55)", 0, 0));
-        let scoreText = new UIText("scoreText", 15, 25, "Score: 0", 22, "white", TEXT_ALIGN_LEFT, 0, 0);
+        this.addUI(new UIRect("scoreBg", 5, 5, 350, 40, "rgba(0,0,0,0.55)", 0, 0));
+        let scoreText = new UIText("scoreText", 15, 25, `Score: 0 | Best: ${scoreManager.getHighScore()}`, 22, "white", TEXT_ALIGN_LEFT, 0, 0);
         this.addUI(scoreText);
         scoreManager.setTextObject(scoreText);
         let dot = new UIRect("debug", 0, 0, 5, 5, 'red');
@@ -811,6 +811,9 @@ const endingScene = () => {
     let scene = new Scene("ending");
 
     scene.start = function() {
+        //최고 점수 저장
+        scoreManager.saveHighScore();
+
         this.gameCanvas.objects = {};
         this.uiCanvas.objects = {};
 
@@ -822,6 +825,9 @@ const endingScene = () => {
 
         // 점수
         this.addUI(new UIText("scoreText", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 30, `Score: ${scoreManager.getScore()}`, 28, "white"));
+
+        //최고 점수
+        this.addUI(new UIText("highScoreText", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 10, `Best Score: ${scoreManager.getHighScore()}`, 28, "#FFD700"));
 
         // Title Screen 버튼
         this.addUI(new UIButton("titleBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 145, 290, 50, "Title Screen", () => {
@@ -836,6 +842,9 @@ const gameClearScene = () => {
     let scene = new Scene("gameClear");
 
     scene.start = function() {
+        // 게임 클리어 시 최고 점수 저장
+        scoreManager.saveHighScore();
+
         this.gameCanvas.objects = {};
         this.uiCanvas.objects = {};
 
@@ -847,6 +856,9 @@ const gameClearScene = () => {
 
         // 점수
         this.addUI(new UIText("scoreText", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 30, `Score: ${scoreManager.getScore()}`, 28, "white"));
+
+        //최고 점수
+        this.addUI(new UIText("highScoreText", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 10, `Best Score: ${scoreManager.getHighScore()}`, 28, "#FFD700"));
 
         // Next Level 버튼
         this.addUI(new UIButton("nextLevelBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 60, 290, 50, "Next Level", () => {
@@ -868,8 +880,9 @@ const gameClearScene = () => {
 
 const gameOverScene = () => {
     let scene = new Scene("gameOver");
-
     scene.start = function() {
+        // 게임 오버 시 최고 점수 저장
+        scoreManager.saveHighScore();
         this.gameCanvas.objects = {};
         this.uiCanvas.objects = {};
 
@@ -883,6 +896,9 @@ const gameOverScene = () => {
 
         // 점수
         this.addUI(new UIText("scoreText", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 30, `Score: ${scoreManager.getScore()}`, 28, "white"));
+
+        //최고 점수
+        this.addUI(new UIText("highScoreText",CANVAS_WIDTH/2,CANVAS_HEIGHT/2 + 10,`Best Score: ${scoreManager.getHighScore()}`,28,"#FFD700"));
 
         // Respawn 버튼
         this.addUI(new UIButton("respawnBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 60, 290, 50, "Respawn", () => {
