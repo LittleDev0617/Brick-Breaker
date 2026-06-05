@@ -79,6 +79,15 @@ const settingsScene = () => {
 
 const gameScene = () => {
     let scene = new Scene("game");
+    const backgroundImages = {
+        level1: new Image(),
+        level2: new Image(),
+        level3: new Image()
+    };
+
+    backgroundImages.level1.src = "assets/background/level1.png";
+    backgroundImages.level2.src = "assets/background/level2.png";
+    backgroundImages.level3.src = "assets/background/level3.png";
 
     const STAGES = [
         {
@@ -124,8 +133,6 @@ const gameScene = () => {
             scene.removeObject(block.name);
         });
         
-        this.level++;
-        this.stage = STAGES[this.level];
         let map = maps.find(map => map.name == `level${scene.level+1}`);
         map.draw(scene);
     };
@@ -140,6 +147,18 @@ const gameScene = () => {
         this.level = level;
         this.stage = STAGES[level];
         ////////////////////////        UI / Map 생성       ///////////////////////////////
+        let background = new UIImage(
+            "background",
+            CANVAS_WIDTH / 2,
+            CANVAS_HEIGHT / 2,
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT,
+            backgroundImages[`level${level + 1}`]
+        );
+        background.isCollisionDisabled = true;
+        background.isFixedToScreen = true;
+
+        this.addGameObject(background);
         loadMap();
 
 

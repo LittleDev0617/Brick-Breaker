@@ -378,7 +378,7 @@ class Scene {
         for (const objID in this.gameCanvas.objects) {
             let otherObj = this.gameCanvas.objects[objID];
 
-            if (otherObj !== obj && otherObj.isActive) {
+            if (otherObj !== obj && otherObj.isActive && !otherObj.isCollisionDisabled) {
                 
                 const a = obj.transform.getAbsolute();
                 const b = otherObj.transform.getAbsolute();

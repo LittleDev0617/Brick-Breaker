@@ -396,7 +396,7 @@ class Camera extends GameObject {
     move(dx, dy) {
         this.scene.findGameObjects("").forEach(obj => {
             // Camera 자신이면 리턴
-            if (obj == this || obj == this.parent || obj instanceof Player) return;
+            if (obj == this || obj == this.parent || obj instanceof Player || obj.isFixedToScreen) return;
             obj.transform.x -= dx;
             obj.transform.y -= dy;
         });
