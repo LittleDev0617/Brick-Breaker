@@ -81,6 +81,7 @@ class GameManager {
         //     this.isLoopRunning = true;
         //     this.update();
         // }
+        this.playingScene.last = 0;
         let id = requestAnimationFrame((now) => {this.update(now)});
         this.animationMap[this.playingScene.name] = id;        
     }
