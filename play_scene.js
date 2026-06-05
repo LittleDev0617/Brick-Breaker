@@ -124,11 +124,11 @@ const gameScene = () => {
     ]
 
     const BALL_SPAWN_POINT = new Vector2D(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 100);
-    const MAX_BALL_COUNT = 5;
+    const MAX_BALL_COUNT = 10;
 
     const createBall = (level) => {
         let randDx = Math.floor(Math.random()*8 - 4);
-        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, new Vector2D(randDx, -3));
+        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, new Vector2D(randDx, -2));
         
         ball.transform.velocity.scale(120);
         
