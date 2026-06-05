@@ -11,10 +11,13 @@ class Vector2D {
     scale(k) { this.x *= k; this.y *= k; }
     add(v) { this.x += v.x; this.y += v.y; }
     rotate(angle) {
+        // 버그(Vector2D.rotate): x를 먼저 바꾸면 y 계산이 바뀐 x를 사용해서 회전값이 틀어짐.
+        const x = this.x;
+        const y = this.y;
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
-        this.x = this.x * cos - this.y * sin;
-        this.y = this.x * sin + this.y * cos;
+        this.x = x * cos - y * sin;
+        this.y = x * sin + y * cos;
     }
 };
 
@@ -131,8 +134,9 @@ class Ball extends GameObject {
         });
     }
 
-    constructor(name, x, y, tool, level, velocity) {
+    constructor(name, x, y, tool, level, velocity = new Vector2D(0, 0)) {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
+        // 버그(Ball.constructor): velocity가 없으면 move/physics에서 undefined.x 때문에 게임이 멈출 수 있음.
         this.transform.velocity = velocity;
         
         this.rigidbody = new Rigidbody(this.transform, 150);
@@ -237,6 +241,11 @@ class Block extends GameObject {
 
         if (this.hp <= 0) {
             this.isActive = false;
+
+            // 버그(Block.hit): 엔드 크리스탈을 부숴도 goal_crystal이 줄지 않아 마지막 스테이지를 클리어할 수 없었음.
+            if (this.blockInfo == BLOCK_END_CRYSTAL && typeof this.scene.goal_crystal == "number") {
+                this.scene.goal_crystal = Math.max(0, this.scene.goal_crystal - 1);
+            }
             
             if (this.blockInfo.itemInfo) {
                 let item = new Item('item', this.transform.x + Math.random() * 50 - 50, this.transform.y + Math.random() * 50 - 50, this.blockInfo.itemInfo);
@@ -345,6 +354,9 @@ class Player extends GameObject {
         let targetSlot = this.inventory.find(slot => slot.itemInfo == itemInfo);
         if (targetSlot == undefined)
             targetSlot = this.inventory.find(slot => slot.itemInfo == undefined);
+
+        // 버그(Player.addItem): 인벤토리가 꽉 찬 상태에서 새 아이템을 먹으면 targetSlot이 없어 오류가 남.
+        if (targetSlot == undefined) return;
 
         targetSlot.setItem(itemInfo, targetSlot.count+1);
 
