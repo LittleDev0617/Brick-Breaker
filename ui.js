@@ -424,22 +424,34 @@ class Scene {
         return [null, null];
     }
 
-    start() {
+    start(arg=null) {
         // 각자 Scene 객체에서 구현.
         // Scene이 play 될 때 Scene 초기화 기능.
     }
 
-    frame() {        
-        this.deltaTime = performance.now() - this.last;
-        
+    frame(now) {
+        this.deltaTime = (now - this.last) / 1000;
+        // this.deltaTime = Math.max(0, Math.min(this.deltaTime, 1 / 30)); 
         this.update();
-        Object.values(this.gameCanvas.objects).forEach(obj => {
-            if (obj.rigidbody)
-                obj.rigidbody.update();
-        })
+
+        const updateForward = (objects) => {
+            objects.forEach(obj => {
+                if (obj.rigidbody)
+                    obj.rigidbody.update();
+
+                if (obj.update)
+                    obj.update();
+
+                if (obj.child)
+                    updateForward(obj.child);                
+            });
+        };
+        
+        updateForward(Object.values(this.gameCanvas.objects));
+
         this.draw();
 
-        this.last = performance.now();
+        this.last = now;
     }
 
     update() {
@@ -448,9 +460,10 @@ class Scene {
 
     end() {
         this.layer.forEach(canvas => {
-            canvas.objects = [];
-        })
-        this.isEnd = true;
+            canvas.objects = {};
+        });
+        cancelAnimationFrame(gameManager.animationMap[this.name]);
+        // this.isEnd = true;
     }
 
     draw() {

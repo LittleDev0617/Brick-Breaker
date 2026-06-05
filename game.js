@@ -15,6 +15,7 @@ class Vector2D {
         const sin = Math.sin(angle);
         this.x = this.x * cos - this.y * sin;
         this.y = this.x * sin + this.y * cos;
+        this.y = this.x * sin + this.y * cos;
     }
 };
 
@@ -28,10 +29,6 @@ class GameObject extends ObjectT {
         this.sprite = sprite;
     }
 
-    update() {
-        this.move();
-        this.render();
-    }
     
     render(context) {
         if (!this.sprite) return;
@@ -47,37 +44,60 @@ class GameManager {
         this.sceneIndex = -1;
         this.sceneList = [];
         this.callStack = [];
+        this.isLoopRunning = false; // this.update 중복 호출 방지
+
+        this.animationMap = {};
     }
 
     get playingScene() { return this.sceneIndex == -1 ? null : this.sceneList[this.sceneIndex]; }
     addScene(scene) { this.sceneList.push(scene); }
 
-    play(sceneName) {
-        if (this.playingScene != null)
-            this.callStack.push(this.playingScene.name);
-
+    resume(sceneName) {
         this.sceneList.forEach((scene, i) => {
             scene.isActive = false;
             if (scene.name == sceneName) {
                 scene.isActive = true;
                 this.sceneIndex = i;
             }
-        })
+        });
+    }
+
+    play(sceneName, arg=null) {
+        if (this.playingScene != null) {
+            this.callStack.push(this.playingScene.name);
+            this.playingScene.end();
+        }
+
+        this.resume(sceneName);
 
         console.log(`Scene ${sceneName} started`);
         this.playingScene.isEnd = false;
-        this.playingScene.start();
-        this.update();
+
+        // deltatime으로 인해 튀는것 방지
+        // this.playingScene.last = 0;
+
+        this.playingScene.start(arg);
+
+        // if (!this.isLoopRunning) {
+        //     this.isLoopRunning = true;
+        //     this.update();
+        // }
+        let id = requestAnimationFrame((now) => {this.update(now)});
+        this.animationMap[this.playingScene.name] = id;        
     }
 
-    update() {
-        if (this.playingScene.isEnd) {
-            this.sceneIndex = -1;
-            let lastScene = this.callStack.pop();
-            return this.play(lastScene);
-        }
-        this.playingScene.frame();
-        requestAnimationFrame(() => { this.update(); });
+    update(now) {
+        // if (this.playingScene.isEnd) {
+        //     this.sceneIndex = -1;
+        //     let lastScene = this.callStack.pop();
+            
+        //     // this.resume(lastScene);
+            
+        //     return this.play(lastScene);
+        // }
+        this.playingScene.frame(now);
+        let id = requestAnimationFrame((now) => {this.update(now)});
+        this.animationMap[this.playingScene.name] = id;       
     }
 };
 
@@ -86,7 +106,8 @@ class Rigidbody {
         this.transform = transform;
         this.mass = mass;
         transform.acceleration = new Vector2D(0, 0);
-        this.transform.acceleration.y = this.mass * 0.008;
+        this.transform.acceleration.y = this.mass * 0.01;
+        // console.log(transform.velocity)
     }
 
     update() {
@@ -115,37 +136,54 @@ class Ball extends GameObject {
     constructor(name, x, y, tool, level, velocity) {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
         this.transform.velocity = velocity;
-        this.rigidbody = new Rigidbody(this.transform, 1);
+        
+        console.log("NEW BALLLLLLLLLLLLLLLLLLLLLLL")
+        console.log(this.transform)
+        console.log(this.transform.velocity)
+        this.rigidbody = new Rigidbody(this.transform, 150);
+        // this.rigidbody = null;
         this.damage = Ball.damageList[level];
+
+        this.maxSpeed = 500;
     }
 
     update() {
     }
 
     move() {
-        this.transform.x += this.transform.velocity.x;
-        this.transform.y += this.transform.velocity.y;
+        console.log(this.transform.velocity.y)
+
+        this.transform.x += this.transform.velocity.x * this.scene.deltaTime*2;
+        this.transform.y += this.transform.velocity.y * this.scene.deltaTime*2;
+        
+        // 최대 속력 제한
+        if (this.transform.velocity.size > this.maxSpeed) {
+            let ratio = this.maxSpeed / this.transform.velocity.size;
+            this.transform.velocity.scale(ratio);
+        }
 
         let a = this.transform.getAbsolute();
         
-        if (a.left <= 0) {
+        if (a.left <= 0 && this.transform.velocity.x < 0) {
             this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = this.transform.width * this.transform.pivotX;
 
-            this.transform.velocity.rotate(90 * Math.PI / 180);
-            this.transform.velocity.scale(0.5);
-        } else if (a.right >= CANVAS_WIDTH) {
+            // this.transform.velocity.rotate(90 * Math.PI / 180);
+            // this.transform.velocity.scale(0.95);
+        } else if (a.right >= CANVAS_WIDTH && this.transform.velocity.x > 0) {
             this.transform.velocity.x = -this.transform.velocity.x;
             this.transform.x = CANVAS_WIDTH - this.transform.width * this.transform.pivotX;
             
-            this.transform.velocity.rotate(-90 * Math.PI / 180);
-            this.transform.velocity.scale(0.5);
-        } else if (a.top <= 0) {
+            // this.transform.velocity.rotate(-90 * Math.PI / 180);
+            // this.transform.velocity.scale(0.95);
+        } 
+        
+        if (a.top <= 0 && this.transform.velocity.y < 0) {
             this.transform.velocity.y = -this.transform.velocity.y;
             this.transform.y = this.transform.height * this.transform.pivotY;
         }
         
-        this.transform.radian += 0.02 * (this.transform.velocity.size * (Math.random() + 1));
+        this.transform.radian += 0.02 * (this.transform.velocity.size *this.scene.deltaTime*2 * (Math.random() + 1));
     }
 
     checkCollision() {
@@ -215,7 +253,7 @@ class Block extends GameObject {
             this.isActive = false;
             
             if (this.blockInfo.itemInfo) {
-                let item = new Item('item', this.transform.x, this.transform.y, this.blockInfo.itemInfo);
+                let item = new Item('item', this.transform.x + Math.random() * 50 - 50, this.transform.y + Math.random() * 50 - 50, this.blockInfo.itemInfo);
                 this.scene.addGameObject(item);
             }
             this.scene.removeObject(this.name);
@@ -244,7 +282,18 @@ class Item extends GameObject {
         super(name, x, y, 32, 32);
         this.itemInfo = itemInfo;
         this.sprite = itemInfo.sprite;
-        this.rigidbody = new Rigidbody(this.transform, Math.random() + 1);
+        this.rigidbody = new Rigidbody(this.transform, Math.random()*30 + 100);
+    }
+
+    update() {    
+        this.transform.y += this.transform.velocity.y * this.scene.deltaTime*2;
+        
+        const [collisionSide, collisionObject] = this.scene.checkCollision(this);
+        
+        if (collisionSide == 'bottom' && collisionObject instanceof Player) {
+            collisionObject.addItem(this.itemInfo);
+            this.scene.removeObject(this.name);
+        }
     }
 }
 
@@ -318,12 +367,21 @@ class Player extends GameObject {
         });
     }
 
+    getItem(itemInfo) {
+        let sum = 0;
+        this.inventory.forEach(slot => {
+            if (slot.itemInfo == itemInfo)
+                sum += slot.count;
+        });
+        return sum;
+    }
+
     onMouseMove(e) {
         this.transform.x = Math.min(CANVAS_WIDTH-this.transform.width / 2, Math.max(e.offsetX, this.transform.width/2));
         this.transform.y = Math.min(CANVAS_HEIGHT-50, Math.max(e.offsetY, CANVAS_HEIGHT-200));
 
-        this.transform.velocity.x = (this.transform.x - this.prevX) * this.scene.deltaTime;
-        this.transform.velocity.y = (this.transform.y - this.prevY) * this.scene.deltaTime;        
+        this.transform.velocity.x = this.transform.x - this.prevX;
+        this.transform.velocity.y = this.transform.y - this.prevY;
 
         this.prevX = this.transform.x;
         this.prevY = this.transform.y;
