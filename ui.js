@@ -430,6 +430,10 @@ class Scene {
     }
 
     frame(now) {
+        if (this.last == 0) {
+            this.last = now;
+            return;
+        }
         this.deltaTime = (now - this.last) / 1000;
         // this.deltaTime = Math.max(0, Math.min(this.deltaTime, 1 / 30)); 
         this.update();
