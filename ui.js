@@ -145,6 +145,23 @@ class Canvas {
         this.canvas = canvas;        
         this.context = canvas.getContext("2d");
         this.objects = {};
+
+        
+        const dispatchTopDown = (e, handlerName) => {
+            if (!this.isActive) return;
+
+            for (let i=this.layer.length-1; i >= 0; i--) {
+                let canvas = this.layer[i];
+                if (canvas[handlerName](e, canvas.objects)) break;
+            }
+        }
+
+        const dispatchAll = (e, handlerName) => {           
+            if (!this.isActive) return;
+            this.layer.forEach(canvas => {
+                canvas[handlerName](e, canvas.objects);
+            })
+        }
     }
     
     isMouseOver(target, mx, my) {
@@ -153,25 +170,36 @@ class Canvas {
         return mx >= absolute.left && mx <= absolute.right && my >= absolute.top && my <= absolute.bottom;
     }
 
-    tryClick(e, target) {
-        const { offsetX, offsetY, button } = e;
-        if (!this.isActive) return false;
+    mouseEvent(e, event, target) {
+        const { offsetX, offsetY } = e;
+        e.preventDefault();
+
+        if (event == EVENT_MOUSE_HOVER) {
+            for (const objId of Object.keys(target).reverse()) {
+                let obj = target[objId];
+                if (obj.hover == undefined) continue;
+                obj.hover = false;
+            }
+        }
 
         for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
-            if (obj.onClick == undefined) {
+            if (!obj.isActive) continue;
+            if (event != EVENT_MOUSE_HOVER && obj[event] == undefined) {
                 if (obj.child.length != 0) {
-                    if (this.tryClick(e, obj.child))
+                    if (this.mouseEvent(e, event, obj.child))
                         return true;
                 }
                 continue;
             }
 
-            if (this.isMouseOver(obj, offsetX, offsetY)) {
-                if (button == 0)     // 좌클릭
-                    obj.onClick(e);
-                else if (button == 2)    // 우클릭
-                    obj.onClick(e, true);
+            let isMosueOver = this.isMouseOver(obj, offsetX, offsetY);
+            if (isMosueOver || event == EVENT_MOUSE_MOVE) {
+                if (event == EVENT_MOUSE_HOVER && obj.hover != undefined) {
+                    obj.hover = true;
+                }
+
+                obj[event](e);
                 return true;
             }
         }
@@ -179,81 +207,12 @@ class Canvas {
         return false;
     }
 
-    tryScroll(e, target) {
-        const { offsetX, offsetY }  = e;
-        if (!this.isActive) return false;
-
+    keyEvent(e, event, target) {
         for (const objId of Object.keys(target).reverse()) {
             let obj = target[objId];
-            
-            if (obj.onScroll == undefined) continue;
-            
-            if (this.isMouseOver(obj, offsetX, offsetY)) {
-                obj.onScroll(e);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    updateHover(e, target) {
-        const { offsetX, offsetY } = e;
-        if (!this.isActive) return false;
-
-        // TODO: 땜빵용 코드. hover 겹쳐있는 대상 어떻게 할지 고민. mouse out 이벤트를 만들긴 해야하는데.
-        for (const objId of Object.keys(target).reverse()) {
-            let obj = target[objId];
-            if (obj.hover == undefined) continue;
-            obj.hover = false;
-        }
-
-        for (const objId of Object.keys(target).reverse()) {
-            let obj = target[objId];
-            
-            // if (!(obj instanceof UIButton)) continue;
-            if (obj.hover == undefined) continue;
-
-            if (this.isMouseOver(obj, offsetX, offsetY)) {
-                obj.hover = true;
-                if (obj.onHover != undefined)
-                    obj?.onHover();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // 이벤트 핸들러도 좀 리팩토링할 필요 있음
-    mouseMove(e, target) {        
-        if (!this.isActive) return false;
-        for (const objId of Object.keys(target).reverse()) {
-            let obj = target[objId];
-            
-            if (obj.onMouseMove == undefined) continue;
-            if (obj.child.length != 0)
-                this.mouseMove(e, obj.child);     
-            obj.onMouseMove(e);
-        }
-    }
-
-    keyDown(e, target) {   
-        if (!this.isActive) return false;
-        for (const objId of Object.keys(target).reverse()) {
-            let obj = target[objId];
-            
-            if (obj.onKeyDown == undefined) continue;
-            obj.onKeyDown(e);
-        }
-    }
-
-    keyUp(e, target) {   
-        if (!this.isActive) return false;
-        for (const objId of Object.keys(target).reverse()) {
-            let obj = target[objId];
-            
-            if (obj.onKeyUp == undefined) continue;
-            obj.onKeyUp(e);
+            if (!obj.isActive) continue;
+            if (obj[event] == undefined) continue;
+            obj[event](e);
         }
     }
 
@@ -297,36 +256,36 @@ class Scene {
 
         topCanvas.addEventListener('contextmenu', e => e.preventDefault());
 
-        const dispatchTopDown = (e, handlerName) => {
+        const dispatchTopDown = (e, handlerName, event) => {
             if (!this.isActive) return;
 
             for (let i=this.layer.length-1; i >= 0; i--) {
                 let canvas = this.layer[i];
-                if (canvas[handlerName](e, canvas.objects)) break;
+                if (canvas[event](e, handlerName, canvas.objects)) break;
             }
         }
 
-        const dispatchAll = (e, handlerName) => {           
+        const dispatchAll = (e, handlerName, event) => {
             if (!this.isActive) return;
             this.layer.forEach(canvas => {
-                canvas[handlerName](e, canvas.objects);
+                canvas[event](e, handlerName, canvas.objects);
             })
         }
 
         document.addEventListener("keydown", e => {
             this.keys[e.code] = true;
-            dispatchAll(e, "keyDown");
+            dispatchAll(e, "onKeyDown", EVENT_KEY);
         });
 
         document.addEventListener("keyup", e => {
             this.keys[e.code] = false;
-            dispatchAll(e, "keyUp")
+            dispatchAll(e, "onKeyUp", EVENT_KEY)
         });
 
-        topCanvas.addEventListener("mousedown", e => dispatchTopDown(e, "tryClick"));
-        topCanvas.addEventListener("wheel", e => dispatchTopDown(e, "tryScroll"));
-        topCanvas.addEventListener("mousemove", e => dispatchAll(e, "updateHover"));
-        topCanvas.addEventListener("mousemove", e => dispatchAll(e, "mouseMove"));
+        topCanvas.addEventListener("mousedown", e => dispatchTopDown(e, "onClick",     EVENT_MOUSE));
+        topCanvas.addEventListener("wheel",     e => dispatchTopDown(e, "onScroll",    EVENT_MOUSE));
+        topCanvas.addEventListener("mousemove", e => dispatchAll(e,     "onHover",     EVENT_MOUSE));
+        topCanvas.addEventListener("mousemove", e => dispatchAll(e,     "onMouseMove", EVENT_MOUSE));
 
     }
 

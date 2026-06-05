@@ -108,7 +108,7 @@ class Rigidbody {
         this.transform = transform;
         this.mass = mass;
         transform.acceleration = new Vector2D(0, 0);
-        this.transform.acceleration.y = this.mass * 0.02;
+        this.transform.acceleration.y = this.mass * 0.015;
     }
 
     update() {
@@ -139,7 +139,7 @@ class Ball extends GameObject {
         // 버그(Ball.constructor): velocity가 없으면 move/physics에서 undefined.x 때문에 게임이 멈출 수 있음.
         this.transform.velocity = velocity;
         
-        this.rigidbody = new Rigidbody(this.transform, 150);
+        // this.rigidbody = new Rigidbody(this.transform, 150);
         this.damage = Ball.damageList[level];
 
         this.maxSpeed = 500;
@@ -248,7 +248,7 @@ class Block extends GameObject {
             }
             
             if (this.blockInfo.itemInfo) {
-                let item = new Item('item', this.transform.x + Math.random() * 50 - 50, this.transform.y + Math.random() * 50 - 50, this.blockInfo.itemInfo);
+                let item = new Item('item', this.transform.x + Math.random() * 10 + 32, this.transform.y + Math.random() * 10 - 10, this.blockInfo.itemInfo);
                 this.scene.addGameObject(item);
             }
             this.scene.removeObject(this.name);
@@ -277,7 +277,7 @@ class Item extends GameObject {
         super(name, x, y, 32, 32);
         this.itemInfo = itemInfo;
         this.sprite = itemInfo.sprite;
-        this.rigidbody = new Rigidbody(this.transform, Math.random()*30 + 100);
+        this.rigidbody = new Rigidbody(this.transform, Math.random()*30 + 150);
     }
 
     update() {    
@@ -398,7 +398,7 @@ class Camera extends GameObject {
             obj.transform.x -= dx;
             obj.transform.y -= dy;
         });
-        // this.transform.x += dx;
-        // this.transform.y += dy;  
+        this.transform.x += dx;
+        this.transform.y += dy;  
     }
 }

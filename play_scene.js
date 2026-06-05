@@ -127,10 +127,10 @@ const gameScene = () => {
     const MAX_BALL_COUNT = 10;
 
     const createBall = (level) => {
-        let randDx = Math.floor(Math.random()*8 - 4);
-        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, new Vector2D(randDx, -2));
+        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, new Vector2D(0, -1));
         
-        ball.transform.velocity.scale(120);
+        ball.transform.velocity.rotate(Math.random() * Math.PI/4 - Math.PI/4);
+        ball.transform.velocity.scale(400);
         
         scene.addGameObject(ball);
     }
@@ -211,8 +211,11 @@ const gameScene = () => {
         let player_img = "assets/etc/hotbar.png";
 
         let player = new Player("player", CANVAS_WIDTH / 2, CANVAS_HEIGHT - player_height - 20, player_width, player_height, player_img);
-        if (inventory)
-            player.inventory = inventory;
+        if (inventory) {
+            inventory.forEach((slot, i) => {
+                player.inventory[i].setItem(slot.itemInfo, slot.count);
+            });
+        }
 
         this.addGameObject(player);    
 
@@ -300,21 +303,8 @@ const gameScene = () => {
             soundManager.playClick();
         }));
 
-        let canCameraMove = false;
-        this.isCameraMoving = false;
-        this.camera.onMouseMove = e => {
-            const { offsetX, offsetY } = e;
-
-            let cntBlocksInMap = 0;
-            this.findGameObjects('block_').forEach(block => {
-                if (block.transform.y >= this.camera.transform.getAbsolute().y)
-                    cntBlocksInMap++;
-            });
-
-            canCameraMove = cntBlocksInMap <= 5;
-            this.isCameraMoving = canCameraMove && offsetY <= CANVAS_HEIGHT-200;
-        }
-
+        const MIN_Y = Math.min(...this.findGameObjects("block").map(block => block.transform.top));
+        console.log('MIN Y', MIN_Y);
     }
     
 
@@ -343,8 +333,8 @@ const gameScene = () => {
             const [collisionSide, collisionObject] = ball.checkCollision();
             
             if (collisionSide == 'bottom' && collisionObject instanceof Player) {
-                ball.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x * 5, 400);
-                ball.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y * 5, 400);
+                ball.transform.velocity.x +=  Math.min(collisionObject.transform.velocity.x * 50, 400);
+                ball.transform.velocity.y +=  Math.min(collisionObject.transform.velocity.y * 50, 400);
             }
             
             if (collisionObject instanceof Block && collisionObject.isActive) {
@@ -379,9 +369,16 @@ const gameScene = () => {
             }
         });
 
-        if (this.isCameraMoving) {
+        let blocks = this.findGameObjects('block_');
+        let cntBlocksInMap = 0;
+        blocks.forEach(block => {
+            if (block.transform.y >= 0)
+                cntBlocksInMap++;
+        })
+        
+        if (cntBlocksInMap <= 25 && blocks.length - cntBlocksInMap != 0) {
             this.camera.move(0, -2);
-            this.isCameraMoving = false;
+            isCameraMoving = false;
         }
         dot.transform.x = this.camera.transform.getAbsolute().x;
         dot.transform.y = this.camera.transform.getAbsolute().y;
