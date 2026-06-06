@@ -41,7 +41,15 @@ const settingsScene = () => {
         const cy = CANVAS_HEIGHT / 2;
 
         this.addUI(new UIRect("bg", cx, cy, CANVAS_WIDTH, CANVAS_HEIGHT, "rgba(0,0,0,0.85)"));
-        this.addUI(new UIText("title", cx, cy - 150, "Settings", 48, "white"));
+        this.addUI(new UIText("title", cx, cy - 230, "Settings", 48, "white"));
+
+        let toolSelectBtn = new UIButton("toolSelectBtn", cx, cy - 110, 400, 50, `Ball: ${Ball.getCurrentTool()}`, () => {
+            Ball.nextTool();
+            toolSelectBtnText.text = `Ball: ${Ball.getCurrentTool()}`
+            soundManager.playClick();
+        });
+        let toolSelectBtnText = toolSelectBtn.child[0];
+        this.addUI(toolSelectBtn);
 
         let musicSelectBtn = new UIButton("musicSelectBtn", cx, cy - 40, 400, 50, 
             soundManager.getBgm(), () => {
@@ -76,7 +84,7 @@ const settingsScene = () => {
         this.addUI(sfxBtn);
 
         // 뒤로가기
-        this.addUI(new UIButton("backBtn", cx, cy + 200, 400, 50, "Back", () => {
+        this.addUI(new UIButton("backBtn", cx, cy + 210, 400, 50, "Back", () => {
             soundManager.playClick();
             gameManager.play("lobby");
         }));
@@ -127,7 +135,7 @@ const gameScene = () => {
 
     const createBall = (level) => {
         const MAX_SPEED = [500, 550, 600];
-        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, MAX_SPEED[scene.level], new Vector2D(0, -1));
+        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, Ball.getCurrentTool(), level, MAX_SPEED[scene.level], new Vector2D(0, -1));
         
         ball.transform.velocity.rotate(Math.random() * Math.PI/4 - Math.PI/4);
         ball.transform.velocity.scale(400);
