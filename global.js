@@ -20,7 +20,7 @@ const ITEM_OBSIDIAN     = new ItemInfo("assets/items/obsidian.png");
 const ITEM_NETHERRACK   = new ItemInfo("assets/items/netherrack.png");
 const ITEM_GOLD_INGOT  = new ItemInfo("assets/items/gold_ingot.png");
 
-const BlockInfo = function(blockId, src, hp=1, itemInfo=null, color=null, itemCount=1) {
+const BlockInfo = function(blockId, src, hp=1, color=null, itemInfo=null, itemCount=1) {
     let img = new Image();
     img.src = src;
     
@@ -35,34 +35,34 @@ const BlockInfo = function(blockId, src, hp=1, itemInfo=null, color=null, itemCo
 };
 
 // overworld blocks
-const BLOCK_GRASS       = new BlockInfo("b_grass",          "assets/blocks/over/grass.png", 1, ITEM_DIRT, '#7F6B42');
-const BLOCK_DIRT        = new BlockInfo("b_dirt",           "assets/blocks/over/dirt.png", 1, ITEM_DIRT, '#866043');
-const BLOCK_STONE       = new BlockInfo("b_stone",          "assets/blocks/over/stone.png", 2, ITEM_COBBLESTONE, '#7E7E7E');
-const BLOCK_OAK_LOG     = new BlockInfo("b_oak_log",        "assets/blocks/over/oak_log.png", 2, ITEM_OAK_LOG, '#6D5533');
-const BLOCK_IRON_ORE    = new BlockInfo("b_iron_ore",       "assets/blocks/over/iron_ore.png", 4, ITEM_IRON_INGOT, '#88817B');
-const BLOCK_DIAMOND_ORE = new BlockInfo("b_diamond_ore",    "assets/blocks/over/diamond_ore.png", 7, ITEM_DIAMOND, '#798D8D', 2);
-const BLOCK_OBSIDIAN    = new BlockInfo("b_obsidian",       "assets/blocks/over/obsidian.png", 20, ITEM_OBSIDIAN, '#0F0B19');
+const BLOCK_GRASS       = new BlockInfo("b_grass",          "assets/blocks/over/grass.png", 1, '#7F6B42');
+const BLOCK_DIRT        = new BlockInfo("b_dirt",           "assets/blocks/over/dirt.png", 1, '#866043');
+const BLOCK_STONE       = new BlockInfo("b_stone",          "assets/blocks/over/stone.png", 2, '#7E7E7E', ITEM_COBBLESTONE);
+const BLOCK_OAK_LOG     = new BlockInfo("b_oak_log",        "assets/blocks/over/oak_log.png", 2, '#6D5533', ITEM_OAK_LOG);
+const BLOCK_IRON_ORE    = new BlockInfo("b_iron_ore",       "assets/blocks/over/iron_ore.png", 4, '#88817B', ITEM_IRON_INGOT);
+const BLOCK_DIAMOND_ORE = new BlockInfo("b_diamond_ore",    "assets/blocks/over/diamond_ore.png", 7, '#798D8D', ITEM_DIAMOND, 2);
+const BLOCK_OBSIDIAN    = new BlockInfo("b_obsidian",       "assets/blocks/over/obsidian.png", 15, '#0F0B19', ITEM_OBSIDIAN);
 const BLOCK_TNT         = new BlockInfo("b_tnt",            "assets/blocks/over/tnt.png"); // #B65854
 const BLOCK_ZOMBIE      = new BlockInfo("b_zombie",         "assets/blocks/over/zombie.png"); // #4D703C
 const BLOCK_PIG         = new BlockInfo("b_pig",            "assets/blocks/over/pig.png");
 const BLOCK_SHEEP       = new BlockInfo("b_sheep",          "assets/blocks/over/sheep.png");
 const BLOCK_SPIDER      = new BlockInfo("b_spider",         "assets/blocks/over/spider.png");
 const BLOCK_CREEPER     = new BlockInfo("b_creeper",        "assets/blocks/over/creeper.png");
-const BLOCK_CHEST       = new BlockInfo("b_chest",          "assets/blocks/over/chest.png", 1, ITEM_DIAMOND, '#9e6104', 3);
+const BLOCK_CHEST       = new BlockInfo("b_chest",          "assets/blocks/over/chest.png", 1, '#9e6104', ITEM_DIAMOND, 3);
 
 // nether blocks
 const BLOCK_SOULSAND        = new BlockInfo("b_soulsand",           "assets/blocks/nether/soulsand.png", 2, '#513E33');
 const BLOCK_NETHERRACK      = new BlockInfo("b_netherrack",         "assets/blocks/nether/netherrack.png", 1, '#6b2929');
 const BLOCK_ANCIENT_DEBRIS  = new BlockInfo("b_ancient_debris",     "assets/blocks/nether/ancient_debris.png");
-const BLOCK_NETHER_GOLD_ORE = new BlockInfo("b_nether_gold_ore",    "assets/blocks/nether/nether_gold_ore.png", 4, ITEM_GOLD_INGOT, '#73372A');
-const BLOCK_NETHER_BRICKS   = new BlockInfo("b_nether_bricks",      "assets/blocks/nether/nether_bricks.png", 2, '#3a0e0e');
-const BLOCK_BLAZE           = new BlockInfo("b_blaze",              "assets/blocks/nether/blaze.png", 5, ITEM_BLAZE_ROD, '#ce9d35');
+const BLOCK_NETHER_GOLD_ORE = new BlockInfo("b_nether_gold_ore",    "assets/blocks/nether/nether_gold_ore.png", 4, '#73372A', ITEM_GOLD_INGOT);
+const BLOCK_NETHER_BRICKS   = new BlockInfo("b_nether_bricks",      "assets/blocks/nether/nether_bricks.png", 5, '#3a0e0e');
+const BLOCK_BLAZE           = new BlockInfo("b_blaze",              "assets/blocks/nether/blaze.png", 15, '#ce9d35', ITEM_BLAZE_ROD);
 const BLOCK_BONE            = new BlockInfo("b_bone_block",         "assets/blocks/nether/bone_block.png", 1, '#cbcbcb');
 const BLOCK_NETHER_QUARTZ   = new BlockInfo("b_nether_quartz",      "assets/blocks/nether/nether_quartz_ore.png", 4, '#622626');
 const BLOCK_SOUL_SOIL       = new BlockInfo("b_soul_soil",          "assets/blocks/nether/soul_soil.png", 2, '#513E33');
 
 // ender blocks
-const BLOCK_ENDERMAN        = new BlockInfo("b_enderman",           "assets/blocks/ender/enderman.png", 5, ITEM_ENDER_PEARL, '#232323');
+const BLOCK_ENDERMAN        = new BlockInfo("b_enderman",           "assets/blocks/ender/enderman.png", 15, '#232323', ITEM_ENDER_PEARL);
 const BLOCK_END_CRYSTAL     = new BlockInfo("b_end_crystal",        "assets/blocks/ender/end_crystal.png", 1, '#820c70');
 const BLOCK_BECROCK         = new BlockInfo("b_bedrock",            "assets/blocks/ender/bedrock.png", 9999);
 const BLOCK_CHORUS_FLOWER   = new BlockInfo("b_chorus_flower",      "assets/blocks/ender/chorus_flower.png", 1, '#6e076c');
