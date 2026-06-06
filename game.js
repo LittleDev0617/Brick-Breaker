@@ -226,14 +226,16 @@ class Block extends GameObject {
         if (this.hp <= 0) {
             this.isActive = false;
 
-            // 버그(Block.hit): 엔드 크리스탈을 부숴도 goal_crystal이 줄지 않아 마지막 스테이지를 클리어할 수 없었음.
             if (this.blockInfo == BLOCK_END_CRYSTAL && typeof this.scene.goal_crystal == "number") {
                 this.scene.goal_crystal = Math.max(0, this.scene.goal_crystal - 1);
             }
             
             if (this.blockInfo.itemInfo) {
-                let item = new Item('item', this.transform.x + Math.random() * 10 + 32, this.transform.y + Math.random() * 10 - 10, this.blockInfo.itemInfo);
-                this.scene.addGameObject(item);
+                let randItemCount = Math.floor(Math.random()*this.blockInfo.itemCount + 1);
+                for (let i = 0; i < randItemCount; i++) {
+                    let item = new Item('item', this.transform.x + Math.random()*BLOCK_SIZE, this.transform.y + Math.random() * 10 - 10, this.blockInfo.itemInfo);
+                    this.scene.addGameObject(item);
+                }
             }
 
             this.scene.addGameObject(new Particle(`destroy`, this.transform.x+BLOCK_SIZE, this.transform.y+BLOCK_SIZE, this.blockInfo.color))

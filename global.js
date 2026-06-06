@@ -20,7 +20,7 @@ const ITEM_OBSIDIAN     = new ItemInfo("assets/items/obsidian.png");
 const ITEM_NETHERRACK   = new ItemInfo("assets/items/netherrack.png");
 const ITEM_GOLD_INGOT  = new ItemInfo("assets/items/gold_ingot.png");
 
-const BlockInfo = function(blockId, src, hp=1, itemInfo=null, color=null) {
+const BlockInfo = function(blockId, src, hp=1, itemInfo=null, color=null, itemCount=1) {
     let img = new Image();
     img.src = src;
     
@@ -29,6 +29,7 @@ const BlockInfo = function(blockId, src, hp=1, itemInfo=null, color=null) {
     this.hp = hp;
     this.itemInfo = itemInfo;
     this.color = color;
+    this.itemCount = itemCount;
 
     return this;
 };
@@ -39,7 +40,7 @@ const BLOCK_DIRT        = new BlockInfo("b_dirt",           "assets/blocks/over/
 const BLOCK_STONE       = new BlockInfo("b_stone",          "assets/blocks/over/stone.png", 2, ITEM_COBBLESTONE, '#7E7E7E');
 const BLOCK_OAK_LOG     = new BlockInfo("b_oak_log",        "assets/blocks/over/oak_log.png", 2, ITEM_OAK_LOG, '#6D5533');
 const BLOCK_IRON_ORE    = new BlockInfo("b_iron_ore",       "assets/blocks/over/iron_ore.png", 4, ITEM_IRON_INGOT, '#88817B');
-const BLOCK_DIAMOND_ORE = new BlockInfo("b_diamond_ore",    "assets/blocks/over/diamond_ore.png", 7, ITEM_DIAMOND, '#798D8D');
+const BLOCK_DIAMOND_ORE = new BlockInfo("b_diamond_ore",    "assets/blocks/over/diamond_ore.png", 7, ITEM_DIAMOND, '#798D8D', 2);
 const BLOCK_OBSIDIAN    = new BlockInfo("b_obsidian",       "assets/blocks/over/obsidian.png", 20, ITEM_OBSIDIAN, '#0F0B19');
 const BLOCK_TNT         = new BlockInfo("b_tnt",            "assets/blocks/over/tnt.png"); // #B65854
 const BLOCK_ZOMBIE      = new BlockInfo("b_zombie",         "assets/blocks/over/zombie.png"); // #4D703C
@@ -47,7 +48,7 @@ const BLOCK_PIG         = new BlockInfo("b_pig",            "assets/blocks/over/
 const BLOCK_SHEEP       = new BlockInfo("b_sheep",          "assets/blocks/over/sheep.png");
 const BLOCK_SPIDER      = new BlockInfo("b_spider",         "assets/blocks/over/spider.png");
 const BLOCK_CREEPER     = new BlockInfo("b_creeper",        "assets/blocks/over/creeper.png");
-const BLOCK_CHEST       = new BlockInfo("b_chest",          "assets/blocks/over/chest.png", 1, ITEM_DIAMOND, '#9e6104');
+const BLOCK_CHEST       = new BlockInfo("b_chest",          "assets/blocks/over/chest.png", 1, ITEM_DIAMOND, '#9e6104', 3);
 
 // nether blocks
 const BLOCK_SOULSAND        = new BlockInfo("b_soulsand",           "assets/blocks/nether/soulsand.png", 2, '#513E33');
