@@ -8,6 +8,7 @@ const editorScene = () => {
         let camera = new ObjectT("camera", 0, 0, 0, 0);
         let cameraPos = camera.transform;
 
+        this.addGameObject(new UIRect("background", 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, "white", 0, 0));
         this.addUI(new UIText("currentMode", 20, 50, mode, 32, "black", TEXT_ALIGN_LEFT));
         this.addUI(new UIText("guide", 20, 100, "Left Click: Place/Destroy Block", 16, "black", TEXT_ALIGN_LEFT));
         this.addUI(new UIText("guide2", 20, 120, "Right Click: Drag to move map", 16, "black", TEXT_ALIGN_LEFT));
@@ -217,9 +218,10 @@ const editorScene = () => {
             map.placeBlock(absX, absY, BLOCK_LIST[idx].id);
         }
 
-        editorManager.onClick = (e, isRight) => {
-            const { offsetX, offsetY } = e;
+        editorManager.onClick = (e) => {
+            const { offsetX, offsetY, button } = e;
 
+            const isRight = button & 2;
             if (!isRight) { // 좌클릭
                 if (mode == "draw")             
                     place(offsetX, offsetY, blockSelected);

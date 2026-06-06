@@ -112,6 +112,24 @@ const gameScene = () => {
                 const player = scene.findGameObject('player');
 
                 return player.getItem(ITEM_OBSIDIAN) >= 8;
+            },
+            'isOver': () => {
+                const player = scene.findGameObject('player');
+                const blocks = scene.findGameObjects('block_');
+                
+                if (blocks.length == 0)
+                    return false;
+
+                let obsidianCnt = 0;
+                player.inventory.forEach(slot => {
+                    if (slot.itemInfo == ITEM_OBSIDIAN)
+                        obsidianCnt += slot.count;
+                });
+
+                if (obsidianCnt == 0)
+                    return true;
+                
+                return false;
             }
         },
         {
