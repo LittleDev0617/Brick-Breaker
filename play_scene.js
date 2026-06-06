@@ -20,7 +20,6 @@ const lobby = () => {
             soundManager.playClick();
         }));
 
-        // 버그(lobby.start): let 없이 i/j를 쓰면 전역 변수가 생겨 다른 반복문과 충돌할 수 있음.
         for (let i = 0; i < 12; i++)
             for (let j = 0; j < 16; j++)
                 scene1.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), BLOCK_STONE));
@@ -226,7 +225,6 @@ const gameScene = () => {
         
 
         start_button = new UIButton("start_button", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 300, 50, "CLICK TO START", () => {
-            // 버그(gameStart): 함수 이름만 쓰면 실행되지 않아서 버튼을 눌러도 시작 상태가 바뀌지 않음.
             gameStart();
             soundManager.playClick();
         });
@@ -316,7 +314,11 @@ const gameScene = () => {
         const dot = this.findUIObject('debug');
         
         if (this.stage.isClear()) {
-            gameManager.play("gameClear", [this.level, player.inventory]);
+            if (this.level == 3) {
+                gameManager.play("ending");
+            } else {
+                gameManager.play("gameClear", [this.level, player.inventory]);
+            }
             return;
         }
         
