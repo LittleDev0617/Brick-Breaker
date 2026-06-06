@@ -15,6 +15,8 @@ window.onload = () => {
     gameManager.addScene(endingScene());
     gameManager.addScene(gameClearScene());
     gameManager.addScene(gameOverScene());
+    
+    gameManager.addScene(bossScene());
 
-    gameManager.play("lobby");
+    gameManager.play("bossScene");
 }

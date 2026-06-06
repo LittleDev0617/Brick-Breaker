@@ -412,3 +412,36 @@ class Camera extends GameObject {
         this.transform.y += dy;  
     }
 }
+
+class EnderDragon extends GameObject {
+    static frames = [];
+    static {
+        const path = './assets/boss/'
+        for (let i=0; i < 100; i++) {
+            let img = new Image();            
+            img.src = path + `frame_${String(i).padStart(3, "0")}_delay-0.04s.png`;
+            this.frames.push(img);
+        }
+    }
+
+    constructor(name, x, y) {
+        super(name, x, y, 300, 300);
+        this.frameIndex = 0;
+        this.time = 0;
+    }
+
+    render(context) {
+        if (this.time >= 0.015) {
+            this.frameIndex++;
+            this.frameIndex %= 100;
+            this.time = 0;
+        }
+
+        context.imageSmoothingEnabled = false;
+        context.globalAlpha = this.opacity;
+        context.drawImage(EnderDragon.frames[this.frameIndex], this.transform.offsetX, this.transform.offsetY, this.transform.width, this.transform.height);
+        context.globalAlpha = 1;
+
+        this.time += this.scene.deltaTime;
+    }
+}

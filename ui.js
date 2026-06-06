@@ -430,9 +430,6 @@ class Scene {
     }
 
     draw() {
-        if (this.background) {
-            this.background.draw();
-        }
 
         this.layer.forEach(canvas => {
             canvas.draw();
