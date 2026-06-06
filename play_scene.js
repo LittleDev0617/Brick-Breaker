@@ -315,7 +315,7 @@ const gameScene = () => {
             scoreManager.reset();
             soundManager.stopBGM();
             soundManager.playClick();
-            gameManager.play("lobby");
+            setTimeout(() => gameManager.play("lobby"), 0);
         }));
 
         const MIN_Y = Math.min(...this.findGameObjects("block").map(block => block.transform.top));
