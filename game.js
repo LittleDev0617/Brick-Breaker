@@ -104,6 +104,7 @@ class Rigidbody {
 
 class Ball extends GameObject {
     static toolList = ["pickaxe", "axe", "shovel", "sword"];
+    static currentTool = 0;
     static toolLevelList = ["wood", "stone", "iron", "gold", "diamond"];
     static damageList = [1, 2, 4, 4, 8];
     static toolImages = {};
@@ -119,6 +120,14 @@ class Ball extends GameObject {
         });
     }
 
+    static getCurrentTool = () => {
+        return this.toolList[this.currentTool];
+    };
+
+    static nextTool = () => {
+        this.currentTool = (this.currentTool + 1) % this.toolList.length;
+    }
+
     constructor(name, x, y, tool, level, maxSpeed, velocity = new Vector2D(0, 0)) {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
         this.transform.velocity = velocity;
@@ -127,7 +136,8 @@ class Ball extends GameObject {
         this.damage = Ball.damageList[level];
 
         this.maxSpeed = maxSpeed;
-        this.minSpeed = 200;
+        this.minSpeed = 300;
+        this.minYSpeed = 200;
     }
 
     update() {
@@ -141,6 +151,12 @@ class Ball extends GameObject {
         if (this.transform.velocity.size > this.maxSpeed) {
             let ratio = this.maxSpeed / this.transform.velocity.size;
             this.transform.velocity.scale(ratio);
+        }
+
+        // y속력 lower bound
+        if (Math.abs(this.transform.velocity.y) < this.minYSpeed) {
+            if (this.transform.velocity.y > 0) this.transform.velocity.y = this.minYSpeed;
+            else                              this.transform.velocity.y = -this.minYSpeed;
         }
 
         if (this.transform.velocity.size < this.minSpeed) {
