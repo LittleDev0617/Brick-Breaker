@@ -459,17 +459,17 @@ const gameClearScene = () => {
         // 점수
         this.addUI(new UIText("scoreText", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - 30, `Score: ${scoreManager.getScore()}`, 28, "white"));
 
-        //최고 점수
+        // 최고 점수
         this.addUI(new UIText("highScoreText", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 10, `Best Score: ${scoreManager.getHighScore()}`, 28, "#FFD700"));
 
         // Next Level 버튼
-        this.addUI(new UIButton("nextLevelBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 60, 290, 50, "Next Level", () => {
+        this.addUI(new UIButton("nextLevelBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 140, 290, 50, "Next Level", () => {
             gameManager.play("game", [level+1, inventory]);
             soundManager.playClick();
         }));
 
         // Title Screen 버튼
-        this.addUI(new UIButton("titleBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 145, 290, 50, "Title Screen", () => {
+        this.addUI(new UIButton("titleBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 220, 290, 50, "Title Screen", () => {
             gameManager.play("lobby");
             soundManager.playClick();
         }));
@@ -503,13 +503,13 @@ const gameOverScene = () => {
         this.addUI(new UIText("highScoreText",CANVAS_WIDTH/2,CANVAS_HEIGHT/2 + 10,`Best Score: ${scoreManager.getHighScore()}`,28,"#FFD700"));
 
         // Respawn 버튼
-        this.addUI(new UIButton("respawnBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 60, 290, 50, "Respawn", () => {
+        this.addUI(new UIButton("respawnBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 130, 290, 50, "Respawn", () => {
             gameManager.play("game", [level, undefined]);
             soundManager.playClick();
         }));
 
         // Title Screen 버튼
-        this.addUI(new UIButton("titleBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 145, 290, 50, "Title Screen", () => {
+        this.addUI(new UIButton("titleBtn", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 220, 290, 50, "Title Screen", () => {
             gameManager.play("lobby");
             soundManager.playClick();
         }));

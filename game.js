@@ -239,7 +239,7 @@ class Block extends GameObject {
     }
 
     onClick() {
-        this.hit(1);
+        // this.hit(1);
     }
 
     hit(dmg) {
