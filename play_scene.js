@@ -126,7 +126,8 @@ const gameScene = () => {
     const MAX_BALL_COUNT = 10;
 
     const createBall = (level) => {
-        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, new Vector2D(0, -1));
+        const MAX_SPEED = [500, 550, 600];
+        let ball = new Ball('ball', BALL_SPAWN_POINT.x, BALL_SPAWN_POINT.y, "pickaxe", level, MAX_SPEED[scene.level], new Vector2D(0, -1));
         
         ball.transform.velocity.rotate(Math.random() * Math.PI/4 - Math.PI/4);
         ball.transform.velocity.scale(400);

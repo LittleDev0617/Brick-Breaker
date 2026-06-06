@@ -119,14 +119,15 @@ class Ball extends GameObject {
         });
     }
 
-    constructor(name, x, y, tool, level, velocity = new Vector2D(0, 0)) {
+    constructor(name, x, y, tool, level, maxSpeed, velocity = new Vector2D(0, 0)) {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
         this.transform.velocity = velocity;
         
         // this.rigidbody = new Rigidbody(this.transform, 150);
         this.damage = Ball.damageList[level];
 
-        this.maxSpeed = 500;
+        this.maxSpeed = maxSpeed;
+        this.minSpeed = 200;
     }
 
     update() {
@@ -139,6 +140,11 @@ class Ball extends GameObject {
         // 최대 속력 제한
         if (this.transform.velocity.size > this.maxSpeed) {
             let ratio = this.maxSpeed / this.transform.velocity.size;
+            this.transform.velocity.scale(ratio);
+        }
+
+        if (this.transform.velocity.size < this.minSpeed) {
+            let ratio = this.minSpeed / this.transform.velocity.size;
             this.transform.velocity.scale(ratio);
         }
 
