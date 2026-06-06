@@ -74,29 +74,14 @@ class GameManager {
 
         this.playingScene.isEnd = false;
 
-        // deltatime으로 인해 튀는것 방지
-        // this.playingScene.last = 0;
-
         this.playingScene.start(arg);
 
-        // if (!this.isLoopRunning) {
-        //     this.isLoopRunning = true;
-        //     this.update();
-        // }
         this.playingScene.last = 0;
         let id = requestAnimationFrame((now) => {this.update(now)});
         this.animationMap[this.playingScene.name] = id;        
     }
 
     update(now) {
-        // if (this.playingScene.isEnd) {
-        //     this.sceneIndex = -1;
-        //     let lastScene = this.callStack.pop();
-            
-        //     // this.resume(lastScene);
-            
-        //     return this.play(lastScene);
-        // }
         this.playingScene.frame(now);
         let id = requestAnimationFrame((now) => {this.update(now)});
         this.animationMap[this.playingScene.name] = id;       
@@ -136,7 +121,6 @@ class Ball extends GameObject {
 
     constructor(name, x, y, tool, level, velocity = new Vector2D(0, 0)) {
         super(name, x, y, BLOCK_SIZE, BLOCK_SIZE, 0.5, 0.5, Ball.toolImages[tool][level]);
-        // 버그(Ball.constructor): velocity가 없으면 move/physics에서 undefined.x 때문에 게임이 멈출 수 있음.
         this.transform.velocity = velocity;
         
         // this.rigidbody = new Rigidbody(this.transform, 150);
