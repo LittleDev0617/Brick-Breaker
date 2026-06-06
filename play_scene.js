@@ -294,7 +294,7 @@ const gameScene = () => {
         owSfxText.color = "#22ee77";
         addToOverlay(owSfxBtn);
 
-        addToOverlay(new UIButton("ow_resumeBtn", cx, cy + 130, 300, 50, "Resume", () => {
+        addToOverlay(new UIButton("ow_resumeBtn", cx, cy + 105, 300, 50, "Resume", () => {
             this.settingsPanelOpen = false;
             settingsOverlay.forEach(el => el.isActive = false);
 
@@ -308,6 +308,14 @@ const gameScene = () => {
             });
             this.savedBallVelocities = null;
             soundManager.playClick();
+        }));
+
+        addToOverlay(new UIButton("ow_quitBtn", cx, cy + 175, 300, 50, "Quit", () => {
+            scoreManager.saveHighScore();
+            scoreManager.reset();
+            soundManager.stopBGM();
+            soundManager.playClick();
+            gameManager.play("lobby");
         }));
 
         const MIN_Y = Math.min(...this.findGameObjects("block").map(block => block.transform.top));
