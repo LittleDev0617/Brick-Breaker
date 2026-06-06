@@ -315,7 +315,7 @@ const gameScene = () => {
         const dot = this.findUIObject('debug');
         
         if (this.stage.isClear()) {
-            if (this.level == 3) {
+            if (this.level == 2) {
                 gameManager.play("ending");
             } else {
                 gameManager.play("gameClear", [this.level, player.inventory]);
