@@ -181,6 +181,9 @@ const gameScene = () => {
             'map': 'level3',
             'isClear': () => {
                 return scene.goal_crystal == 0;
+            },
+            'isOver': () => {
+                return false;
             }
         },
     ]
@@ -454,7 +457,7 @@ const gameScene = () => {
             if (block.transform.y >= 0)
                 cntBlocksInMap++;
 
-            if (block.transform.y >= CANVAS_HEIGHT)
+            if (block.transform.bottom >= CANVAS_HEIGHT)
                 scene.removeObject(block.name);
         })
 
