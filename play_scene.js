@@ -136,6 +136,7 @@ const gameScene = () => {
             'isOver': () => {
                 const player = scene.findGameObject('player');
                 const blocks = scene.findGameObjects('block_');
+                const _blocks = blocks.filter(block => block.blockInfo != BLOCK_BEDROCK);
 
                 let obsidianCnt = 0;
                 player.inventory.forEach(slot => {
@@ -143,7 +144,7 @@ const gameScene = () => {
                         obsidianCnt += slot.count;
                 });
 
-                if (blocks.length == 0 && obsidianCnt < 12)
+                if (_blocks.length == 0 && obsidianCnt < 12)
                     return true;
 
                 return false;
@@ -161,6 +162,7 @@ const gameScene = () => {
             'isOver': () => {
                 const player = scene.findGameObject('player');
                 const blocks = scene.findGameObjects('block_');
+                const _blocks = blocks.filter(block => block.blockInfo != BLOCK_BEDROCK);
 
                 let blazeRod = 0;
                 let enderPearl = 0;
@@ -171,7 +173,7 @@ const gameScene = () => {
                         enderPearl += slot.count;
                 });
 
-                if (blocks.length == 0 && (blazeRod < 12 || enderPearl < 12))
+                if (_blocks.length == 0 && (blazeRod < 12 || enderPearl < 12))
                     return true;
 
                 return false;
