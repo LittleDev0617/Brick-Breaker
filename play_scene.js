@@ -3,6 +3,7 @@ const lobby = () => {
 
     scene1.start = function () {
         document.body.className = 'lobby-bg';
+        this.addGameObject(new UIImage('back', 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, "./assets/background/lobby.png", 0, 0));
         scene1.addUI(new UIText("titleText", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 150, "Brick Breaker", 54, "black"));
         scene1.addUI(new UIButton("playBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 400, 50, "Play", () => {
             scoreManager.reset(); // 새 게임 시작 시 점수 초기화
@@ -21,8 +22,25 @@ const lobby = () => {
         }));
 
         for (let i = 0; i < 12; i++)
-            for (let j = 0; j < 16; j++)
-                scene1.addGameObject(new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), BLOCK_STONE));
+            for (let j = 0; j < 16; j++) {
+                let r = Math.random();
+                let blockInfo;
+                if (r <= 0.8)
+                    blockInfo = BLOCK_STONE;
+                else if (r <= 0.9)
+                    blockInfo = BLOCK_IRON_ORE;
+                else if (r <= 0.95)
+                    blockInfo = BLOCK_DIAMOND_ORE;
+                else if (r <= 1)
+                    blockInfo = BLOCK_PIG;
+                
+                let block = new Block(`stone${i}_${j}`, j * (BLOCK_SIZE + 1), i * (BLOCK_SIZE + 1), blockInfo);
+                block.onClick = function(e) {
+                    this.hit(1);
+                }
+
+                scene1.addGameObject(block);
+            }
     }
 
 
@@ -182,10 +200,12 @@ const gameScene = () => {
 
     scene.start = function (arg = null) {
         if (arg == null) return;
+        this.gameCanvas.objects = {};
+        this.uiCanvas.objects = {};
 
-        const [level, inventory] = arg;
+        const [level, inventory, other] = arg;
 
-        if (level == 2 && !arg[2]) //
+        if (level == 2 && other == undefined) //
             gameManager.play("enderEnter", arg);
 
         this.level = level;
@@ -533,7 +553,7 @@ const gameOverScene = () => {
 
         // Respawn 버튼
         this.addUI(new UIButton("respawnBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 130, 290, 50, "Respawn", () => {
-            gameManager.play("game", [level, undefined]);
+            gameManager.play("game", [level, undefined, 'respawn']);
             soundManager.playClick();
         }));
 

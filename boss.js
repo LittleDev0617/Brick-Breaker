@@ -87,7 +87,7 @@ const bossScene = () => {
         const enderDragon = this.findGameObject('enderDragon');
 
         if (this.time >= 5)
-            gameManager.play('game', [...this.arg, true]);
+            gameManager.play('game', [this.arg[0], this.arg[1], 'go']);
         
         this.time += this.deltaTime;
         // if (enderDragon.transform.y <= CANVAS_HEIGHT/2) {

@@ -372,6 +372,7 @@ class Player extends GameObject {
         if (targetSlot == undefined) return;
 
         targetSlot.setItem(itemInfo, targetSlot.count+amount);
+        console.log(targetSlot);
 
         this.inventory.forEach(slot => {
             if (!slot.itemInfo) return;
