@@ -19,6 +19,10 @@ class Vector2D {
         this.x = x * cos - y * sin;
         this.y = x * sin + y * cos;
     }
+
+    normalize() {
+        this.scale(1 / this.size);
+    }
 };
 
 // 새로운 오브젝트 만들 때 게임오브젝트를 상속받기
@@ -107,6 +111,7 @@ class Ball extends GameObject {
     static currentTool = 0;
     static toolLevelList = ["wood", "stone", "iron", "gold", "diamond"];
     static damageList = [1, 2, 4, 4, 8];
+    // static damageList = [30, 30, 30, 30, 30];
     static toolImages = {};
     static {
         this.toolList.forEach(tool => {
@@ -346,8 +351,6 @@ class Player extends GameObject {
         this.inventory = [];
         for (let i=0; i < SLOT_COUNT; i++) {
             let slot = new ItemSlot('slot', -width/2 + 32 + i*56, height/2);
-            // slot.count++;
-            // slot.setItem(ITEM_COBBLESTONE);
 
             this.appendChild(slot);
             this.inventory.push(slot);
@@ -357,7 +360,7 @@ class Player extends GameObject {
         this.prevY = this.transform.y;
     }
 
-    addItem(itemInfo) {    
+    addItem(itemInfo, amount=1) {    
         soundManager.playGetItem();    
         let isExist = false;
 
@@ -368,7 +371,7 @@ class Player extends GameObject {
         // 버그(Player.addItem): 인벤토리가 꽉 찬 상태에서 새 아이템을 먹으면 targetSlot이 없어 오류가 남.
         if (targetSlot == undefined) return;
 
-        targetSlot.setItem(itemInfo, targetSlot.count+1);
+        targetSlot.setItem(itemInfo, targetSlot.count+amount);
 
         this.inventory.forEach(slot => {
             if (!slot.itemInfo) return;
@@ -425,7 +428,7 @@ class EnderDragon extends GameObject {
     }
 
     constructor(name, x, y) {
-        super(name, x, y, 300, 300);
+        super(name, x, y, 400, 400);
         this.frameIndex = 0;
         this.time = 0;
     }

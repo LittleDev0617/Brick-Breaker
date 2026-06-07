@@ -82,10 +82,10 @@ const editorScene = () => {
 
         mapEditorUI.querySelector("#add-btn").addEventListener("click", () => {
             clearMap();
-            let _map = createMap();
+            map = createMap();
 
 
-            loadMaps(_map);
+            loadMaps(map);
         });
 
         mapEditorUI.querySelector("#save-btn").addEventListener("click", () => {
