@@ -137,16 +137,13 @@ const gameScene = () => {
                 const player = scene.findGameObject('player');
                 const blocks = scene.findGameObjects('block_');
 
-                if (blocks.length == 0)
-                    return false;
-
                 let obsidianCnt = 0;
                 player.inventory.forEach(slot => {
                     if (slot.itemInfo == ITEM_OBSIDIAN)
                         obsidianCnt += slot.count;
                 });
 
-                if (obsidianCnt == 0)
+                if (blocks.length == 0 && obsidianCnt < 12)
                     return true;
 
                 return false;
@@ -160,6 +157,24 @@ const gameScene = () => {
                 const _blocks = blocks.filter(block => block.blockInfo != BLOCK_BEDROCK);
 
                 return player.getItem(ITEM_BLAZE_ROD) >= 12 && player.getItem(ITEM_ENDER_PEARL) >= 12 && _blocks.length == 0;
+            },
+            'isOver': () => {
+                const player = scene.findGameObject('player');
+                const blocks = scene.findGameObjects('block_');
+
+                let blazeRod = 0;
+                let enderPearl = 0;
+                player.inventory.forEach(slot => {
+                    if (slot.itemInfo == ITEM_BLAZE_ROD)
+                        blazeRod += slot.count;
+                    if (slot.itemInfo == ITEM_ENDER_PEARL)
+                        enderPearl += slot.count;
+                });
+
+                if (blocks.length == 0 && (blazeRod < 12 || enderPearl < 12))
+                    return true;
+
+                return false;
             }
         },
         {
@@ -387,8 +402,7 @@ const gameScene = () => {
 
         const balls = this.findGameObjects('ball');
 
-        if (balls.length == 0) {
-            scoreManager.reset();
+        if (balls.length == 0 || this.stage.isOver()) {
             gameManager.play("gameOver", [this.level, player.inventory]);
             return;
         }
@@ -553,6 +567,7 @@ const gameOverScene = () => {
 
         // Respawn 버튼
         this.addUI(new UIButton("respawnBtn", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 130, 290, 50, "Respawn", () => {
+            scoreManager.reset();
             gameManager.play("game", [level, undefined, 'respawn']);
             soundManager.playClick();
         }));
