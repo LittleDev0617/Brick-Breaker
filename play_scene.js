@@ -127,15 +127,15 @@ const gameScene = () => {
         {
             'map': 'level1',
             'goals': [
-                { item: ITEM_OBSIDIAN, icon: 'assets/items/obsidian.png', count: 8 },
-                { text: '+ 모든 블록 파괴' },
+                { item: ITEM_OBSIDIAN, icon: 'assets/items/obsidian.png', count: 14 },
+                { text: ' + 모든 블록 파괴' },
             ],
             'isClear': () => {
                 const player = scene.findGameObject('player');
                 const blocks = scene.findGameObjects('block_');
                 const _blocks = blocks.filter(block => block.blockInfo != BLOCK_BEDROCK);
 
-                return player.getItem(ITEM_OBSIDIAN) >= 8 && _blocks.length == 0;
+                return player.getItem(ITEM_OBSIDIAN) >= 14 && _blocks.length == 0;
             },
             'isOver': () => {
                 const player = scene.findGameObject('player');
@@ -148,7 +148,7 @@ const gameScene = () => {
                         obsidianCnt += slot.count;
                 });
 
-                if (_blocks.length == 0 && obsidianCnt < 12)
+                if (_blocks.length == 0 && obsidianCnt < 14)
                     return true;
 
                 return false;
