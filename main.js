@@ -20,5 +20,5 @@ window.onload = () => {
     gameManager.addScene(levelEnding());
     gameManager.addScene(enderWorldEnterScene());
 
-    gameManager.play("game", [1]);
+    gameManager.play("lobby");
 }
