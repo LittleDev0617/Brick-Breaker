@@ -20,8 +20,9 @@ const ITEM_OBSIDIAN     = new ItemInfo("assets/items/obsidian.png");
 const ITEM_NETHERRACK   = new ItemInfo("assets/items/netherrack.png");
 const ITEM_GOLD_INGOT   = new ItemInfo("assets/items/gold_ingot.png");
 const ITEM_EYE_OF_ENDER = new ItemInfo("assets/items/eye_of_ender.png");
+const ITEM_STRENGTH_POTION = new ItemInfo("assets/items/potion.png")
 
-const ITEM_LIST = [ITEM_DIRT, ITEM_OAK_LOG, ITEM_COBBLESTONE, ITEM_IRON_INGOT, ITEM_DIAMOND, ITEM_ENDER_PEARL, ITEM_BLAZE_ROD, ITEM_OBSIDIAN, ITEM_NETHERRACK, ITEM_GOLD_INGOT, ITEM_EYE_OF_ENDER];
+const ITEM_LIST = [ITEM_DIRT, ITEM_OAK_LOG, ITEM_COBBLESTONE, ITEM_IRON_INGOT, ITEM_DIAMOND, ITEM_ENDER_PEARL, ITEM_BLAZE_ROD, ITEM_OBSIDIAN, ITEM_NETHERRACK, ITEM_GOLD_INGOT, ITEM_EYE_OF_ENDER, ITEM_STRENGTH_POTION];
 
 const BlockInfo = function(blockId, src, hp=1, color=null, itemInfo=null, itemCount=1) {
     let img = new Image();
@@ -38,8 +39,8 @@ const BlockInfo = function(blockId, src, hp=1, color=null, itemInfo=null, itemCo
 };
 
 // overworld blocks
-const BLOCK_GRASS       = new BlockInfo("b_grass",          "assets/blocks/over/grass.png", 1, '#7F6B42');
-const BLOCK_DIRT        = new BlockInfo("b_dirt",           "assets/blocks/over/dirt.png", 1, '#866043');
+const BLOCK_GRASS       = new BlockInfo("b_grass",          "assets/blocks/over/grass.png", 1, '#7F6B42', ITEM_DIRT);
+const BLOCK_DIRT        = new BlockInfo("b_dirt",           "assets/blocks/over/dirt.png", 1, '#866043', ITEM_DIRT);
 const BLOCK_STONE       = new BlockInfo("b_stone",          "assets/blocks/over/stone.png", 2, '#7E7E7E', ITEM_COBBLESTONE);
 const BLOCK_OAK_LOG     = new BlockInfo("b_oak_log",        "assets/blocks/over/oak_log.png", 2, '#6D5533', ITEM_OAK_LOG);
 const BLOCK_IRON_ORE    = new BlockInfo("b_iron_ore",       "assets/blocks/over/iron_ore.png", 4, '#88817B', ITEM_IRON_INGOT);
@@ -52,7 +53,7 @@ const BLOCK_SHEEP       = new BlockInfo("b_sheep",          "assets/blocks/over/
 const BLOCK_SPIDER      = new BlockInfo("b_spider",         "assets/blocks/over/spider.png");
 const BLOCK_CREEPER     = new BlockInfo("b_creeper",        "assets/blocks/over/creeper.png");
 const BLOCK_NETHER_PROTAL= new BlockInfo("b_nether_portal", "assets/blocks/over/nether_portal.png");
-const BLOCK_CHEST       = new BlockInfo("b_chest",          "assets/blocks/over/chest.png", 1, '#9e6104', ITEM_DIAMOND, 3);
+const BLOCK_CHEST       = new BlockInfo("b_chest",          "assets/blocks/over/chest.png", 1, '#9e6104', [[ITEM_DIAMOND, 0.8], [ITEM_STRENGTH_POTION, 0.2]], 3);
 
 // nether blocks
 const BLOCK_SOULSAND        = new BlockInfo("b_soulsand",           "assets/blocks/nether/soulsand.png", 2, '#513E33');

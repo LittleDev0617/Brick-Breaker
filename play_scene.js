@@ -481,6 +481,26 @@ const gameScene = () => {
         const ITEM_COST = 3;
         const itemList = [ITEM_OAK_LOG, ITEM_COBBLESTONE, ITEM_IRON_INGOT, ITEM_GOLD_INGOT, ITEM_DIAMOND];
 
+        const drinkPotion = () => {
+            this.tmpBalls = this.findGameObjects('ball');
+            this.tmpBalls.forEach(ball => {
+                ball.transform.width  *= 3;
+                ball.transform.height *= 3;
+                ball.damage *= 5;
+                ball.transform.velocity.scale(0.2);
+            });
+        }
+
+        const potionEnd = () => {
+            player.potionDrinked = null;
+            this.tmpBalls.forEach(ball => {
+                ball.transform.width /= 3;
+                ball.transform.height /= 3;
+                ball.damage /= 5;
+                ball.transform.velocity.scale(1/0.2);
+            })
+        }
+
         player.inventory.forEach(slot => {
             if (slot.itemInfo == null) return;
 
@@ -490,6 +510,17 @@ const gameScene = () => {
             if (itemLevel != -1 && slot.count >= ITEM_COST && ballCounter < MAX_BALL_COUNT) {
                 createBall(itemLevel);
                 slot.addCount(-ITEM_COST);
+            }
+
+            if (slot.itemInfo == ITEM_STRENGTH_POTION && player.potionDrinked == null) {
+                console.log('asdfasdfasfsadf')
+                player.potionDrinked = ITEM_STRENGTH_POTION;
+                slot.addCount(-1);
+
+                drinkPotion();
+
+                
+                setTimeout(potionEnd, 5000);
             }
         });
 

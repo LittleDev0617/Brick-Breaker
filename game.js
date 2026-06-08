@@ -260,8 +260,19 @@ class Block extends GameObject {
             
             if (this.blockInfo.itemInfo) {
                 let randItemCount = Math.floor(Math.random()*this.blockInfo.itemCount + 1);
-                for (let i = 0; i < randItemCount; i++) {
-                    let item = new Item('item', this.transform.x + Math.random()*BLOCK_SIZE, this.transform.y + Math.random() * 10 - 10, this.blockInfo.itemInfo);
+                for (let i = 0; i < randItemCount; i++) {                    
+                    let itemInfo = this.blockInfo.itemInfo;
+                    if (this.blockInfo.itemInfo instanceof Array) {
+                        let r = Math.random();
+                        this.blockInfo.itemInfo.forEach(_itemInfo => {
+                            if (itemInfo != this.blockInfo.itemInfo) return;
+                            const [item, possibility] = _itemInfo;
+                            if (r <= possibility)
+                                itemInfo = item;
+                            r -= possibility;
+                        });
+                    }
+                    let item = new Item('item', this.transform.x + Math.random()*BLOCK_SIZE, this.transform.y + Math.random() * 10 - 10, itemInfo);
                     this.scene.addGameObject(item);
                 }
             }
@@ -360,6 +371,8 @@ class Player extends GameObject {
             this.appendChild(slot);
             this.inventory.push(slot);
         }
+
+        this.potionDrinked = null;
 
         this.prevX = this.transform.x;
         this.prevY = this.transform.y;
