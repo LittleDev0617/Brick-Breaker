@@ -253,6 +253,7 @@ class Block extends GameObject {
         if (this.hp <= 0) {
             this.isActive = false;
 
+            soundManager.playBlockBreak();
             if (this.blockInfo == BLOCK_END_CRYSTAL && typeof this.scene.goal_crystal == "number") {
                 this.scene.goal_crystal = Math.max(0, this.scene.goal_crystal - 1);
             }
@@ -267,7 +268,11 @@ class Block extends GameObject {
 
             this.scene.addGameObject(new Particle(`destroy`, this.transform.x+BLOCK_SIZE, this.transform.y+BLOCK_SIZE, this.blockInfo.color))
             this.scene.removeObject(this.name);
+            scoreManager.addByBlock(this.blockInfo);
+            return;
         }
+        
+        soundManager.playBlockHit();
     }
 
     render(context) {

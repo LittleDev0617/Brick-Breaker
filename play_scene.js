@@ -423,14 +423,6 @@ const gameScene = () => {
 
             if (collisionObject instanceof Block && collisionObject.isActive) {
                 collisionObject.hit(ball.damage);
-
-                if (collisionObject.isActive) {
-                    soundManager.playBlockHit();
-                } else {
-                    soundManager.playBlockBreak();
-                    this.removeObject(collisionObject.name);
-                    scoreManager.addByBlock(collisionObject);
-                }
             }
 
             if (ball.transform.y > CANVAS_HEIGHT + 100) {
