@@ -336,6 +336,7 @@ class ItemSlot extends GameObject {
     update() {
         this.child[0].text = `${this.count}`;
         if (this.count <= 0) {
+            this.count = 0;
             this.itemInfo = null;
             this.child[0].text = '';
             this.sprite = null;

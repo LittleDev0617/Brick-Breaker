@@ -65,7 +65,7 @@ const bossScene = () => {
         this.addGameObject(background);
         this.background[0].forEach(dust => this.addGameObject(dust));
 
-        this.addGameObject(player);
+        // this.addGameObject(player);
         this.addGameObject(enderDragon);
 
         this.background[1].forEach(dust => this.addGameObject(dust));
