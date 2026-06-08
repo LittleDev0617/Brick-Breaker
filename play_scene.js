@@ -126,6 +126,10 @@ const gameScene = () => {
     const STAGES = [
         {
             'map': 'level1',
+            'goals': [
+                { item: ITEM_OBSIDIAN, icon: 'assets/items/obsidian.png', count: 8 },
+                { text: '+ 모든 블록 파괴' },
+            ],
             'isClear': () => {
                 const player = scene.findGameObject('player');
                 const blocks = scene.findGameObjects('block_');
@@ -152,6 +156,11 @@ const gameScene = () => {
         },
         {
             'map': 'level2',
+            'goals': [
+                { item: ITEM_BLAZE_ROD, icon: 'assets/items/blaze_rod.png', count: 12 },
+                { item: ITEM_ENDER_PEARL, icon: 'assets/items/ender_pearl.png', count: 12 },
+                { text: '+ 모든 블록 파괴' },
+            ],
             'isClear': () => {
                 const player = scene.findGameObject('player');
                 const blocks = scene.findGameObjects('block_');
@@ -181,6 +190,9 @@ const gameScene = () => {
         },
         {
             'map': 'level3',
+            'goals': [
+                { crystal: true, icon: 'assets/blocks/ender/end_crystal.png' },
+            ],
             'isClear': () => {
                 return scene.goal_crystal == 0;
             },
@@ -276,6 +288,42 @@ const gameScene = () => {
         scoreManager.setTextObject(scoreText);
         let dot = new UIRect("debug", 0, 0, 5, 5, 'red');
         this.addUI(dot);
+
+        // 스테이지 목표 UI (점수판 아래, 한 줄에 가로로 나열, 화면 고정)
+        const goals = this.stage.goals || [];
+        if (goals.length > 0) {
+            // 내용 너비 먼저 계산해서 박스를 딱 맞게
+            const widthOf = (goal) => {
+                if (goal.icon) {
+                    if (goal.crystal) {
+                        return 32 + 92;   // 아이콘 + "모두 파괴"
+                    } else {
+                        return 32 + 52;   // 아이콘 + "× N"
+                    }
+                } else {
+                    return 150;           // "+ 모든 블록 파괴" (텍스트만)
+                }
+            };
+            let boxW = 12;
+            goals.forEach(goal => boxW += widthOf(goal));
+
+            this.addUI(new UIRect("goalBg", 5, 50, boxW, 60, "rgba(0,0,0,0.55)", 0, 0));
+            this.addUI(new UIText("goalTitle", 15, 68, "목표", 16, "#ffd24a", TEXT_ALIGN_LEFT, 0, 0));
+            const gy = 92;
+            let x = 12;
+            goals.forEach((goal, i) => {
+                if (goal.icon) {
+                    this.addUI(new UIImage(`goalIcon${i}`, x, gy - 14, 28, 28, goal.icon, 0, 0));
+                    x += 32;
+                    const label = goal.crystal ? "모두 파괴" : `× ${goal.count}`;
+                    this.addUI(new UIText(`goalText${i}`, x, gy, label, 20, "white", TEXT_ALIGN_LEFT, 0, 0));
+                    x += goal.crystal ? 92 : 52;
+                } else {
+                    this.addUI(new UIText(`goalText${i}`, x, gy, goal.text, 18, "#cfcfcf", TEXT_ALIGN_LEFT, 0, 0));
+                    x += 128;
+                }
+            });
+        }
 
         ////////////////////////        GameObject 생성       ///////////////////////////////
 
